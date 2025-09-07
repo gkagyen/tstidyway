@@ -3,7 +3,7 @@
 As stated earlier we will be using a combination of `tidyverse` and time series specific packages (`tidyverts`)
 
 | Package | Purpose |
-|---------------|---------------------------------------------------------|
+|----|----|
 | `tidyverse` | Core suite for data wrangling and visualisation (`dplyr`, `tibble`, `ggplot2`, `readr`, etc) |
 | `tsibble` | Tidy data frames for time series, handles dates, keys and indexing |
 | `fable` | Forecasting models (ETS, ARIMA, Naive, etc) with tidy outputs |
