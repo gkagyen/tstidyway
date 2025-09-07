@@ -1,0 +1,94 @@
+[
+  {
+    "objectID": "required-packages.html",
+    "href": "required-packages.html",
+    "title": "2  Required Packages",
+    "section": "",
+    "text": "2.1 Installing the Packages\nAs stated earlier we will be using a combination of tidyverse and time series specific packages (tidyverts)\nTo install the above packages, run the following code once in your R console:\ninstall.packages(c(\"tidyverse\", \"tsibble\", \"fable\", \"feasts\", \"readxl\"))",
+    "crumbs": [
+      "Setting Up",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Required Packages</span>"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Timeseries Analysis - the Tidyverse Way",
+    "section": "",
+    "text": "Welcome\nA practical, beginner-friendly guide using tsibble, fable and friends\nHave you ever looked at a line chart of sales, website traffic, stock prices or weather patterns and thought, “I wonder what happens next?” – then you are in the right place.\nIn this book, we will take your basic R skills and transform them into real-world forecasting power – all using the clean modern tools of the Tidyverse. No black-box algorithms or confusing jargon. Just a step by step journey into understanding patterns over time and predicting the future with confidence.\nWhether you are a student, analyst or data enthusiast, time series skills are essential in your field – and surprisingly accessible. By the end of this guide, you will be able to:\nSo grab your pen and paper (whatever it is you want to grab 😁), fire up RStudio and let’s turn your curiosity into prediction. 📊✨",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "Timeseries Analysis - the Tidyverse Way",
+    "section": "",
+    "text": "Visualise trends and seasonality like a pro\nDecompose complex patterns\nBuild and compare forecasts using smart, automated models\nAnd most importantly explain your results clearly",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "required-packages.html#installing-the-packages",
+    "href": "required-packages.html#installing-the-packages",
+    "title": "2  Required Packages",
+    "section": "",
+    "text": "Tip\n\n\n\nIf you already have them installed, you do not need to reinstall. You can check if a package is installed by typing \"fable\" %in% installed.packages()\n\n\n\n2.1.1 Loading the Packages\nAfter installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. You can load a package in R with the library() function\n\n# Load all packages\nlibrary(tidyverse)          # Core data wrangling + visualisation\nlibrary(tsibble)            # Tidy time series structure\nlibrary(fable)              # Forecasting\nlibrary(feasts)             # Time series exploration tools\nlibrary(readxl)             # Importing Excel files",
+    "crumbs": [
+      "Setting Up",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Required Packages</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "1.1 What is Time Series Data?\nTime series data consists of observations recorded over time, usually at regular intervals (e.g., daily, monthly, yearly). Some examples include:\nWhat makes time series special is that time is not just a variable, It carries important structure and dependencies. What happened today can depend on what happened yesterday, last month or even last year. This temporal uniqueness is what makes time series very powerful.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#what-is-time-series-data",
+    "href": "intro.html#what-is-time-series-data",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "Monthly rainfall totals\nDaily COVID-19 cases\nHourly temperature readings\nYearly population counts",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#why-time-series-analysis-matters",
+    "href": "intro.html#why-time-series-analysis-matters",
+    "title": "1  Introduction",
+    "section": "1.2 Why Time Series Analysis Matters",
+    "text": "1.2 Why Time Series Analysis Matters\nTime series analysis helps us to understand the past, monitor the present, and predict the future. Some real world examples are:\n\nPublic Health: Forecasting disease outbreaks or hospital admissions\nFinance: Predicting stock prices, currency exchange rates, or sales revenue.\nEnvironmental Science: Analysing temperature trends or rainfall patterns for climate studies\nEngineering: Monitoring sensor data to detect faults or changes in performance\n\nIn many cases, this analysis supports decision making — whether it is planning resources, anticipating risks, or detecting unusual patterns.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#traditional-vs.-tidy-approach",
+    "href": "intro.html#traditional-vs.-tidy-approach",
+    "title": "1  Introduction",
+    "section": "1.3 Traditional vs. Tidy Approach",
+    "text": "1.3 Traditional vs. Tidy Approach\nHistorically, time series in R has been handled using ts objects and packages like forecast. These are still useful, but they do not fit perfectly with the modern tidy philosophy; data frames, pipelines and consistent syntax.\nWe will follow the tidy time series workflow using the tidyverse ecosystem. The workflow uses packages from the tidyverts ecosystem:\n\ntsibble: A tidy data structure for time series (like a tibble but with special time handling)\nfable: For forecasting models (ARIMA, ETS, etc) in a tidy way.\nfeasts: For exploratory analysis (seasonal plots, decomposition, autocorrelation).\nlubridate: For working with dates and times.\nggplot2: For beautiful and flexible visualisations\ndplyr/tidyr/tibble: For general data wrangling\n\n\n1.3.1 The Tidy Time Series Workflow\nThe tidyverse ecosystem in R emphasises clean, readable code and consistent data structure. For time series, the modern approach uses the tidyverts suite of packages.\nThe typical flow we will follow includes:\n\n🔧 Data Preparation: Load and tidy data. Convert the data to a tsibble object so R knows how to handle time.\n🔍 Explore: Visualise trends, seasonality, patterns\n🧩 Decompose: Break down components (trends, seasonal, noise)\n🖥️ Model: Fit forecasting models (simple —&gt; advanced)\n📈 Forecast: Generate future predictions\n📏 Evaluate: Check how good the forecasts are (accuracy assessment)\n\nThis workflow is clean, consistent and integrates smoothly with other tidyverse tools you might already know.\n\n\n\n\n\n\nTip\n\n\n\ntidyverse: collection of packages designed for general data science\ntidyverts: collection of packages specifically for time series analysis\nThey all follow the tidy philosophy, structure and grammar\n\n\n\n\n1.3.2 Data We Will Use\nWe will start with some built-in datasets from the tsibble package so every on can follow along without downloading external files:\n\naus_production — Quarterly production values for Australian industries.\ntourism — Quarterly overnight trips in different Australian regions.\n\nLater, we shall also show how to use real-life datasets — for example, population growth or GDP growth data from Ghana, to make the examples relatable and practical\nYou can download the datasets used here gh_data.csv .\n\n\n1.3.3 What You Will Need to Follow Along\n\nBasic R Knowledge: You should know how to load packages, run functions, and work with data frames\nRStudio installed for a smooth workflow\nInternet connection (for package installation and possible data download)\n\n\n1.3.3.1 By the end of this tutorial, you will be able to:\n\nHandle date/time data with ease\nExplore time series visually and statistically\nBuild forecasts using tidyverse-style functions\nApply your skills to your own datasets in research or work",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "setup.html",
+    "href": "setup.html",
+    "title": "Setting Up",
+    "section": "",
+    "text": "Before diving into analysis, let;s make sure we have all the tools we need to get ready. We need to set up our R environment with the right tools. The tidyverts ecosystem — built around the Tidyverse — makes time series analysis intuitive, consistent and visual.\n\n\n\n\n\n\n\nTidyverts Package Collection\n\n\n\n\n\nTidyverse Package Collection\n\n\nThis section will cover installing and loading the packages we will use and checking that your R environment is prepared for a smooth time series work\nWe will address the following:\n\n2  Required Packages: This part will cover all the packages we will need, how to install and load them for use in our R environment.\n3  Setting Up Your RStudio Environment: Here you will see how to keep things organised in a more seamless and orderly manner on your system.\n\nAfter going through this section you should have been able to install and load all required packages, make RStudio ready for your time series coding and then been able able to successfully load a test dataset.",
+    "crumbs": [
+      "Setting Up"
+    ]
+  }
+]

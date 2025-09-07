@@ -1,0 +1,25 @@
+*A practical, beginner-friendly guide using tsibble, fable and friends*
+
+> "📌Target Audience: Beginners in R with basic knowledge of data frames and plotting, but little to no experience in time series analysis
+>
+> ✔️Tools Used: `tidyverse` `tsibble` `fable` `feasts` `lubridate`
+>
+> 📈Datasets: Built-in data (`tsibble::tourism`, `datasets::AirPassengers`) and custom datasets (`local gh time series data in csv format`)
+
+## Welcome {.unnumbered}
+
+Have you ever looked at a line chart of sales, website traffic, stock prices or weather patterns and thought, *"I wonder what happens next?"* – then you are in the right place.
+
+In this book, we will take your basic R skills and transform them into **real-world forecasting power –** all using the clean modern tools of the `Tidyverse`. No black-box algorithms or confusing jargon. Just a step by step journey into understanding patterns over time and predicting the future with confidence.
+
+Whether you are a student, analyst or data enthusiast, time series skills are essential in your field – and surprisingly accessible. By the end of this guide, you will be able to:
+
+-   Visualise trends and seasonality like a pro
+
+-   Decompose complex patterns
+
+-   Build and compare forecasts using smart, automated models
+
+-   And most importantly explain your results clearly
+
+So grab your pen and paper (whatever it is you want to grab 😁), fire up RStudio and let's turn your curiosity into prediction. 📊✨

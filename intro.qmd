@@ -1,0 +1,82 @@
+# Introduction {#sec-introduction}
+
+## What is Time Series Data?
+
+Time series data consists of observations recorded over time, usually at regular intervals (e.g., daily, monthly, yearly). Some examples include:
+
+-   Monthly rainfall totals
+-   Daily COVID-19 cases
+-   Hourly temperature readings
+-   Yearly population counts
+
+What makes time series special is that time is not just a variable, It carries important structure and dependencies. What happened today can depend on what happened yesterday, last month or even last year. This temporal uniqueness is what makes time series very powerful.
+
+## Why Time Series Analysis Matters
+
+Time series analysis helps us to **understand the past, monitor the present, and predict the future**. Some real world examples are:
+
+-   **Public Health:** Forecasting disease outbreaks or hospital admissions
+-   **Finance:** Predicting stock prices, currency exchange rates, or sales revenue.
+-   **Environmental Science:** Analysing temperature trends or rainfall patterns for climate studies
+-   **Engineering:** Monitoring sensor data to detect faults or changes in performance
+
+In many cases, this analysis supports decision making — whether it is planning resources, anticipating risks, or detecting unusual patterns.
+
+## Traditional vs. Tidy Approach
+
+Historically, time series in R has been handled using `ts` objects and packages like `forecast`. These are still useful, but they do not fit perfectly with the modern **tidy philosophy**; data frames, pipelines and consistent syntax.
+
+We will follow the tidy time series workflow using the tidyverse ecosystem. The workflow uses packages from the **`tidyverts`** ecosystem:
+
+-   `tsibble`: A tidy data structure for time series (like a tibble but with special time handling)
+-   `fable`: For forecasting models (ARIMA, ETS, etc) in a tidy way.
+-   `feasts`: For exploratory analysis (seasonal plots, decomposition, autocorrelation).
+-   `lubridate`: For working with dates and times.
+-   `ggplot2`: For beautiful and flexible visualisations
+-   `dplyr`/`tidyr`/`tibble`: For general data wrangling
+
+### The Tidy Time Series Workflow
+
+The tidyverse ecosystem in R emphasises clean, readable code and consistent data structure. For time series, the modern approach uses the `tidyverts` suite of packages.\
+The typical flow we will follow includes:
+
+1.  🔧 **Data Preparation:** Load and tidy data. Convert the data to a `tsibble` object so R knows how to handle time.
+2.  🔍 **Explore:** Visualise trends, seasonality, patterns
+3.  🧩 **Decompose:** Break down components (trends, seasonal, noise)
+4.  🖥️ **Model:** Fit forecasting models (simple —\> advanced)
+5.  📈 **Forecast:** Generate future predictions
+6.  📏 **Evaluate:** Check how good the forecasts are (accuracy assessment)
+
+This workflow is clean, consistent and integrates smoothly with other tidyverse tools you might already know.
+
+::: callout-tip
+`tidyverse`: collection of packages designed for general data science
+
+`tidyverts`: collection of packages specifically for time series analysis
+
+They all follow the tidy philosophy, structure and grammar
+:::
+
+### Data We Will Use
+
+We will start with some built-in datasets from the `tsibble` package so every on can follow along without downloading external files:
+
+-   `aus_production` — Quarterly production values for Australian industries.
+-   `tourism` — Quarterly overnight trips in different Australian regions.
+
+Later, we shall also show how to use **real-life datasets** — for example, population growth or GDP growth data from Ghana, to make the examples relatable and practical
+
+You can download the datasets used here `gh_data.csv` .
+
+### What You Will Need to Follow Along
+
+1.  **Basic R Knowledge:** You should know how to load packages, run functions, and work with data frames
+2.  **RStudio** installed for a smooth workflow
+3.  Internet connection (for package installation and possible data download)
+
+#### By the end of this tutorial, you will be able to:
+
+-   Handle date/time data with ease
+-   Explore time series visually and statistically
+-   Build forecasts using tidyverse-style functions
+-   Apply your skills to your own datasets in research or work

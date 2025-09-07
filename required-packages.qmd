@@ -1,0 +1,48 @@
+# Required Packages {#sec-required-packages}
+
+As stated earlier we will be using a combination of `tidyverse` and time series specific packages (`tidyverts`)
+
+| Package | Purpose |
+|---------------|---------------------------------------------------------|
+| `tidyverse` | Core suite for data wrangling and visualisation (`dplyr`, `tibble`, `ggplot2`, `readr`, etc) |
+| `tsibble` | Tidy data frames for time series, handles dates, keys and indexing |
+| `fable` | Forecasting models (ETS, ARIMA, Naive, etc) with tidy outputs |
+| `feasts` | **F**eature **E**xtraction and **A**nalysis for **S**eries **T**ime **S**eries (plots, decomposition, autocorrelation, etc) |
+| `lubridate` | Easy and readable date time manipulation |
+| `readr` | Fast and easy data imports (csv, text data, etc) |
+| `readxl` | Importing excel files (could be optional but very useful) |
+
+::: callout-note
+the `readr` and `lubridate` packages are already part of the **tidyverse package collections**. Once you install `tidyverse`, you do not need to install them again separately.
+:::
+
+## Installing the Packages
+
+To install the above packages, run the following code **once** in your R console:
+
+```{r}
+#| eval: false
+
+install.packages(c("tidyverse", "tsibble", "fable", "feasts", "readxl"))
+
+```
+
+::: callout-tip
+If you already have them installed, you do not need to reinstall. You can check if a package is installed by typing `"fable" %in% installed.packages()`
+:::
+
+### Loading the Packages
+
+After installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. You can load a package in R with the `library()` function
+
+```{r}
+#| message: false
+#| warning: false
+
+# Load all packages
+library(tidyverse)          # Core data wrangling + visualisation
+library(tsibble)            # Tidy time series structure
+library(fable)              # Forecasting
+library(feasts)             # Time series exploration tools
+library(readxl)             # Importing Excel files
+```

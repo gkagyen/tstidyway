@@ -1,0 +1,41 @@
+project:
+  type: book
+
+book:
+  title: "Timeseries Analysis - the Tidyverse Way"
+  author: "George K Agyen"
+  reader-mode: true
+  page-footer: 
+    left: "Copyright 2025, George Kyei Agyen"
+    right: |
+      This book was built with <a href="https://quarto.org/">Quarto</a>.
+  
+  cover-image: ts_cover.png
+  favicon: ts_cover.png
+  chapters:
+    - index.qmd
+    - intro.qmd
+    
+    - part: setup.qmd
+      chapters: 
+        - required-packages.qmd
+        - environment-setup.qmd
+        
+    - part: tidy-timeseries.qmd
+      chapters: 
+        - timeseries-basics.qmd
+        - timegaps.qmd
+        - import-data.qmd
+    
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    toc: true
+    theme:
+      - cosmo
+
+editor: visual
+
