@@ -1,1 +1,62 @@
-# Working with Time Series in `tsibble`
+# Working with Time Series Data
+
+Time is the most fundamental dimension in data analysis, yet working with temporal data has traditionally been one of the most frustrating aspects of data science. If you have ever felt less enthusiastic trying to force dates and data into a standard data frame, then here is some good news for you. The `Tidyverse` provides a coherent, intuitive framework for taming the chaos of temporal data.
+
+In this section, we will explore how to work with time series data using the **tidy data principles.** Rather than wrestling with complex time series objects or memorising some mysterious date formatting codes, you will learn to treat temporal data as just another type of structured data that can be manipulated, visualised and modelled using the same consistent grammar you already know.
+
+## The tidy Approach to Time Series
+
+```{mermaid}
+%%{init: {'themeVariables': { 'fontSize': '15pt'}}}%%
+
+flowchart TD
+    A[Raw Time Series Data] --> B{Data Structure}
+    B -->|Traditional| C[Specialized TS Objects]
+    B -->|Tidy| D[tsibble]
+    
+    C --> E[Limited Functions]
+    C --> F[Complex Syntax]
+    C --> G[Isolated Workflow]
+    
+    D --> H[dplyr Verbs]
+    D --> I[ggplot2 Graphics]
+    D --> J[Tidyverse Integration]
+    
+    H --> K[filter, mutate, summarize...]
+    I --> L[geom_line, facet_wrap...]
+    J --> M[Seamless Data Pipeline]
+    
+    K --> N[Flexible Analysis]
+    L --> N
+    M --> N
+    
+    E --> O[Rigid Analysis]
+    F --> O
+    G --> O
+    
+    style D fill:#e1f5fe
+    style N fill:#c8e6c9
+    style O fill:#ffcdd2
+```
+
+Traditional time series analysis in R has been handled using **`ts`** objects and packages like `forecast`. These are still useful, but they do not fit perfectly with the modern **tidyverse philosophy.** The tidy approach treats time series as regular dataframes which extends the `tibble` data structure by incorporating time series components **(index and key).**
+
+```{r}
+#| label: tbl-tourism-data
+#| tbl-cap: A tidy time series data structure (tsibble)
+#| echo: false
+library(tsibble)
+head(tourism)
+```
+
+This approach unlocks the full power of `dplyr's` data manipulation verbs, `ggplot2's` visualisation capabilities and the broader tidyverse ecosystem for temporal data analysis.
+
+## What We will Cover
+
+This sectsec-tidy-time-series-basicsion is organised into three complementary chapters that builds your time series skills progressively.
+
+-   @sec-tidy-time-series-basics: This chapter will help you master the fundamental building blocks of time series data analysis. It establishes the foundation for all subsequent time series work.
+
+-   @sec-dealing-with-time-gaps-and-irregularities: Real world time series data is messy, with missing observations, irregular intervals and unexpected gaps. This chapter teaches you to identify understand and handle these imperfections.
+
+-   @sec-importing-data-and-creating-a-tsibble:

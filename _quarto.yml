@@ -12,6 +12,7 @@ book:
   
   cover-image: ts_cover.png
   favicon: ts_cover.png
+  repo-url: https://github.com/gkagyen/Timeseries-Analysis---the-Tidyverse-Way
   chapters:
     - index.qmd
     - intro.qmd
@@ -36,6 +37,7 @@ format:
     toc: true
     theme:
       - cosmo
+    code-link: true
 
 editor: visual
 

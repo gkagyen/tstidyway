@@ -260,8 +260,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>As stated earlier we will be using a combination of <code>tidyverse</code> and time series specific packages (<code>tidyverts</code>)</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 79%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -300,6 +300,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
+<p>There is another supporting package in the <strong>tidyverts</strong> ecosystem caled <code>fabletools</code>. This is a supporting package that provides some underlying tools for the <code>fables</code> package</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -310,7 +311,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>the <code>readr</code> and <code>lubridate</code> packages are already part of the <strong>tidyverse package collections</strong>. Once you install <code>tidyverse</code>, you do not need to install them again separately.</p>
+<p>the <code>readr</code> and <code>lubridate</code> packages are already part of the <strong>tidyverse package collections</strong>. Once you install <code>tidyverse</code>, you do not need to install them again separately. <code>fabletools</code> is installed together with the <code>fables</code> package.</p>
 </div>
 </div>
 <section id="installing-the-packages" class="level2" data-number="2.1">
@@ -334,7 +335,7 @@ Tip
 </div>
 <section id="loading-the-packages" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="loading-the-packages"><span class="header-section-number">2.1.1</span> Loading the Packages</h3>
-<p>After installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. You can load a package in R with the <code>library()</code> function</p>
+<p>After installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. Doing it correctly saves headaches. You can load a package in R with the <code>library()</code> function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load all packages</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)          <span class="co"># Core data wrangling + visualisation</span></span>
@@ -342,6 +343,20 @@ Tip
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fable)              <span class="co"># Forecasting</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(feasts)             <span class="co"># Time series exploration tools</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)             <span class="co"># Importing Excel files</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Think of the install command as buying a tool and placing it in your garage <strong>(your computer’s library).</strong> The <code>library()</code> function is like grabbing the tool from your garage and bringing it to your workbench <strong>(your current R session)</strong> so you can use it</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you see a message like <em>“there is no package called…”,</em> it means you have not installed it yet. Go back to the installation step.</p>
+</div>
 </div>
 
 

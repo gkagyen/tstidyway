@@ -1,0 +1,69 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Working with Time Series: From Chaos to Clarity\n",
+        "\n",
+        "Time is the most fundamental dimension in data analysis, yet working with temporal data has traditionally been one of the most frustrating aspects of data science. If you have ever felt less enthusiastic trying to force dates and data into a standard data frame, then here is some good news for you. The `Tidyverse` provides a coherent, intuitive framework for taming the chaos of temporal data.\n",
+        "\n",
+        "In this section, we will explore how to work with time series data using the **tidy data principles.** Rather than wrestling with complex time series objects or memorising some mysterious date formatting codes, you will learn to treat temporal data as just another type of structured data that can be manipulated, visualised and modelled using the same consistent grammar you already know.\n",
+        "\n",
+        "## The tidy Approach to Time Series\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "```{css}\n",
+        ".mermaid {\n",
+        "  font-size: 20px !important;\n",
+        "}\n",
+        "```\n",
+        "\n",
+        "```{mermaid, }\n",
+        "\n",
+        "flowchart TD\n",
+        "    A[Raw Time Series Data] --> B{Data Structure}\n",
+        "    B -->|Traditional| C[Specialized TS Objects]\n",
+        "    B -->|Tidy| D[tsibble]\n",
+        "    \n",
+        "    C --> E[Limited Functions]\n",
+        "    C --> F[Complex Syntax]\n",
+        "    C --> G[Isolated Workflow]\n",
+        "    \n",
+        "    D --> H[dplyr Verbs]\n",
+        "    D --> I[ggplot2 Graphics]\n",
+        "    D --> J[Tidyverse Integration]\n",
+        "    \n",
+        "    H --> K[filter, mutate, summarize...]\n",
+        "    I --> L[geom_line, facet_wrap...]\n",
+        "    J --> M[Seamless Data Pipeline]\n",
+        "    \n",
+        "    K --> N[Flexible Analysis]\n",
+        "    L --> N\n",
+        "    M --> N\n",
+        "    \n",
+        "    E --> O[Rigid Analysis]\n",
+        "    F --> O\n",
+        "    G --> O\n",
+        "    \n",
+        "    style D fill:#e1f5fe\n",
+        "    style N fill:#c8e6c9\n",
+        "    style O fill:#ffcdd2\n",
+        "```"
+      ],
+      "id": "c748591d"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

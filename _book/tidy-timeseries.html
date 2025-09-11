@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Working with Time Series in tsibble – Timeseries Analysis - the Tidyverse Way</title>
+<title>Working with Time Series: From Chaos to Clarity – Timeseries Analysis - the Tidyverse Way</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -69,6 +69,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -82,7 +85,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tidy-timeseries.html">Working with Time Series in <code>tsibble</code></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tidy-timeseries.html">Working with Time Series Data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -152,7 +155,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./tidy-timeseries.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Working with Time Series in `tsibble`</span></a>
+ <span class="menu-text">Working with Time Series Data</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -189,15 +192,21 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-tidy-approach-to-time-series" id="toc-the-tidy-approach-to-time-series" class="nav-link active" data-scroll-target="#the-tidy-approach-to-time-series">The tidy Approach to Time Series</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Working with Time Series in <code>tsibble</code></h1>
+<h1 class="title">Working with Time Series: From Chaos to Clarity</h1>
 </div>
 
 
@@ -214,8 +223,54 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Time is the most fundamental dimension in data analysis, yet working with temporal data has traditionally been one of the most frustrating aspects of data science. If you have ever felt less enthusiastic trying to force dates and data into a standard data frame, then here is some good news for you. The <code>Tidyverse</code> provides a coherent, intuitive framework for taming the chaos of temporal data.</p>
+<p>In this section, we will explore how to work with time series data using the <strong>tidy data principles.</strong> Rather than wrestling with complex time series objects or memorising some mysterious date formatting codes, you will learn to treat temporal data as just another type of structured data that can be manipulated, visualised and modelled using the same consistent grammar you already know.</p>
+<section id="the-tidy-approach-to-time-series" class="level2">
+<h2 class="anchored" data-anchor-id="the-tidy-approach-to-time-series">The tidy Approach to Time Series</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">%%{init: {'themeVariables': { 'fontSize': '24px'}}}%%
+
+flowchart TD
+    A[Raw Time Series Data] --&gt; B{Data Structure}
+    B --&gt;|Traditional| C[Specialized TS Objects]
+    B --&gt;|Tidy| D[tsibble]
+    
+    C --&gt; E[Limited Functions]
+    C --&gt; F[Complex Syntax]
+    C --&gt; G[Isolated Workflow]
+    
+    D --&gt; H[dplyr Verbs]
+    D --&gt; I[ggplot2 Graphics]
+    D --&gt; J[Tidyverse Integration]
+    
+    H --&gt; K[filter, mutate, summarize...]
+    I --&gt; L[geom_line, facet_wrap...]
+    J --&gt; M[Seamless Data Pipeline]
+    
+    K --&gt; N[Flexible Analysis]
+    L --&gt; N
+    M --&gt; N
+    
+    E --&gt; O[Rigid Analysis]
+    F --&gt; O
+    G --&gt; O
+    
+    style D fill:#e1f5fe
+    style N fill:#c8e6c9
+    style O fill:#ffcdd2
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -13,4 +13,6 @@ We will address the following:
 -   @sec-required-packages: This part will cover all the packages we will need, how to install and load them for use in our R environment.
 -   @sec-setting-up-your-rstudio-environment: Here you will see how to keep things organised in a more seamless and orderly manner on your system.
 
-After going through this section you should have been able to **install and load** all required packages, make RStudio r**eady for your time series coding** and then been able able to **successfully load a test** dataset.
+After going through this section your R environment will be a **fully-equipped** time series analysis workshop. You will understand the role of each major package (`tsibble`, `fable`, `feasts`) and how they interoperate.
+
+More importantly you will get the practical knowledge to install and load them correctly, setting a stable foundation for every analysis you perform in the following chapters.

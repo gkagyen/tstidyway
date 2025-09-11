@@ -4,7 +4,7 @@
     "href": "required-packages.html",
     "title": "2  Required Packages",
     "section": "",
-    "text": "2.1 Installing the Packages\nAs stated earlier we will be using a combination of tidyverse and time series specific packages (tidyverts)\nTo install the above packages, run the following code once in your R console:\ninstall.packages(c(\"tidyverse\", \"tsibble\", \"fable\", \"feasts\", \"readxl\"))",
+    "text": "2.1 Installing the Packages\nAs stated earlier we will be using a combination of tidyverse and time series specific packages (tidyverts)\nThere is another supporting package in the tidyverts ecosystem caled fabletools. This is a supporting package that provides some underlying tools for the fables package\nTo install the above packages, run the following code once in your R console:\ninstall.packages(c(\"tidyverse\", \"tsibble\", \"fable\", \"feasts\", \"readxl\"))",
     "crumbs": [
       "Setting Up",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Required Packages</span>"
@@ -35,7 +35,7 @@
     "href": "required-packages.html#installing-the-packages",
     "title": "2  Required Packages",
     "section": "",
-    "text": "Tip\n\n\n\nIf you already have them installed, you do not need to reinstall. You can check if a package is installed by typing \"fable\" %in% installed.packages()\n\n\n\n2.1.1 Loading the Packages\nAfter installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. You can load a package in R with the library() function\n\n# Load all packages\nlibrary(tidyverse)          # Core data wrangling + visualisation\nlibrary(tsibble)            # Tidy time series structure\nlibrary(fable)              # Forecasting\nlibrary(feasts)             # Time series exploration tools\nlibrary(readxl)             # Importing Excel files",
+    "text": "Tip\n\n\n\nIf you already have them installed, you do not need to reinstall. You can check if a package is installed by typing \"fable\" %in% installed.packages()\n\n\n\n2.1.1 Loading the Packages\nAfter installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. Doing it correctly saves headaches. You can load a package in R with the library() function.\n\n# Load all packages\nlibrary(tidyverse)          # Core data wrangling + visualisation\nlibrary(tsibble)            # Tidy time series structure\nlibrary(fable)              # Forecasting\nlibrary(feasts)             # Time series exploration tools\nlibrary(readxl)             # Importing Excel files\n\nThink of the install command as buying a tool and placing it in your garage (your computer’s library). The library() function is like grabbing the tool from your garage and bringing it to your workbench (your current R session) so you can use it\n\n\n\n\n\n\nTip\n\n\n\nIf you see a message like “there is no package called…”, it means you have not installed it yet. Go back to the installation step.",
     "crumbs": [
       "Setting Up",
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Required Packages</span>"
@@ -86,9 +86,51 @@
     "href": "setup.html",
     "title": "Setting Up",
     "section": "",
-    "text": "Before diving into analysis, let;s make sure we have all the tools we need to get ready. We need to set up our R environment with the right tools. The tidyverts ecosystem — built around the Tidyverse — makes time series analysis intuitive, consistent and visual.\n\n\n\n\n\n\n\nTidyverts Package Collection\n\n\n\n\n\nTidyverse Package Collection\n\n\nThis section will cover installing and loading the packages we will use and checking that your R environment is prepared for a smooth time series work\nWe will address the following:\n\n2  Required Packages: This part will cover all the packages we will need, how to install and load them for use in our R environment.\n3  Setting Up Your RStudio Environment: Here you will see how to keep things organised in a more seamless and orderly manner on your system.\n\nAfter going through this section you should have been able to install and load all required packages, make RStudio ready for your time series coding and then been able able to successfully load a test dataset.",
+    "text": "Before diving into analysis, let;s make sure we have all the tools we need to get ready. We need to set up our R environment with the right tools. The tidyverts ecosystem — built around the Tidyverse — makes time series analysis intuitive, consistent and visual.\n\n\n\n\n\n\n\nTidyverts Package Collection\n\n\n\n\n\nTidyverse Package Collection\n\n\nThis section will cover installing and loading the packages we will use and checking that your R environment is prepared for a smooth time series work\nWe will address the following:\n\n2  Required Packages: This part will cover all the packages we will need, how to install and load them for use in our R environment.\n3  Setting Up Your RStudio Environment: Here you will see how to keep things organised in a more seamless and orderly manner on your system.\n\nAfter going through this section your R environment will be a fully-equipped time series analysis workshop. You will understand the role of each major package (tsibble, fable, feasts) and how they interoperate.\nMore importantly you will get the practical knowledge to install and load them correctly, setting a stable foundation for every analysis you perform in the following chapters.",
     "crumbs": [
       "Setting Up"
+    ]
+  },
+  {
+    "objectID": "environment-setup.html",
+    "href": "environment-setup.html",
+    "title": "3  Setting Up Your RStudio Environment",
+    "section": "",
+    "text": "3.1 Quick Test Run\nWe can go ahead and start building our time series analysis task right away after installing and loading the needed packages. However, to keep things organised.\nLet’s run a quick test to ensure everything is working. We shall use a built in dataset\n# Use the 'us_employment' dataset from the fpp3 package built into the tsibble package\nlibrary(fpp3)\nhead(us_employment)\n\n# Lets see if it is a proper tsibble and we can plot it\nus_employment |&gt; \n  filter(Title == \"Total Private\") |&gt; \n  autoplot(Employed) +\n  labs(title = \"US Total Private Employment\",\n       y = \"People\")\nThis “head(us_employment)” line of code should show you a tidy time series dataset with index (time column) and key (group identifier). The codes that follow, if it runs without errors, should also produce a time series plot.\nIf you see all the things mentioned earlier, congratulations! Your environment is ready.",
+    "crumbs": [
+      "Setting Up",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Setting Up Your RStudio Environment</span>"
+    ]
+  },
+  {
+    "objectID": "environment-setup.html#quick-test-run",
+    "href": "environment-setup.html#quick-test-run",
+    "title": "3  Setting Up Your RStudio Environment",
+    "section": "",
+    "text": "Note\n\n\n\nThe fpp3 package is a collection of tools and datasets (which we have already seen) for time series forecasting. It was built to accompany the third edition of the book Forecasting: Principles and Practice by Rob J Hyndman and George Athanasopoulos .",
+    "crumbs": [
+      "Setting Up",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Setting Up Your RStudio Environment</span>"
+    ]
+  },
+  {
+    "objectID": "tidy-timeseries.html",
+    "href": "tidy-timeseries.html",
+    "title": "Working with Time Series: From Chaos to Clarity",
+    "section": "",
+    "text": "The tidy Approach to Time Series\nTime is the most fundamental dimension in data analysis, yet working with temporal data has traditionally been one of the most frustrating aspects of data science. If you have ever felt less enthusiastic trying to force dates and data into a standard data frame, then here is some good news for you. The Tidyverse provides a coherent, intuitive framework for taming the chaos of temporal data.\nIn this section, we will explore how to work with time series data using the tidy data principles. Rather than wrestling with complex time series objects or memorising some mysterious date formatting codes, you will learn to treat temporal data as just another type of structured data that can be manipulated, visualised and modelled using the same consistent grammar you already know.\n%%{init: {'themeVariables': { 'fontSize': '24px'}}}%%\n\nflowchart TD\n    A[Raw Time Series Data] --&gt; B{Data Structure}\n    B --&gt;|Traditional| C[Specialized TS Objects]\n    B --&gt;|Tidy| D[tsibble]\n    \n    C --&gt; E[Limited Functions]\n    C --&gt; F[Complex Syntax]\n    C --&gt; G[Isolated Workflow]\n    \n    D --&gt; H[dplyr Verbs]\n    D --&gt; I[ggplot2 Graphics]\n    D --&gt; J[Tidyverse Integration]\n    \n    H --&gt; K[filter, mutate, summarize...]\n    I --&gt; L[geom_line, facet_wrap...]\n    J --&gt; M[Seamless Data Pipeline]\n    \n    K --&gt; N[Flexible Analysis]\n    L --&gt; N\n    M --&gt; N\n    \n    E --&gt; O[Rigid Analysis]\n    F --&gt; O\n    G --&gt; O\n    \n    style D fill:#e1f5fe\n    style N fill:#c8e6c9\n    style O fill:#ffcdd2",
+    "crumbs": [
+      "Working with Time Series Data"
+    ]
+  },
+  {
+    "objectID": "tidy-timeseries.html#what-we-will-cover",
+    "href": "tidy-timeseries.html#what-we-will-cover",
+    "title": "Working with Time Series Data",
+    "section": "What We will Cover",
+    "text": "What We will Cover\nThis sectsec-tidy-time-series-basicsion is organised into three complementary chapters that builds your time series skills progressively.\n\n?sec-tidy-time-series-basics: This chapter will help you master the fundamental building blocks of time series data analysis. It establishes the foundation for all subsequent time series work.\n?sec-dealing-with-time-gaps-and-irregularities: Real world time series data is messy, with missing observations, irregular intervals and unexpected gaps. This chapter teaches you to identify understand and handle these imperfections.\n?sec-importing-data-and-creating-a-tsibble:",
+    "crumbs": [
+      "Working with Time Series Data"
     ]
   }
 ]
