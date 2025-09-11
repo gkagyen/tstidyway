@@ -5,6 +5,7 @@ book:
   title: "Timeseries Analysis - the Tidyverse Way"
   author: "George K Agyen"
   reader-mode: true
+  
   page-footer: 
     left: "Copyright 2025, George Kyei Agyen"
     right: |
@@ -12,7 +13,7 @@ book:
   
   cover-image: ts_cover.png
   favicon: ts_cover.png
-  repo-url: https://github.com/tstidyway
+  repo-url: https://github.com/gkagyen/tstidyway
   chapters:
     - index.qmd
     - intro.qmd
