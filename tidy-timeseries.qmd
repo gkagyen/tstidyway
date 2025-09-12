@@ -45,6 +45,9 @@ Traditional time series analysis in R has been handled using **`ts`** objects an
 #| label: tbl-tourism-data
 #| tbl-cap: A tidy time series data structure (tsibble)
 #| echo: false
+#| message: false
+#| warning: false
+
 library(tsibble)
 head(tourism)
 ```
@@ -53,10 +56,14 @@ This approach unlocks the full power of `dplyr's` data manipulation verbs, `ggpl
 
 ## What We will Cover
 
-This sectsec-tidy-time-series-basicsion is organised into three complementary chapters that builds your time series skills progressively.
+This section is organised into three complementary chapters that builds your time series skills progressively.
 
 -   @sec-tidy-time-series-basics: This chapter will help you master the fundamental building blocks of time series data analysis. It establishes the foundation for all subsequent time series work.
 
 -   @sec-dealing-with-time-gaps-and-irregularities: Real world time series data is messy, with missing observations, irregular intervals and unexpected gaps. This chapter teaches you to identify understand and handle these imperfections.
 
--   @sec-importing-data-and-creating-a-tsibble:
+-   @sec-importing-data-and-creating-a-tsibble: Time series data comes from everywhere – csv files, APIs, databases and excel files. Some of these sources might have **inconsistent** date formats**, dates** being stored as **strings** and **time zones** being **mixed up**. In this chapter you will be provided with practical strategies for importing temporal data and handling different date formats
+
+Throughout this section we will primarily use these essential packages `lubridate`, `tsibble`, `dplyr`, `tidyr`. By the end of this section you will have mastered the crucial first step in any time series analysis: **creating a valid, gap-aware `tsibble` from raw data**. This is not just busy work, it is about building a solid foundation.
+
+A well structured `tsibble` ensures that every analysis, visualisation, and forecast that follows is built on accurate and understandable temporal data.

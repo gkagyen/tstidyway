@@ -1,1 +1,7 @@
 # Tidy Time Series Basics {#sec-tidy-time-series-basics}
+
+At its core, a time series is just a data where *when* it was collected is a crucial part of the story. It is a sequence of data points indexed in time and order. Regardless, a time series should still be a *tidy* data frame. In a *tidy dataset* (following Hadley Wickham's principles), Each **row** is an **observation,** each **column** is a **variable.**
+
+## What is a tsibble
+
+A tsibble (short for "tidy temporal tibble") is a special data frame for time series. It extends the tibble data structure by formally declaring one column as the **index**

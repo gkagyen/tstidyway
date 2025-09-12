@@ -6,13 +6,13 @@ Authors@R:
 License: MIT + file LICENSE
 URL: https://github.com/gkagyen/tstidyway
 Imports: 
-    dplyr (>= 1.1.4),
+    dplyr,
     fable,
     feasts,
-    ggplot2 (>= 3.5.2),
+    ggplot2 ,
     lubridate,
     tidyr,
-    tsibble (>= 1.1.6)
+    tsibble
 Suggests: 
     fpp3,
     readr,

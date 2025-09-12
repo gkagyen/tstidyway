@@ -28,6 +28,11 @@ book:
         - timeseries-basics.qmd
         - timegaps.qmd
         - import-data.qmd
+        
+    - part: dates-and-time.qmd
+      chapters: 
+        - lubridate.qmd
+        - new-time-variables.qmd
     
     - references.qmd
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5&nbsp; Dealing with Time Gaps and Irregularities – Timeseries Analysis - the Tidyverse Way</title>
+<title>7&nbsp; Using Lubridate for Date Manipulation – Timeseries Analysis - the Tidyverse Way</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./import-data.html" rel="next">
-<link href="./timeseries-basics.html" rel="prev">
+<link href="./new-time-variables.html" rel="next">
+<link href="./dates-and-time.html" rel="prev">
 <link href="./ts_cover.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -82,7 +82,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tidy-timeseries.html">Working with Time Series in <code>tsibble</code></a></li><li class="breadcrumb-item"><a href="./timegaps.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dealing with Time Gaps and Irregularities</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dates-and-time.html">Working with Dates and Time</a></li><li class="breadcrumb-item"><a href="./lubridate.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -99,6 +99,7 @@ ul.task-list li input[type="checkbox"] {
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Timeseries Analysis - the Tidyverse Way</a> 
         <div class="sidebar-tools-main">
+    <a href="https://github.com/gkagyen/tstidyway" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
   <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
   <div class="quarto-reader-toggle-btn">
   <i class="bi"></i>
@@ -152,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./tidy-timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Working with Time Series in `tsibble`</span></a>
+ <span class="menu-text">Working with Time Series Data</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -166,7 +167,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./timegaps.html" class="sidebar-item-text sidebar-link active">
+  <a href="./timegaps.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dealing with Time Gaps and Irregularities</span></span></a>
   </div>
 </li>
@@ -174,6 +175,29 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="./import-data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./dates-and-time.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with Dates and Time</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lubridate.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./new-time-variables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating New Time Variables</span></span></a>
   </div>
 </li>
       </ul>
@@ -195,9 +219,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tidy-timeseries.html">Working with Time Series in <code>tsibble</code></a></li><li class="breadcrumb-item"><a href="./timegaps.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dealing with Time Gaps and Irregularities</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./dates-and-time.html">Working with Dates and Time</a></li><li class="breadcrumb-item"><a href="./lubridate.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Dealing with Time Gaps and Irregularities</span></h1>
+<h1 class="title"><span id="sec-using-lubridate-for-date-manipulation" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></span></h1>
 </div>
 
 
@@ -637,13 +661,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./timeseries-basics.html" class="pagination-link" aria-label="Tidy Time Series Basics">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tidy Time Series Basics</span></span>
+      <a href="./dates-and-time.html" class="pagination-link" aria-label="Working with Dates and Time">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Working with Dates and Time</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./import-data.html" class="pagination-link" aria-label="Importing Data and Creating a tsibble">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./new-time-variables.html" class="pagination-link" aria-label="Creating New Time Variables">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating New Time Variables</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
