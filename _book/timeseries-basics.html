@@ -62,7 +62,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <link href="./timegaps.html" rel="next">
 <link href="./tidy-timeseries.html" rel="prev">
-<link href="./ts_cover.png" rel="icon" type="image/png">
+<link href="./ts_book.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -315,18 +315,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tsibble: 41 x 2 [1Y]
-    year   value
-   &lt;int&gt;   &lt;dbl&gt;
- 1  2010  0.449 
- 2  2011  1.60  
- 3  2012  1.20  
- 4  2013  1.04  
- 5  2014  0.173 
- 6  2015 -0.703 
- 7  2016 -0.0220
- 8  2017  0.487 
- 9  2018 -0.535 
-10  2019  0.222 
+    year  value
+   &lt;int&gt;  &lt;dbl&gt;
+ 1  2010  0.230
+ 2  2011  0.938
+ 3  2012 -0.294
+ 4  2013 -1.48 
+ 5  2014 -0.733
+ 6  2015  1.64 
+ 7  2016  1.55 
+ 8  2017 -0.683
+ 9  2018 -1.00 
+10  2019  2.02 
 # ℹ 31 more rows</code></pre>
 </div>
 </div>
@@ -462,6 +462,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 1,420 more rows</code></pre>
 </div>
 </div>
+<p>We have out time series tsibble ready!. But there are some nuances in the data the first obvious ones are the column names- <code>Country Name</code>, <code>Indicator Name</code> and <code>Indicator Code</code>-we see that they are surrounded in back ticks <code>(`)</code> . This tells us that they do not follow the correct naming convention for <strong>variables</strong> in R (no spaces between word). The next one is the interval [1D]. The tsibble package thinks our data is supposed to be a daily data because we have a full date with month and days available. We will see how to fix this in the next chapter</p>
 
 
 </section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">

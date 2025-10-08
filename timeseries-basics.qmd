@@ -151,4 +151,4 @@ gh_ts <- gh_data_long |>
 gh_ts
 ```
 
-We have out time series tsibble ready!. But there are some nuances in the data the first obvious ones are the column names- `Country Name`, `Indicator Name` and `Indicator Code`-we see that they are surrounded in back ticks `` (`) `` . This tells us that they do not follow the correct naming convention for **variables** in R (no spaces between word). The not too obvious one is the date gaps within `Date` column. We will fix that in the next Chapter.
+We have out time series tsibble ready!. But there are some nuances in the data the first obvious ones are the column names- `Country Name`, `Indicator Name` and `Indicator Code`-we see that they are surrounded in back ticks `` (`) `` . This tells us that they do not follow the correct naming convention for **variables** in R (no spaces between word). The next one is the interval \[1D\]. The tsibble package thinks our data is supposed to be a daily data because we have a full date with month and days available. We will see how to fix this in the next chapter

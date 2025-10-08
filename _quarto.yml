@@ -11,8 +11,8 @@ book:
     right: |
       This book was built with <a href="https://quarto.org/">Quarto</a>.
   
-  cover-image: ts_cover.png
-  favicon: ts_cover.png
+  cover-image: ts_book.png
+  favicon: ts_book.png
   repo-url: https://github.com/gkagyen/tstidyway
   chapters:
     - index.qmd
