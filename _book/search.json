@@ -1,136 +1,35 @@
 [
   {
-    "objectID": "required-packages.html",
-    "href": "required-packages.html",
-    "title": "2  Required Packages",
+    "objectID": "timeseries-basics.html",
+    "href": "timeseries-basics.html",
+    "title": "4  Tidy Time Series Basics",
     "section": "",
-    "text": "2.1 Installing the Packages\nAs stated earlier we will be using a combination of tidyverse and time series specific packages (tidyverts)\nThere is another supporting package in the tidyverts ecosystem caled fabletools. This is a supporting package that provides some underlying tools for the fables package\nTo install the above packages, run the following code once in your R console:\ninstall.packages(c(\"tidyverse\", \"tsibble\", \"fable\", \"feasts\", \"readxl\"))",
+    "text": "4.1 What is a tsibble\nAt its core, a time series is just a data where when it was collected is a crucial part of the story. It is a sequence of data points indexed in time and order. Regardless, a time series should still be a tidy data frame. In a tidy dataset (following Hadley Wickham’s principles), Each row is an observation, each column is a variable.\nA tsibble (short for “tidy temporal tibble”) is a special data frame for time series. It extends the tibble data structure by formally declaring one column as the index (the time variable) and optionally, one or more columns as key(s) (unique identifiers for different series)",
     "crumbs": [
-      "Setting Up",
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Required Packages</span>"
+      "Working with Time Series Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tidy Time Series Basics</span>"
     ]
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Timeseries Analysis - the Tidyverse Way",
+    "objectID": "timeseries-basics.html#what-is-a-tsibble",
+    "href": "timeseries-basics.html#what-is-a-tsibble",
+    "title": "4  Tidy Time Series Basics",
     "section": "",
-    "text": "Welcome\nA practical, beginner-friendly guide using tsibble, fable and friends\nHave you ever looked at a line chart of sales, website traffic, stock prices or weather patterns and thought, “I wonder what happens next?” – then you are in the right place.\nIn this book, we will take your basic R skills and transform them into real-world forecasting power – all using the clean modern tools of the Tidyverse. No black-box algorithms or confusing jargon. Just a step by step journey into understanding patterns over time and predicting the future with confidence.\nWhether you are a student, analyst or data enthusiast, time series skills are essential in your field – and surprisingly accessible. By the end of this guide, you will be able to:\nSo grab your pen and paper (whatever it is you want to grab 😁), fire up RStudio and let’s turn your curiosity into prediction. 📊✨",
+    "text": "4.1.1 Key terminologies\nIndex: The variable (usually a date/time) that defines the time order of observations\nKey: A variable (or combination of variables) that uniquely identifies different time series within a single table e.g. country, stock_symbol etc.\nInterval: The regular frequency of the measurements e.g. daily, monthly, quarterly etc.\nTo illustrate what we just discussed below is a standard dataframe with a date column. This data is not time aware yet (not a time series)\n\n\n# A tibble: 4 × 3\n  date       product sales\n  &lt;date&gt;     &lt;chr&gt;   &lt;dbl&gt;\n1 2023-01-01 A         120\n2 2023-01-02 A         145\n3 2023-01-01 B          88\n4 2023-01-02 B         102\n\n\na tsibble on the other hand is self-aware. It knows its index and its key, unlocking powerful analysis tool. compare the table below. The [1D] beside the tsibble dimension represents the interval (daily)\n\n\n# A tsibble: 4 x 3 [1D]\n# Key:       product [2]\n  date       product sales\n  &lt;date&gt;     &lt;chr&gt;   &lt;dbl&gt;\n1 2023-01-01 A         120\n2 2023-01-02 A         145\n3 2023-01-01 B          88\n4 2023-01-02 B         102",
     "crumbs": [
-      "Welcome"
+      "Working with Time Series Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tidy Time Series Basics</span>"
     ]
   },
   {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
-    "title": "Timeseries Analysis - the Tidyverse Way",
-    "section": "",
-    "text": "Visualise trends and seasonality like a pro\nDecompose complex patterns\nBuild and compare forecasts using smart, automated models\nAnd most importantly explain your results clearly",
+    "objectID": "timeseries-basics.html#creating-and-converting-data-into-a-tsibble",
+    "href": "timeseries-basics.html#creating-and-converting-data-into-a-tsibble",
+    "title": "4  Tidy Time Series Basics",
+    "section": "\n4.2 Creating and Converting Data into a tsibble\n",
+    "text": "4.2 Creating and Converting Data into a tsibble\n\ncreating a tsibble follows the same procedure as creating a normal data frame using the tsibble() function or simply from an existing data frame or tibble using the as_tsibble() function.\nAs explained earlier, these two functions require you to specify at least one of these two things (index or key) or both depending on your data.\nWe see how to create a tsibble from using tsibble() and as_tsibble below\n\n# single time series\ntsibble(\n  year = 2010:2050,\n  value = rnorm(41),\n  index = year\n)\n\n# A tsibble: 41 x 2 [1Y]\n    year   value\n   &lt;int&gt;   &lt;dbl&gt;\n 1  2010  0.449 \n 2  2011  1.60  \n 3  2012  1.20  \n 4  2013  1.04  \n 5  2014  0.173 \n 6  2015 -0.703 \n 7  2016 -0.0220\n 8  2017  0.487 \n 9  2018 -0.535 \n10  2019  0.222 \n# ℹ 31 more rows\n\n\nThe above code creates a simple time series data using the tsibble() function, exactly like creating a dataframe. Indicating the index variable distinguishes a tsibble from a tibble.\nNow we will create a tsibble from the as_tsibble() function using an existing tibble\n\n# creating a tsibble from monthly data sales\n# sales come from two different shops\nsales_data &lt;- tibble(\n  Date = ymd(c('2025-01-01','2025-02-01','2025-03-01','2026-04-01','2025-05-01','2025-01-01','2025-02-01','2025-03-01','2025-04-01','2025-05-01')),\n  Store = rep(c('Phone Shop', 'Beauty Shop'), each = 5),\n  Sales = c(225, 150, 130, 90, 220, 190, 145, 180, 110, 180)\n)\nprint(sales_data)\n\n# A tibble: 10 × 3\n   Date       Store       Sales\n   &lt;date&gt;     &lt;chr&gt;       &lt;dbl&gt;\n 1 2025-01-01 Phone Shop    225\n 2 2025-02-01 Phone Shop    150\n 3 2025-03-01 Phone Shop    130\n 4 2026-04-01 Phone Shop     90\n 5 2025-05-01 Phone Shop    220\n 6 2025-01-01 Beauty Shop   190\n 7 2025-02-01 Beauty Shop   145\n 8 2025-03-01 Beauty Shop   180\n 9 2025-04-01 Beauty Shop   110\n10 2025-05-01 Beauty Shop   180\n\n\n\n# We use as_tsibble to convert the tibble to a tsibble\n# the date column becomes the index and the store column the key\nsales_data_ts &lt;- sales_data |&gt; \n  mutate(Date = yearmonth(Date)) |&gt;\n  as_tsibble(\n    index = Date,\n    key = Store\n  )\nprint(sales_data_ts)\n\n# A tsibble: 10 x 3 [1M]\n# Key:       Store [2]\n       Date Store       Sales\n      &lt;mth&gt; &lt;chr&gt;       &lt;dbl&gt;\n 1 2025 Jan Beauty Shop   190\n 2 2025 Feb Beauty Shop   145\n 3 2025 Mar Beauty Shop   180\n 4 2025 Apr Beauty Shop   110\n 5 2025 May Beauty Shop   180\n 6 2025 Jan Phone Shop    225\n 7 2025 Feb Phone Shop    150\n 8 2025 Mar Phone Shop    130\n 9 2025 May Phone Shop    220\n10 2026 Apr Phone Shop     90\n\n\nWe now have our sales data in a time aware tsibble format. The yearmonth() is an index function to represent our Date in a year-month format.\n\n4.2.1 Practice tsibble conversion\nHere we will learn how to convert real world data into a tsibble. The data we will use is a time series data for Ghana containing certain world bank indicators. The data can be found here gh_data.csv. The data comes in a wide format (where years are columns). To make it tidy, where each row represents one indicator so that we a year and value column, we first need to reshape it into a long format\nWe will use pivot_longer from tidyr to reshape the data\n\n# load data\ngh_data_raw &lt;- read_csv('data/gh_data.csv', show_col_types = FALSE) \n  \n# convert wide data to long\ngh_data_long &lt;- gh_data_raw |&gt; \n  pivot_longer(\n    cols = starts_with(c('19','20')), # select all date columns\n    names_to = \"Year\",                # New column for years\n    values_to = 'Value'               # New column for values\n  )\n\n# View the first few rows\nhead(gh_data_long)\n\n# A tibble: 6 × 5\n  `Country Name` `Indicator Name` `Indicator Code` Year    Value\n  &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;   &lt;dbl&gt;\n1 Ghana          Population_total SP.POP.TOTL      1960  6961215\n2 Ghana          Population_total SP.POP.TOTL      1961  7162667\n3 Ghana          Population_total SP.POP.TOTL      1962  7337375\n4 Ghana          Population_total SP.POP.TOTL      1963  7514714\n5 Ghana          Population_total SP.POP.TOTL      1964  7695739\n6 Ghana          Population_total SP.POP.TOTL      1965  7882606\n\n\nSuccess! Now each row is an observation of an indicator in a given year\nThe next step is to convert the Year to a Proper Date. Right now Year is a character. We need it as a date so tsibble can understand time ordering. we will use the lubridate package functions and convert it to a Date object (assuming January 1st of each year).\n\n# convert year to date\ngh_data_long &lt;-  gh_data_long |&gt; \n  mutate(\n    Year = as.integer(Year),                      # convert to integer number\n    Date = lubridate::ymd(paste0(Year, \"-01-01\")), # Create date:Jan 1 of each year\n    .after = Year                                 # add new Date column after year column\n  )\n\n# check structure\nstr(gh_data_long$Date)\n\n Date[1:1430], format: \"1960-01-01\" \"1961-01-01\" \"1962-01-01\" \"1963-01-01\" \"1964-01-01\" ...\n\n\nNow Date is a proper Date object essential for time series analysis.\nFinally we can convert our data to a time series dataframe (tsibble) that is time aware of - index (time)and keys (unique series identifiers). In our case the Date column is our index and the Indicator_name becomes our index since we have multiple time series -population, life expectancy etc.\n\n# convert data to tsibble\ngh_ts &lt;- gh_data_long |&gt; \n  as_tsibble(\n    index = Date,              # Time index\n    key = `Indicator Name`     # Key column: each indicator is a separate series\n  )\n\n# View the tsibble\ngh_ts\n\n# A tsibble: 1,430 x 6 [1D]\n# Key:       Indicator Name [22]\n   `Country Name` `Indicator Name`      `Indicator Code`  Year Date        Value\n   &lt;chr&gt;          &lt;chr&gt;                 &lt;chr&gt;            &lt;int&gt; &lt;date&gt;      &lt;dbl&gt;\n 1 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1960 1960-01-01 NA    \n 2 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1961 1961-01-01  3.43 \n 3 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1962 1962-01-01  4.11 \n 4 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1963 1963-01-01  4.41 \n 5 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1964 1964-01-01  2.21 \n 6 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1965 1965-01-01  1.37 \n 7 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1966 1966-01-01 -4.26 \n 8 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1967 1967-01-01  3.08 \n 9 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1968 1968-01-01  0.369\n10 Ghana          Annual GDP growth ra… NY.GDP.MKTP.KD.…  1969 1969-01-01  6.01 \n# ℹ 1,420 more rows",
     "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "required-packages.html#installing-the-packages",
-    "href": "required-packages.html#installing-the-packages",
-    "title": "2  Required Packages",
-    "section": "",
-    "text": "Tip\n\n\n\nIf you already have them installed, you do not need to reinstall. You can check if a package is installed by typing \"fable\" %in% installed.packages()\n\n\n\n2.1.1 Loading the Packages\nAfter installing any package you have to load it before it becomes available for use. Each time you start a new R session, you will need to load the packages you will use again. Doing it correctly saves headaches. You can load a package in R with the library() function.\n\n# Load all packages\nlibrary(tidyverse)          # Core data wrangling + visualisation\nlibrary(tsibble)            # Tidy time series structure\nlibrary(fable)              # Forecasting\nlibrary(feasts)             # Time series exploration tools\nlibrary(readxl)             # Importing Excel files\n\nThink of the install command as buying a tool and placing it in your garage (your computer’s library). The library() function is like grabbing the tool from your garage and bringing it to your workbench (your current R session) so you can use it\n\n\n\n\n\n\nTip\n\n\n\nIf you see a message like “there is no package called…”, it means you have not installed it yet. Go back to the installation step.",
-    "crumbs": [
-      "Setting Up",
-      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Required Packages</span>"
-    ]
-  },
-  {
-    "objectID": "intro.html",
-    "href": "intro.html",
-    "title": "1  Introduction",
-    "section": "",
-    "text": "1.1 What is Time Series Data?\nTime series data consists of observations recorded over time, usually at regular intervals (e.g., daily, monthly, yearly). Some examples include:\nWhat makes time series special is that time is not just a variable, It carries important structure and dependencies. What happened today can depend on what happened yesterday, last month or even last year. This temporal uniqueness is what makes time series very powerful.",
-    "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
-    ]
-  },
-  {
-    "objectID": "intro.html#what-is-time-series-data",
-    "href": "intro.html#what-is-time-series-data",
-    "title": "1  Introduction",
-    "section": "",
-    "text": "Monthly rainfall totals\nDaily COVID-19 cases\nHourly temperature readings\nYearly population counts",
-    "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
-    ]
-  },
-  {
-    "objectID": "intro.html#why-time-series-analysis-matters",
-    "href": "intro.html#why-time-series-analysis-matters",
-    "title": "1  Introduction",
-    "section": "1.2 Why Time Series Analysis Matters",
-    "text": "1.2 Why Time Series Analysis Matters\nTime series analysis helps us to understand the past, monitor the present, and predict the future. Some real world examples are:\n\nPublic Health: Forecasting disease outbreaks or hospital admissions\nFinance: Predicting stock prices, currency exchange rates, or sales revenue.\nEnvironmental Science: Analysing temperature trends or rainfall patterns for climate studies\nEngineering: Monitoring sensor data to detect faults or changes in performance\n\nIn many cases, this analysis supports decision making — whether it is planning resources, anticipating risks, or detecting unusual patterns.",
-    "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
-    ]
-  },
-  {
-    "objectID": "intro.html#traditional-vs.-tidy-approach",
-    "href": "intro.html#traditional-vs.-tidy-approach",
-    "title": "1  Introduction",
-    "section": "1.3 Traditional vs. Tidy Approach",
-    "text": "1.3 Traditional vs. Tidy Approach\nHistorically, time series in R has been handled using ts objects and packages like forecast. These are still useful, but they do not fit perfectly with the modern tidy philosophy; data frames, pipelines and consistent syntax.\nWe will follow the tidy time series workflow using the tidyverse ecosystem. The workflow uses packages from the tidyverts ecosystem:\n\ntsibble: A tidy data structure for time series (like a tibble but with special time handling)\nfable: For forecasting models (ARIMA, ETS, etc) in a tidy way.\nfeasts: For exploratory analysis (seasonal plots, decomposition, autocorrelation).\nlubridate: For working with dates and times.\nggplot2: For beautiful and flexible visualisations\ndplyr/tidyr/tibble: For general data wrangling\n\n\n1.3.1 The Tidy Time Series Workflow\nThe tidyverse ecosystem in R emphasises clean, readable code and consistent data structure. For time series, the modern approach uses the tidyverts suite of packages.\nThe typical flow we will follow includes:\n\n🔧 Data Preparation: Load and tidy data. Convert the data to a tsibble object so R knows how to handle time.\n🔍 Explore: Visualise trends, seasonality, patterns\n🧩 Decompose: Break down components (trends, seasonal, noise)\n🖥️ Model: Fit forecasting models (simple —&gt; advanced)\n📈 Forecast: Generate future predictions\n📏 Evaluate: Check how good the forecasts are (accuracy assessment)\n\nThis workflow is clean, consistent and integrates smoothly with other tidyverse tools you might already know.\n\n\n\n\n\n\nTip\n\n\n\ntidyverse: collection of packages designed for general data science\ntidyverts: collection of packages specifically for time series analysis\nThey all follow the tidy philosophy, structure and grammar\n\n\n\n\n1.3.2 Data We Will Use\nWe will start with some built-in datasets from the tsibble package so every on can follow along without downloading external files:\n\naus_production — Quarterly production values for Australian industries.\ntourism — Quarterly overnight trips in different Australian regions.\n\nLater, we shall also show how to use real-life datasets — for example, population growth or GDP growth data from Ghana, to make the examples relatable and practical\nYou can download the datasets used here gh_data.csv .\n\n\n1.3.3 What You Will Need to Follow Along\n\nBasic R Knowledge: You should know how to load packages, run functions, and work with data frames\nRStudio installed for a smooth workflow\nInternet connection (for package installation and possible data download)\n\n\n1.3.3.1 By the end of this tutorial, you will be able to:\n\nHandle date/time data with ease\nExplore time series visually and statistically\nBuild forecasts using tidyverse-style functions\nApply your skills to your own datasets in research or work",
-    "crumbs": [
-      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
-    ]
-  },
-  {
-    "objectID": "setup.html",
-    "href": "setup.html",
-    "title": "Setting Up",
-    "section": "",
-    "text": "Before diving into analysis, let;s make sure we have all the tools we need to get ready. We need to set up our R environment with the right tools. The tidyverts ecosystem — built around the Tidyverse — makes time series analysis intuitive, consistent and visual.\n\n\n\n\n\n\n\nTidyverts Package Collection\n\n\n\n\n\nTidyverse Package Collection\n\n\nThis section will cover installing and loading the packages we will use and checking that your R environment is prepared for a smooth time series work\nWe will address the following:\n\n2  Required Packages: This part will cover all the packages we will need, how to install and load them for use in our R environment.\n3  Setting Up Your RStudio Environment: Here you will see how to keep things organised in a more seamless and orderly manner on your system.\n\nAfter going through this section your R environment will be a fully-equipped time series analysis workshop. You will understand the role of each major package (tsibble, fable, feasts) and how they interoperate.\nMore importantly you will get the practical knowledge to install and load them correctly, setting a stable foundation for every analysis you perform in the following chapters.",
-    "crumbs": [
-      "Setting Up"
-    ]
-  },
-  {
-    "objectID": "environment-setup.html",
-    "href": "environment-setup.html",
-    "title": "3  Setting Up Your RStudio Environment",
-    "section": "",
-    "text": "3.1 Quick Test Run\nWe can go ahead and start building our time series analysis task right away after installing and loading the needed packages. However, to keep things organised.\nLet’s run a quick test to ensure everything is working. We shall use a built in dataset\n# Use the 'us_employment' dataset from the fpp3 package built into the tsibble package\nlibrary(fpp3)\nhead(us_employment)\n\n# Lets see if it is a proper tsibble and we can plot it\nus_employment |&gt; \n  filter(Title == \"Total Private\") |&gt; \n  autoplot(Employed) +\n  labs(title = \"US Total Private Employment\",\n       y = \"People\")\nThis “head(us_employment)” line of code should show you a tidy time series dataset with index (time column) and key (group identifier). The codes that follow, if it runs without errors, should also produce a time series plot.\nIf you see all the things mentioned earlier, congratulations! Your environment is ready.",
-    "crumbs": [
-      "Setting Up",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Setting Up Your RStudio Environment</span>"
-    ]
-  },
-  {
-    "objectID": "environment-setup.html#quick-test-run",
-    "href": "environment-setup.html#quick-test-run",
-    "title": "3  Setting Up Your RStudio Environment",
-    "section": "",
-    "text": "Note\n\n\n\nThe fpp3 package is a collection of tools and datasets (which we have already seen) for time series forecasting. It was built to accompany the third edition of the book Forecasting: Principles and Practice by Rob J Hyndman and George Athanasopoulos .",
-    "crumbs": [
-      "Setting Up",
-      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Setting Up Your RStudio Environment</span>"
-    ]
-  },
-  {
-    "objectID": "tidy-timeseries.html",
-    "href": "tidy-timeseries.html",
-    "title": "Working with Time Series Data",
-    "section": "",
-    "text": "The tidy Approach to Time Series\nTime is the most fundamental dimension in data analysis, yet working with temporal data has traditionally been one of the most frustrating aspects of data science. If you have ever felt less enthusiastic trying to force dates and data into a standard data frame, then here is some good news for you. The Tidyverse provides a coherent, intuitive framework for taming the chaos of temporal data.\nIn this section, we will explore how to work with time series data using the tidy data principles. Rather than wrestling with complex time series objects or memorising some mysterious date formatting codes, you will learn to treat temporal data as just another type of structured data that can be manipulated, visualised and modelled using the same consistent grammar you already know.\n%%{init: {'themeVariables': { 'fontSize': '15pt'}}}%%\n\nflowchart TD\n    A[Raw Time Series Data] --&gt; B{Data Structure}\n    B --&gt;|Traditional| C[Specialized TS Objects]\n    B --&gt;|Tidy| D[tsibble]\n    \n    C --&gt; E[Limited Functions]\n    C --&gt; F[Complex Syntax]\n    C --&gt; G[Isolated Workflow]\n    \n    D --&gt; H[dplyr Verbs]\n    D --&gt; I[ggplot2 Graphics]\n    D --&gt; J[Tidyverse Integration]\n    \n    H --&gt; K[filter, mutate, summarize...]\n    I --&gt; L[geom_line, facet_wrap...]\n    J --&gt; M[Seamless Data Pipeline]\n    \n    K --&gt; N[Flexible Analysis]\n    L --&gt; N\n    M --&gt; N\n    \n    E --&gt; O[Rigid Analysis]\n    F --&gt; O\n    G --&gt; O\n    \n    style D fill:#e1f5fe\n    style N fill:#c8e6c9\n    style O fill:#ffcdd2\nTraditional time series analysis in R has been handled using ts objects and packages like forecast. These are still useful, but they do not fit perfectly with the modern tidyverse philosophy. The tidy approach treats time series as regular dataframes which extends the tibble data structure by incorporating time series components (index and key).\nTable 1: A tidy time series data structure (tsibble)\n\n\n# A tsibble: 6 x 5 [1Q]\n# Key:       Region, State, Purpose [1]\n  Quarter Region   State           Purpose  Trips\n    &lt;qtr&gt; &lt;chr&gt;    &lt;chr&gt;           &lt;chr&gt;    &lt;dbl&gt;\n1 1998 Q1 Adelaide South Australia Business  135.\n2 1998 Q2 Adelaide South Australia Business  110.\n3 1998 Q3 Adelaide South Australia Business  166.\n4 1998 Q4 Adelaide South Australia Business  127.\n5 1999 Q1 Adelaide South Australia Business  137.\n6 1999 Q2 Adelaide South Australia Business  200.\nThis approach unlocks the full power of dplyr's data manipulation verbs, ggplot2's visualisation capabilities and the broader tidyverse ecosystem for temporal data analysis.",
-    "crumbs": [
-      "Working with Time Series Data"
-    ]
-  },
-  {
-    "objectID": "tidy-timeseries.html#what-we-will-cover",
-    "href": "tidy-timeseries.html#what-we-will-cover",
-    "title": "Working with Time Series Data",
-    "section": "What We will Cover",
-    "text": "What We will Cover\nThis section is organised into three complementary chapters that builds your time series skills progressively.\n\n4  Tidy Time Series Basics: This chapter will help you master the fundamental building blocks of time series data analysis. It establishes the foundation for all subsequent time series work.\n5  Dealing with Time Gaps and Irregularities: Real world time series data is messy, with missing observations, irregular intervals and unexpected gaps. This chapter teaches you to identify understand and handle these imperfections.\n6  Importing Data and Creating a tsibble: Time series data comes from everywhere – csv files, APIs, databases and excel files. Some of these sources might have inconsistent date formats, dates being stored as strings and time zones being mixed up. In this chapter you will be provided with practical strategies for importing temporal data and handling different date formats\n\nThroughout this section we will primarily use these essential packages lubridate, tsibble, dplyr, tidyr. By the end of this section you will have mastered the crucial first step in any time series analysis: creating a valid, gap-aware tsibble from raw data. This is not just busy work, it is about building a solid foundation.\nA well structured tsibble ensures that every analysis, visualisation, and forecast that follows is built on accurate and understandable temporal data.",
-    "crumbs": [
-      "Working with Time Series Data"
+      "Working with Time Series Data",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Tidy Time Series Basics</span>"
     ]
   }
 ]

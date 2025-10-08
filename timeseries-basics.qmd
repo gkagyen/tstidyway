@@ -2,6 +2,153 @@
 
 At its core, a time series is just a data where *when* it was collected is a crucial part of the story. It is a sequence of data points indexed in time and order. Regardless, a time series should still be a *tidy* data frame. In a *tidy dataset* (following Hadley Wickham's principles), Each **row** is an **observation,** each **column** is a **variable.**
 
+```{r}
+#| include: false
+#| message: false
+#| warning: false
+
+library(tsibble)
+library(lubridate)
+library(dplyr)
+library(readr)
+library(tidyr)
+```
+
 ## What is a tsibble
 
-A tsibble (short for "tidy temporal tibble") is a special data frame for time series. It extends the tibble data structure by formally declaring one column as the **index**
+A tsibble (short for "tidy temporal tibble") is a special data frame for time series. It extends the tibble data structure by formally declaring one column as the **index** (the time variable) and optionally, one or more columns as **key(s)** (unique identifiers for different series)
+
+### Key terminologies
+
+**Index:** The variable (usually a date/time) that defines the time order of observations
+
+**Key:** A variable (or combination of variables) that uniquely identifies different time series within a single table e.g. `country`, `stock_symbol` etc.
+
+**Interval:** The regular frequency of the measurements e.g. daily, monthly, quarterly etc.
+
+To illustrate what we just discussed below is a standard dataframe with a date column. This data is not time aware yet (not a time series)
+
+```{r}
+#| echo: false
+
+tibble_data <- tibble(
+  date = as.Date(c('2023-01-01', '2023-01-02', '2023-01-01', '2023-01-02')),
+  product = c('A', 'A', 'B', 'B'),
+  sales = c(120, 145, 88, 102)
+)
+tibble_data
+```
+
+a `tsibble` on the other hand is self-aware. It knows its index and its key, unlocking powerful analysis tool. compare the table below. The \[1D\] beside the tsibble dimension represents the **interval** (daily)
+
+```{r}
+#| echo: false
+
+tsibble_data <-  as_tsibble(tibble_data, index=date, key = product)
+
+tsibble_data
+```
+
+## Creating and Converting Data into a `tsibble`
+
+creating a `tsibble` follows the same procedure as creating a normal data frame using the `tsibble()` function or simply from an existing data frame or tibble using the `as_tsibble()` function.
+
+As explained earlier, these two functions require you to specify at least one of these two things (**index** or **key**) or both depending on your data.
+
+We see how to create a tsibble from using `tsibble()` and `as_tsibble` below
+
+```{r}
+# single time series
+tsibble(
+  year = 2010:2050,
+  value = rnorm(41),
+  index = year
+)
+```
+
+The above code creates a simple time series data using the `tsibble()` function, exactly like creating a dataframe. Indicating the **index** variable distinguishes a tsibble from a tibble.
+
+Now we will create a tsibble from the `as_tsibble()` function using an existing tibble
+
+```{r}
+# creating a tsibble from monthly data sales
+# sales come from two different shops
+sales_data <- tibble(
+  Date = ymd(c('2025-01-01','2025-02-01','2025-03-01','2026-04-01','2025-05-01','2025-01-01','2025-02-01','2025-03-01','2025-04-01','2025-05-01')),
+  Store = rep(c('Phone Shop', 'Beauty Shop'), each = 5),
+  Sales = c(225, 150, 130, 90, 220, 190, 145, 180, 110, 180)
+)
+print(sales_data)
+
+```
+
+```{r}
+# We use as_tsibble to convert the tibble to a tsibble
+# the date column becomes the index and the store column the key
+sales_data_ts <- sales_data |> 
+  mutate(Date = yearmonth(Date)) |>
+  as_tsibble(
+    index = Date,
+    key = Store
+  )
+print(sales_data_ts)
+```
+
+We now have our sales data in a time aware tsibble format. The `yearmonth()` is an index function to represent our **Date** in a **year-month** format.
+
+### Practice tsibble conversion
+
+Here we will learn how to convert real world data into a tsibble. The data we will use is a time series data for Ghana containing certain world bank indicators. The data can be found here [gh_data.csv](https://github.com/gkagyen/tstidyway/blob/main/data/gh_data.csv). The data comes in a wide format (where years are columns). To make it **tidy,** where each row represents one indicator so that we a `year` and `value` column, we first need to reshape it into a **long format**
+
+We will use `pivot_longer` from `tidyr` to reshape the data
+
+```{r}
+# load data
+gh_data_raw <- read_csv('data/gh_data.csv', show_col_types = FALSE) 
+  
+# convert wide data to long
+gh_data_long <- gh_data_raw |> 
+  pivot_longer(
+    cols = starts_with(c('19','20')), # select all date columns
+    names_to = "Year",                # New column for years
+    values_to = 'Value'               # New column for values
+  )
+
+# View the first few rows
+head(gh_data_long)
+```
+
+Success! Now each row is an observation of an indicator in a given year
+
+The next step is to convert the Year to a Proper Date. Right now `Year` is a character. We need it as a date so `tsibble` can understand time ordering. we will use the `lubridate` package functions and convert it to a Date object (assuming January 1st of each year).
+
+```{r}
+# convert year to date
+gh_data_long <-  gh_data_long |> 
+  mutate(
+    Year = as.integer(Year),                      # convert to integer number
+    Date = lubridate::ymd(paste0(Year, "-01-01")), # Create date:Jan 1 of each year
+    .after = Year                                 # add new Date column after year column
+  )
+
+# check structure
+str(gh_data_long$Date)
+```
+
+Now `Date` is a proper **Date object** essential for time series analysis.
+
+Finally we can convert our data to a time series dataframe (`tsibble`) that is time aware of - **index** (time)and **keys** (unique series identifiers). In our case the `Date` column is our **index** and the `Indicator_name` becomes our **index** since we have multiple time series -population, life expectancy etc.
+
+```{r}
+# convert data to tsibble
+gh_ts <- gh_data_long |> 
+  as_tsibble(
+    index = Date,              # Time index
+    key = `Indicator Name`     # Key column: each indicator is a separate series
+  )
+
+# View the tsibble
+gh_ts
+```
+
+We have out time series tsibble ready!. But there are some nuances in the data the first obvious ones are the column names- `Country Name`, `Indicator Name` and `Indicator Code`-we see that they are surrounded in back ticks `` (`) `` . This tells us that they do not follow the correct naming convention for **variables** in R (no spaces between word). The not too obvious one is the date gaps within `Date` column. We will fix that in the next Chapter.

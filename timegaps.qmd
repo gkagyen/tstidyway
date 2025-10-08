@@ -1,1 +1,15 @@
 # Dealing with Time Gaps and Irregularities {#sec-dealing-with-time-gaps-and-irregularities}
+
+Real-world data is messy. Sensors failz, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but `tsibble` helps you find and handle them.
+
+## Why Time Gaps Matter
+
+Many time series models and visualisations assume ***regular spaced data.*** Gaps can lead to errors, misleading plots and inaccurate forecasts.
+
+## How tsibble Helps
+
+We can check the time gaps in our tsibble using the `scan_gaps` function from the `tsibble` package. This is a very handy function that compares our actual data against a complete regular timeline and tells us exactly what is missing.
+
+Before we scan for gaps in our gh_ts
+
+The next chapter is a bonus one. It briefly describes how to import data (time series data) into R from various sources with a simple code illustration.
