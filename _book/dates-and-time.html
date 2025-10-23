@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -32,7 +66,7 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <link href="./lubridate.html" rel="next">
 <link href="./import-data.html" rel="prev">
-<link href="./ts_cover.png" rel="icon" type="image/png">
+<link href="./ts_book.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -174,7 +208,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./import-data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble (Bonus)</span></span></a>
   </div>
 </li>
       </ul>
@@ -191,13 +225,36 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./new-time-variables.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating New Time Variables</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating Useful Time-Based Features</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./exploratory-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploratory Time Series Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./visualising-trends.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Visualising Trends with <code>ggplot2</code> and <code>autoplot()</code></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./exploring-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
   </div>
 </li>
       </ul>
@@ -213,8 +270,18 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-journey-ahead" id="toc-the-journey-ahead" class="nav-link active" data-scroll-target="#the-journey-ahead">The Journey Ahead</a>
+  <ul class="collapse">
+  <li><a href="#the-alchemy-of-feature-engineering---an-illustration" id="toc-the-alchemy-of-feature-engineering---an-illustration" class="nav-link" data-scroll-target="#the-alchemy-of-feature-engineering---an-illustration">The Alchemy of Feature Engineering - an Illustration</a></li>
+  </ul></li>
+  <li><a href="#what-this-means-for-you" id="toc-what-this-means-for-you" class="nav-link" data-scroll-target="#what-this-means-for-you">What This Means for You</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -238,8 +305,51 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Congratulations! You have successfully navigated the first critical steps of your time series journey. You can now import data, forge it into a proper <code>tsibble</code>, and even diagnose temporal gaps in your timeline. You have built a solid foundation, but a foundations is meant to be built upon.</p>
+<p>So far, we have treated time as a structural element (the index that orders our observations). But in time series analysis, time is more than just an index, it is our most powerful predictor. It holds the hidden patterns, the recurring rhythms and the contextual clues that drive our forecasts. To unlock this predictive power, we must move from simply handling dates to truly understanding and engineering them.</p>
+<p>This chapter is where we transition from data wranglers to time travellers. We will learn to manipulate the fabric of time itself within our datasets, transforming raw date stamps into rich source of insight.</p>
+<section id="the-journey-ahead" class="level2">
+<h2 class="anchored" data-anchor-id="the-journey-ahead">The Journey Ahead</h2>
+<p>In this section, we will delve into two powerful skill sets</p>
+<ul>
+<li><p><a href="lubridate.html" class="quarto-xref"><span>7&nbsp; Using Lubridate for Date Manipulation</span></a> : Your <code>tsibble</code> <em>knows that your data is a time series,</em> but <code>lubridate</code> will give you the power to control <em>how</em> it understands time. In this chapter we go beyond basic date parsing and learn to:</p>
+<ul>
+<li><p>effortlessly extract components from dates (what day of the week was it? is this a quarter end?).</p></li>
+<li><p>perform intuitive date arithmetic (What is the date 6 weeks from now? How many days are in the interval)</p></li>
+<li><p>handle time zones and daylight saving time with confidence, avoiding one of the most common pitfalls in time based data</p></li>
+</ul></li>
+<li><p><a href="new-time-variables.html" class="quarto-xref"><span>8&nbsp; Creating Useful Time-Based Features</span></a> : A timestamp like <code>"2023-11-24 14:30:00"</code> is a single point in time. But within it lies a universe of potential features. We will learn to decompose this single data point into a suite of powerful predictors in this chapter. We will look at Temporal context, Cyclical Patterns and Seasonal markers</p></li>
+</ul>
+<section id="the-alchemy-of-feature-engineering---an-illustration" class="level3">
+<h3 class="anchored" data-anchor-id="the-alchemy-of-feature-engineering---an-illustration">The Alchemy of Feature Engineering - an Illustration</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode texinfo code-with-copy"><code class="sourceCode texinfo"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Raw Timestamp: "2023-11-23 14:30:00"</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    |</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    |---[lubridate &amp; feature engineering]---&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    |</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    V</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>A Rich Feature Set:</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>- year = 2023</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>- month = November</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>- day_of_week = Thursday</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>- is_weekend = FALSE</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>- hour_of_day = 14</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>- is_business_hours = TRUE</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>- season = Dry Season  &lt;-- Critical for agriculture, energy, retail</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>- is_public_holiday = FALSE</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>- is_festival_period = FALSE</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>- is_election_period = FALSE  &lt;-- Important for economic activity</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>- days_until_month_end = 16</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="what-this-means-for-you" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-means-for-you">What This Means for You</h2>
+<p>Mastering dates and times is what separates basic time series plot from a truly diagnostic analysis. It is the difference between knowing that “<em>electricity consumption is high</em>” and knowing it specifically peaks on <strong>dry season weekdays between 7-9pm when air conditioning use is highest.</strong> It is the difference between seeing “<em>increased sales</em>” and understanding they spike during <strong>Easter celebrations, Christmas festivities, or a sales discount period within the month.</strong></p>
+<p>By the end of this section, your date columns will no longer be simple indexes. They will become fertile ground for feature engineering, providing the contextual richness that allows your models to capture real-world behaviour and generate remarkably accurate forecasts.</p>
+<p>Let us begin our journey into the fourth dimension 🕰️.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -661,13 +771,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./import-data.html" class="pagination-link" aria-label="Importing Data and Creating a tsibble">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span>
+      <a href="./import-data.html" class="pagination-link" aria-label="Importing Data and Creating a tsibble (Bonus)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble (Bonus)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./lubridate.html" class="pagination-link" aria-label="Using Lubridate for Date Manipulation">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./lubridate.html" class="pagination-link" aria-label="Using `Lubridate` for Date Manipulation">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

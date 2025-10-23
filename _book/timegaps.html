@@ -194,7 +194,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./import-data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble (Bonus)</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,13 +211,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./new-time-variables.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating New Time Variables</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating Useful Time-Based Features</span></span></a>
   </div>
 </li>
       </ul>
@@ -257,7 +257,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
 
 
-</header><p>Real-world data is messy. Sensors failz, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but <code>tsibble</code> helps you find and handle them.</p>
+</header><p>Real-world data is messy. Sensors fails, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but <code>tsibble</code> helps you find and handle them.</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ─────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.2
+✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+Registered S3 method overwritten by 'tsibble':
+  method               from 
+  as_tibble.grouped_df dplyr
+
+
+Attaching package: 'tsibble'
+
+
+The following object is masked from 'package:lubridate':
+
+    interval
+
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, union
+
+
+Loading required package: fabletools</code></pre>
+</div>
+</div>
 <section id="why-time-gaps-matter" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="why-time-gaps-matter">
 <span class="header-section-number">5.1</span> Why Time Gaps Matter</h2>
 <p>Many time series models and visualisations assume <strong><em>regular spaced data.</em></strong> Gaps can lead to errors, misleading plots and inaccurate forecasts.</p>
@@ -265,85 +298,70 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="header-section-number">5.2</span> How tsibble Helps</h2>
 <p>We can check the time gaps in our tsibble using the <code>scan_gaps</code> function from the <code>tsibble</code> package. This is a very handy function that compares our actual data against a complete regular timeline and tells us exactly what is missing. Other equally useful functions for handling time gaps include <code>count_gaps</code> and <code>has_gaps</code>.</p>
 <p>We will scan our <code>gh_ts</code> tsibble to check if there are gaps. But before that, we will fix the column names with <code><a href="https://sfirke.github.io/janitor/reference/clean_names.html">janitor::clean_names()</a></code> to avoid complications later on in our analysis due to the unconventional column names.</p>
-<div class="cell">
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">janitor</span><span class="fu">::</span><span class="fu"><a href="https://sfirke.github.io/janitor/reference/clean_names.html">clean_names</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span></span>
-<span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu">scan_gaps</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 512,864 x 2 [1D]
-# Key:       indicator_name [22]
-   indicator_name         date      
-   &lt;chr&gt;                  &lt;date&gt;    
- 1 Annual GDP growth rate 1960-01-02
- 2 Annual GDP growth rate 1960-01-03
- 3 Annual GDP growth rate 1960-01-04
- 4 Annual GDP growth rate 1960-01-05
- 5 Annual GDP growth rate 1960-01-06
- 6 Annual GDP growth rate 1960-01-07
- 7 Annual GDP growth rate 1960-01-08
- 8 Annual GDP growth rate 1960-01-09
- 9 Annual GDP growth rate 1960-01-10
-10 Annual GDP growth rate 1960-01-11
-# ℹ 512,854 more rows</code></pre>
-</div>
+<span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu">scan_gaps</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## # A tsibble: 512,864 x 2 [1D]</span></span>
+<span><span class="co">## # Key:       indicator_name [22]</span></span>
+<span><span class="co">##   indicator_name         date      </span></span>
+<span><span class="co">##   &lt;chr&gt;                  &lt;date&gt;    </span></span>
+<span><span class="co">## 1 Annual GDP growth rate 1960-01-02</span></span>
+<span><span class="co">## 2 Annual GDP growth rate 1960-01-03</span></span>
+<span><span class="co">## 3 Annual GDP growth rate 1960-01-04</span></span>
+<span><span class="co">## 4 Annual GDP growth rate 1960-01-05</span></span>
+<span><span class="co">## 5 Annual GDP growth rate 1960-01-06</span></span>
+<span><span class="co">## # ℹ 512,859 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>the scan gaps returns a long list of missing dates. However, this is not true for our data set. We are getting this many gaps because the inner workings of tsibble thinks that the days of all the months a missing, meanwhile our data is not a daily data but a yearly series. This whole misinterpretation comes from the incorrect interval [1D]. To fix this we can change the date to a year-month format or use the year column as the index and then rescan for gaps</p>
-<div class="cell">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fix interval  by assigning index to year</span></span>
 <span><span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">as_tsibble</span><span class="op">(</span></span>
 <span>    index <span class="op">=</span> <span class="va">year</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 2 x 6 [1Y]
-# Key:       indicator_name [1]
-  country_name indicator_name         indicator_code     year date       value
-  &lt;chr&gt;        &lt;chr&gt;                  &lt;chr&gt;             &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;
-1 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.ZG  1960 1960-01-01 NA   
-2 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.ZG  1961 1961-01-01  3.43</code></pre>
-</div>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">## # A tsibble: 2 x 6 [1Y]</span></span>
+<span><span class="co">## # Key:       indicator_name [1]</span></span>
+<span><span class="co">##   country_name indicator_name         indicator_code  year date       value</span></span>
+<span><span class="co">##   &lt;chr&gt;        &lt;chr&gt;                  &lt;chr&gt;          &lt;dbl&gt; &lt;date&gt;     &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Ghana        Annual GDP growth rate NY.GDP.MKTP.K…  1960 1960-01-01 NA   </span></span>
+<span><span class="co">## 2 Ghana        Annual GDP growth rate NY.GDP.MKTP.K…  1961 1961-01-01  3.43</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here we see that the interval is now correctly represented a [1Y] which is exactly what we expect. We do not want to change our index variable so what we will do is keep the date as index but modify it somehow for it to be recognised as a year interval.</p>
-<div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>date <span class="op">=</span> <span class="fu">yearmonth</span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 3 x 6 [12M]
-# Key:       indicator_name [1]
-  country_name indicator_name         indicator_code     year     date value
-  &lt;chr&gt;        &lt;chr&gt;                  &lt;chr&gt;             &lt;dbl&gt;    &lt;mth&gt; &lt;dbl&gt;
-1 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.ZG  1960 1960 Jan NA   
-2 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.ZG  1961 1961 Jan  3.43
-3 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.ZG  1962 1962 Jan  4.11</code></pre>
-</div>
+<span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">## # A tsibble: 3 x 6 [12M]</span></span>
+<span><span class="co">## # Key:       indicator_name [1]</span></span>
+<span><span class="co">##   country_name indicator_name         indicator_code    year     date value</span></span>
+<span><span class="co">##   &lt;chr&gt;        &lt;chr&gt;                  &lt;chr&gt;            &lt;dbl&gt;    &lt;mth&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.…  1960 1960 Jan NA   </span></span>
+<span><span class="co">## 2 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.…  1961 1961 Jan  3.43</span></span>
+<span><span class="co">## 3 Ghana        Annual GDP growth rate NY.GDP.MKTP.KD.…  1962 1962 Jan  4.11</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Our interval is [12M]-meaning 12 months, essentially indicating a year. We can go ahead and check for gaps now.</p>
-<div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu">scan_gaps</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 0 x 2 [?]
-# Key:       indicator_name [0]
-# ℹ 2 variables: indicator_name &lt;chr&gt;, date &lt;mth&gt;</code></pre>
-</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu">scan_gaps</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## # A tsibble: 0 x 2 [?]</span></span>
+<span><span class="co">## # Key:       indicator_name [0]</span></span>
+<span><span class="co">## # ℹ 2 variables: indicator_name &lt;chr&gt;, date &lt;mth&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This returns an empty tsibble, telling us that there are no time gaps. we can confirm again with the <code>has_gaps()</code> function.</p>
-<div class="cell">
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu">has_gaps</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pull</span><span class="op">(</span><span class="va">.gaps</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
-</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gh_ts</span> <span class="op">|&gt;</span> <span class="fu">has_gaps</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">pull</span><span class="op">(</span><span class="va">.gaps</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## [1] 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Confirms <strong>Zero Gaps</strong> in our <code>gh_ts</code> data!</p>
 </section><section id="handling-time-gaps" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="handling-time-gaps">
 <span class="header-section-number">5.3</span> Handling Time Gaps</h2>
 <p>In order for us to understand the concept of time gaps and how to handle to properly I will simulate a data with implicit time gaps and then we will see how to deal with them using functions from the <code>tsibble</code> package</p>
 <p>We will use the same product sales concept to simulate this series. Here we compare sales for 2 products <code>Smart Phone</code> and <code>Laptop</code> over a 12 month period</p>
-<div class="cell">
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># create a sequence of sales dates</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># create a sequence of sales dates</span></span>
 <span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="fu">ym</span><span class="op">(</span><span class="st">'2025-01'</span><span class="op">)</span>  </span>
 <span><span class="va">end_date</span> <span class="op">&lt;-</span> <span class="fu">ym</span><span class="op">(</span><span class="st">'2025-12'</span><span class="op">)</span></span>
 <span><span class="va">sales_period</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.Date.html">seq.Date</a></span><span class="op">(</span></span>
@@ -365,45 +383,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  key <span class="op">=</span> <span class="va">Product</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sales_data_gaps</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 18 x 3 [1M]
-# Key:       Product [2]
-   Product     Sales     Date
-   &lt;chr&gt;       &lt;dbl&gt;    &lt;mth&gt;
- 1 Laptop        970 2025 Feb
- 2 Laptop        660 2025 Mar
- 3 Laptop       1000 2025 Apr
- 4 Laptop        775 2025 May
- 5 Laptop        799 2025 Jun
- 6 Laptop        666 2025 Sep
- 7 Laptop        726 2025 Oct
- 8 Laptop        991 2025 Nov
- 9 Smart Phone   255 2025 Jan
-10 Smart Phone   244 2025 Feb
-11 Smart Phone   335 2025 Mar
-12 Smart Phone   287 2025 Apr
-13 Smart Phone   379 2025 May
-14 Smart Phone   359 2025 Aug
-15 Smart Phone   286 2025 Sep
-16 Smart Phone   286 2025 Oct
-17 Smart Phone   345 2025 Nov
-18 Smart Phone   280 2025 Dec</code></pre>
-</div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sales_data_gaps</span><span class="op">)</span></span>
+<span><span class="co">## # A tsibble: 18 x 3 [1M]</span></span>
+<span><span class="co">## # Key:       Product [2]</span></span>
+<span><span class="co">##   Product Sales     Date</span></span>
+<span><span class="co">##   &lt;chr&gt;   &lt;dbl&gt;    &lt;mth&gt;</span></span>
+<span><span class="co">## 1 Laptop    771 2025 Feb</span></span>
+<span><span class="co">## 2 Laptop    923 2025 Mar</span></span>
+<span><span class="co">## 3 Laptop    699 2025 Apr</span></span>
+<span><span class="co">## 4 Laptop    670 2025 May</span></span>
+<span><span class="co">## 5 Laptop    968 2025 Jun</span></span>
+<span><span class="co">## # ℹ 13 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Our simulated tsibble (<code>sales_data_gaps</code>) is now ready. I visual inspection of the <code>Date</code> column will reveal that there are missing dates (implicit). we can confirm this with the functions we learnt earlier and then decide what to do later.</p>
-<div class="cell">
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">scan_gaps</span><span class="op">(</span><span class="va">sales_data_gaps</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 4 x 2 [1M]
-# Key:       Product [2]
-  Product         Date
-  &lt;chr&gt;          &lt;mth&gt;
-1 Laptop      2025 Jul
-2 Laptop      2025 Aug
-3 Smart Phone 2025 Jun
-4 Smart Phone 2025 Jul</code></pre>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>More information on the <code>seq.Date</code> function in (<a href="lubridate.html" class="quarto-xref"><span>Chapter 7</span></a>)</p>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">scan_gaps</span><span class="op">(</span><span class="va">sales_data_gaps</span><span class="op">)</span></span>
+<span><span class="co">## # A tsibble: 4 x 2 [1M]</span></span>
+<span><span class="co">## # Key:       Product [2]</span></span>
+<span><span class="co">##   Product         Date</span></span>
+<span><span class="co">##   &lt;chr&gt;          &lt;mth&gt;</span></span>
+<span><span class="co">## 1 Laptop      2025 Jul</span></span>
+<span><span class="co">## 2 Laptop      2025 Aug</span></span>
+<span><span class="co">## 3 Smart Phone 2025 Jun</span></span>
+<span><span class="co">## 4 Smart Phone 2025 Jul</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The scan gaps tells us the gaps in our data. Notice how it is only showing only <strong>2 months</strong> are missing for <code>Laptop</code> even though we know there are <strong>4 months</strong> missing rather. We will see how to handle this very soon.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -420,29 +435,27 @@ Important
 </div>
 </div>
 <p>The <code>tsibble</code> package makes it really easy to handle gaps in our time series data with the <code>fill_gaps()</code> function. The <code>fill_gaps()</code> makes the <strong>implicit</strong> gaps <strong>explicit</strong> by inserting rows for missing time periods and assigning <code>NA</code> to the observation values (the <code>Sales</code> column in our case)</p>
-<div class="cell">
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fill in the missing time points </span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fill in the missing time points </span></span>
 <span><span class="va">sales_data_gaps</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">fill_gaps</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">pull</span><span class="op">(</span><span class="va">Date</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;yearmonth[22]&gt;
- [1] "2025 Feb" "2025 Mar" "2025 Apr" "2025 May" "2025 Jun" "2025 Jul"
- [7] "2025 Aug" "2025 Sep" "2025 Oct" "2025 Nov" "2025 Jan" "2025 Feb"
-[13] "2025 Mar" "2025 Apr" "2025 May" "2025 Jun" "2025 Jul" "2025 Aug"
-[19] "2025 Sep" "2025 Oct" "2025 Nov" "2025 Dec"</code></pre>
-</div>
+<span>  <span class="fu">fill_gaps</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">pull</span><span class="op">(</span><span class="va">Date</span><span class="op">)</span></span>
+<span><span class="co">## &lt;yearmonth[22]&gt;</span></span>
+<span><span class="co">##  [1] "2025 Feb" "2025 Mar" "2025 Apr" "2025 May" "2025 Jun" "2025 Jul"</span></span>
+<span><span class="co">##  [7] "2025 Aug" "2025 Sep" "2025 Oct" "2025 Nov" "2025 Jan" "2025 Feb"</span></span>
+<span><span class="co">## [13] "2025 Mar" "2025 Apr" "2025 May" "2025 Jun" "2025 Jul" "2025 Aug"</span></span>
+<span><span class="co">## [19] "2025 Sep" "2025 Oct" "2025 Nov" "2025 Dec"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>fill_gaps()</code> function filled only the gaps which were identified by the <code>scan_gaps</code> function evidenced by only <strong>22 time points</strong> instead of <strong>24</strong>.</p>
 <p>So you might be wondering, how do we deal with the missing Jan and Dec.&nbsp;Well! the <code>fill_gaps()</code> function creates provision for such cases. The function can even help us set a start/ending time that allows us to expand the existing time span (we are not doing that).</p>
-<p>Back to our issue, we can set <code>.full = TRUE</code> inside <code>fill_gaps</code> to fill the time gaps over the entire time span of our data. What it does is, it checks the time span for <code>Smart Phone</code> and notices that it starts from Jan and ends in Dec so it applies the same time span to <code>Laptops</code></p>
-<div class="cell">
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fill gaps over entire time span</span></span>
+<p>Back to our issue, we can set <code>.full = TRUE</code> inside <code>fill_gaps</code> to fill the time gaps over the entire time span of our data. What it does is, it checks the time span for the <code>Smart Phone</code>’s series and notices that it starts from Jan and ends in Dec so it applies the same time span to <code>Laptops</code></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fill gaps over entire time span</span></span>
 <span><span class="va">sales_data_filled</span> <span class="op">&lt;-</span> <span class="va">sales_data_gaps</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">fill_gaps</span><span class="op">(</span>.full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Also, instead of assigning the values of the filled time gaps with <code>NAs</code> we can specify a value of our choosing which is very useful if we want to record zero (0) sales for the missing months instead of missing data.</p>
-<div class="cell">
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fill gaps in Sales column with 0</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># fill gaps in Sales column with 0</span></span>
 <span><span class="va">sales_data_gaps</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">fill_gaps</span><span class="op">(</span></span>
 <span>    .full <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -476,7 +489,7 @@ Caution
 <p>Always apply domain knowledge and check time series data characteristics before applying a particular imputation method from <code>imputeTS</code></p>
 </div>
 </div>
-<p>The next chapter is a bonus one. It briefly describes how to import data (time series data) into R from various sources with a simple code illustration.</p>
+<p>The next chapter is a bonus one. It briefly describes how to import data (time series data) into R from various sources with a simple code illustration. You can decide to skip it if you already know how to import the data from some common file formats like <code>.csv</code> or <code>.xlsx</code> (excel file) into R.</p>
 
 
 </section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
@@ -901,8 +914,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./import-data.html" class="pagination-link" aria-label="Importing Data and Creating a tsibble">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./import-data.html" class="pagination-link" aria-label="Importing Data and Creating a tsibble (Bonus)">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble (Bonus)</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

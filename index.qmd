@@ -4,7 +4,7 @@
 >
 > ✔️Tools Used: `tidyverse` `tsibble` `fable` `feasts` `lubridate`
 >
-> 📈Datasets: Built-in data (`tsibble::tourism`, `datasets::AirPassengers`) and custom datasets (`local gh time series data in csv format`)
+> 📈Datasets: Built-in data from the `tsibble` package and custom datasets (`local gh time series data in csv format`)
 
 ## Welcome {.unnumbered}
 

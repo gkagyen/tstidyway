@@ -46,7 +46,6 @@ Traditional time series analysis in R has been handled using **`ts`** objects an
 #| tbl-cap: A tidy time series data structure (tsibble)
 #| echo: false
 #| message: false
-#| warning: false
 
 library(tsibble)
 head(tourism)

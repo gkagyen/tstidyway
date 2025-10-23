@@ -1,0 +1,86 @@
+# Exploring Patterns with `feasts` {#sec-exploring-patterns-with-feasts}
+
+Visual inspection with `ggplot2` and `autoplot()` gives us an intuitive feel for our time series. We might suspect a trend, see hints of seasonality, and notice unusual observations. But how can we move from intuition to a more formal, statistical understanding of these components? This is where the `feasts` package comes in.
+
+The package `feasts`, which stands for **F**eature **E**xtraction **A**nd **S**tatistics for **T**ime **S**eries, is a core part of the tidyverts framework which we have discussed earlier (@sec-introduction). Its purpose is to provide a toolkit for analysing the *features* of a time series data (tsibble). Think of it as a Doctor's diagnostic kit: It does not treat the patients (that is the job of forecasting models), but it runs the tests needed to understand what is going on.
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+```{r}
+#| include: false
+gh_ts <- read_csv('data/gh_ts.csv', show_col_types = FALSE) |>
+  janitor::clean_names() |> 
+  as_tsibble(index = year, key = indicator_name)
+
+sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |> 
+  janitor::clean_names(case = "none") |> 
+  mutate(Month = yearmonth(Month)) |> 
+  as_tsibble(index  = Month)
+```
+
+## Decomposing a Time Series with `STL()`
+
+A fundamental concept in time series analysis is decomposition. The idea is to split, $y_{t}$, into three additive parts (where the time series is represented as the sum of its parts):
+
+-   **Trend (**$T_{t}$**):** The long-term progression (the increasing or decreasing direction over time)
+-   **Seasonal (**$S_{t}$**):** Regular, repeating patterns over a fixed period (example, yearly or quarterly).
+-   **Remainder (**$R_{t}$**):** $R_{t}$ The "leftover" part after trend and seasonality are removed; this is often considered the random noisy component.
+
+$$
+y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
+$$
+
+### Basic and Advanced Decomposition with Special Arguments
+
+The most robust method for this **STL,** which stands for **S**easonal and **T**rend decomposition using **L**oess. Loess is a method for estimating nonlinear relationships, and its use makes STL method versatile and robust to outliers as it handles a wide range of seasonal and trend shapes. The `feasts` package provides the `STL()` function to perform this decomposition directly on a `tsibble` object. Let us decompose the `Sales` series in the `sales_ts` data.
+
+```{r}
+# Decompose the Sales series using STL
+dcmp <- sales_ts |> 
+  model(STL(Sales))
+```
+
+The simplest implementation use the default `STL()` function, which automatically selects suitable window sizes for the trend and seasonal components as illustrated in the above code. The `model()` function from the `fabletools` package is used to fit a "model" (STL Decomposition) to the tsibble `sales_ts`. The variable to e decomposed is specified inside the `STL` function.
+
+For greater control you can include the variable of interest as a formula where you manually define the smoothing window for the trend and the seasonal components using the special arguments `trend` and `season`.
+
+```{r}
+# decompose Sales series using STL with special arguments
+dcmp_sp <- sales_ts |> 
+  model(stl = STL(Sales ~ trend(window = 7) + season(window = "periodic")))
+```
+
+`trend(window = 7)` sets the window size for the trend smoothing, specifying that a trend should be estimated using a window of $2\times7+1=15$ observations. A larger window results in a smoother trend.
+
+### Extracting and Viewing Components
+
+The `dcmp` object we created now contains the fitted decomposition model. To see the results, we use the `components()` function.
+
+```{r}
+#| eval: false
+# extract the components from the decomposition model
+components(dcmp)
+```
+
+This returns a `fabletools` object dataset "`dable`" (decomposition table) which is a tsibble-like data structure for representing decompositions. It contains the original time index with the Sales series together with four new columns;
+
+-   `trend`: The estimated trend component.
+-   `season_year`: The estimated seasonal component.
+-   `remainder`: The residual or error component (noise).
+-   `season_adjust`: The final seasonally adjusted series (Original Series - Seasonal Component)
+
+This allows for direct analysis and visualisation of how much of the variations in the `Sales` series is attributed to long-term movements, seasonal factors, and irregular noise. The `autoplot()` function when applied on this `dable` output will automatically generate a multi-panel plot displaying the decomposition of the `Sales` series into its components as calculated by the STL method.
+
+```{r}
+components(dcmp) |> 
+  autoplot(linewidth = 0.7)
+```
+
+The plot features for main panels; the original Sales time series ($y_{t}$), The long term direction of the trend, the estimated periodic pattern and the noise or irregular fluctuations.
+
+From the STL decomposed plot we see that the original series is highly affected by both seasonality and a trend. The smooth long-term trend shows the overall level of sales over the years. Its starts around 35000 and dips noticeably around late 2017 and then rises back up towards 40,000 by late 2019
+
+The seasonal panel shows a strong, consistent repeating pattern. The vertical scale (from approximately -5000 to 5000) indicates the magnitude of the seasonal effect relative to the trend.

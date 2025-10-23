@@ -74,7 +74,7 @@ You can download the datasets used here `gh_data.csv` .
 2.  **RStudio** installed for a smooth workflow
 3.  Internet connection (for package installation and possible data download)
 
-#### By the end of this tutorial, you will be able to:
+### By the end of this book, you will be able to:
 
 -   Handle date/time data with ease
 -   Explore time series visually and statistically

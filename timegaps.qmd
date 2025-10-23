@@ -1,17 +1,11 @@
 # Dealing with Time Gaps and Irregularities {#sec-dealing-with-time-gaps-and-irregularities}
 
-Real-world data is messy. Sensors failz, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but `tsibble` helps you find and handle them.
+Real-world data is messy. Sensors fails, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but `tsibble` helps you find and handle them.
 
 ```{r}
-#| include: false
-#| message: false
-#| warning: false
+#| echo: false
 
-library(tsibble)
-library(lubridate)
-library(dplyr)
-library(readr)
-library(tidyr)
+source("_common.R")
 ```
 
 ## Why Time Gaps Matter
@@ -106,6 +100,10 @@ print(sales_data_gaps)
 
 Our simulated tsibble (`sales_data_gaps`) is now ready. I visual inspection of the `Date` column will reveal that there are missing dates (implicit). we can confirm this with the functions we learnt earlier and then decide what to do later.
 
+::: callout-note
+More information on the `seq.Date` function in (@sec-using-lubridate-for-date-manipulation)
+:::
+
 ```{r}
 scan_gaps(sales_data_gaps)
 ```
@@ -128,7 +126,7 @@ The `fill_gaps()` function filled only the gaps which were identified by the `sc
 
 So you might be wondering, how do we deal with the missing Jan and Dec. Well! the `fill_gaps()` function creates provision for such cases. The function can even help us set a start/ending time that allows us to expand the existing time span (we are not doing that).
 
-Back to our issue, we can set `.full = TRUE` inside `fill_gaps` to fill the time gaps over the entire time span of our data. What it does is, it checks the time span for `Smart Phone` and notices that it starts from Jan and ends in Dec so it applies the same time span to `Laptops`
+Back to our issue, we can set `.full = TRUE` inside `fill_gaps` to fill the time gaps over the entire time span of our data. What it does is, it checks the time span for the `Smart Phone`'s series and notices that it starts from Jan and ends in Dec so it applies the same time span to `Laptops`
 
 ```{r}
 #| eval: false

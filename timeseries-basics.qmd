@@ -39,7 +39,7 @@ tibble_data <- tibble(
 tibble_data
 ```
 
-a `tsibble` on the other hand is self-aware. It knows its index and its key, unlocking powerful analysis tool. compare the table below. The \[1D\] beside the tsibble dimension represents the **interval** (daily)
+a `tsibble` on the other hand is self-aware. It knows its index and its key, unlocking powerful analysis tool. compare the table below. The "\[1D\]" beside the tsibble dimension represents the **interval** (daily) and the "\[2\]" represents the number of unique keys/series.
 
 ```{r}
 #| echo: false
@@ -58,6 +58,8 @@ As explained earlier, these two functions require you to specify at least one of
 We see how to create a tsibble from using `tsibble()` and `as_tsibble` below
 
 ```{r}
+#| eval: false
+
 # single time series
 tsibble(
   year = 2010:2050,
@@ -71,6 +73,7 @@ The above code creates a simple time series data using the `tsibble()` function,
 Now we will create a tsibble from the `as_tsibble()` function using an existing tibble
 
 ```{r}
+#| eval: false
 # creating a tsibble from monthly data sales
 # sales come from two different shops
 sales_data <- tibble(
@@ -83,6 +86,7 @@ print(sales_data)
 ```
 
 ```{r}
+#| eval: false
 # We use as_tsibble to convert the tibble to a tsibble
 # the date column becomes the index and the store column the key
 sales_data_ts <- sales_data |> 
@@ -126,9 +130,9 @@ The next step is to convert the Year to a Proper Date. Right now `Year` is a cha
 # convert year to date
 gh_data_long <-  gh_data_long |> 
   mutate(
-    Year = as.integer(Year),                      # convert to integer number
+    Year = as.integer(Year),                       # convert to integer number
     Date = lubridate::ymd(paste0(Year, "-01-01")), # Create date:Jan 1 of each year
-    .after = Year                                 # add new Date column after year column
+    .after = Year                                  # add new Date column after year column
   )
 
 # check structure
@@ -151,4 +155,4 @@ gh_ts <- gh_data_long |>
 gh_ts
 ```
 
-We have out time series tsibble ready!. But there are some nuances in the data the first obvious ones are the column names- `Country Name`, `Indicator Name` and `Indicator Code`-we see that they are surrounded in back ticks `` (`) `` . This tells us that they do not follow the correct naming convention for **variables** in R (no spaces between word). The next one is the interval \[1D\]. The tsibble package thinks our data is supposed to be a daily data because we have a full date with month and days available. We will see how to fix this in the next chapter
+We have our time series tsibble ready! But there are some nuances in the data, the first obvious ones are the column names- `Country Name`, `Indicator Name` and `Indicator Code`-we see that they are surrounded in back ticks `` (`) `` . This tells us that they do not follow the correct naming convention for **variables** in R (no spaces between words). The next one is the interval \[1D\]. The tsibble package thinks our data is supposed to be a daily data because we have a full date with month and days available. We will see how to fix this in the next chapter

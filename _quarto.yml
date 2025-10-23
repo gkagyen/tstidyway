@@ -33,6 +33,17 @@ book:
       chapters: 
         - lubridate.qmd
         - new-time-variables.qmd
+        
+    - part: exploratory-analysis.qmd
+      chapters: 
+        - visualising-trends.qmd
+        - exploring-patterns.qmd
+        
+    - part: forecast-prepare.qmd
+      chapters: 
+        - stabilise-variance.qmd
+        - check-stationary.qmd
+        - split-data.qmd
     
     - references.qmd
 

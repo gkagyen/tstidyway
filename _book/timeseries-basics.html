@@ -194,7 +194,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./import-data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Importing Data and Creating a tsibble (Bonus)</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,13 +211,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Lubridate for Date Manipulation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./new-time-variables.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating New Time Variables</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Creating Useful Time-Based Features</span></span></a>
   </div>
 </li>
       </ul>
@@ -287,7 +287,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4 2023-01-02 B         102</code></pre>
 </div>
 </div>
-<p>a <code>tsibble</code> on the other hand is self-aware. It knows its index and its key, unlocking powerful analysis tool. compare the table below. The [1D] beside the tsibble dimension represents the <strong>interval</strong> (daily)</p>
+<p>a <code>tsibble</code> on the other hand is self-aware. It knows its index and its key, unlocking powerful analysis tool. compare the table below. The “[1D]” beside the tsibble dimension represents the <strong>interval</strong> (daily) and the “[2]” represents the number of unique keys/series.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tsibble: 4 x 3 [1D]
@@ -313,27 +313,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">41</span><span class="op">)</span>,</span>
 <span>  index <span class="op">=</span> <span class="va">year</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 41 x 2 [1Y]
-    year  value
-   &lt;int&gt;  &lt;dbl&gt;
- 1  2010  0.230
- 2  2011  0.938
- 3  2012 -0.294
- 4  2013 -1.48 
- 5  2014 -0.733
- 6  2015  1.64 
- 7  2016  1.55 
- 8  2017 -0.683
- 9  2018 -1.00 
-10  2019  2.02 
-# ℹ 31 more rows</code></pre>
-</div>
 </div>
 <p>The above code creates a simple time series data using the <code>tsibble()</code> function, exactly like creating a dataframe. Indicating the <strong>index</strong> variable distinguishes a tsibble from a tibble.</p>
 <p>Now we will create a tsibble from the <code>as_tsibble()</code> function using an existing tibble</p>
 <div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># creating a tsibble from monthly data sales</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># creating a tsibble from monthly data sales</span></span>
 <span><span class="co"># sales come from two different shops</span></span>
 <span><span class="va">sales_data</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  Date <span class="op">=</span> <span class="fu">ymd</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'2025-01-01'</span>,<span class="st">'2025-02-01'</span>,<span class="st">'2025-03-01'</span>,<span class="st">'2026-04-01'</span>,<span class="st">'2025-05-01'</span>,<span class="st">'2025-01-01'</span>,<span class="st">'2025-02-01'</span>,<span class="st">'2025-03-01'</span>,<span class="st">'2025-04-01'</span>,<span class="st">'2025-05-01'</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -341,24 +325,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  Sales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">225</span>, <span class="fl">150</span>, <span class="fl">130</span>, <span class="fl">90</span>, <span class="fl">220</span>, <span class="fl">190</span>, <span class="fl">145</span>, <span class="fl">180</span>, <span class="fl">110</span>, <span class="fl">180</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sales_data</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
-   Date       Store       Sales
-   &lt;date&gt;     &lt;chr&gt;       &lt;dbl&gt;
- 1 2025-01-01 Phone Shop    225
- 2 2025-02-01 Phone Shop    150
- 3 2025-03-01 Phone Shop    130
- 4 2026-04-01 Phone Shop     90
- 5 2025-05-01 Phone Shop    220
- 6 2025-01-01 Beauty Shop   190
- 7 2025-02-01 Beauty Shop   145
- 8 2025-03-01 Beauty Shop   180
- 9 2025-04-01 Beauty Shop   110
-10 2025-05-01 Beauty Shop   180</code></pre>
-</div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># We use as_tsibble to convert the tibble to a tsibble</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># We use as_tsibble to convert the tibble to a tsibble</span></span>
 <span><span class="co"># the date column becomes the index and the store column the key</span></span>
 <span><span class="va">sales_data_ts</span> <span class="op">&lt;-</span> <span class="va">sales_data</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>Date <span class="op">=</span> <span class="fu">yearmonth</span><span class="op">(</span><span class="va">Date</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -367,22 +336,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    key <span class="op">=</span> <span class="va">Store</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sales_data_ts</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tsibble: 10 x 3 [1M]
-# Key:       Store [2]
-       Date Store       Sales
-      &lt;mth&gt; &lt;chr&gt;       &lt;dbl&gt;
- 1 2025 Jan Beauty Shop   190
- 2 2025 Feb Beauty Shop   145
- 3 2025 Mar Beauty Shop   180
- 4 2025 Apr Beauty Shop   110
- 5 2025 May Beauty Shop   180
- 6 2025 Jan Phone Shop    225
- 7 2025 Feb Phone Shop    150
- 8 2025 Mar Phone Shop    130
- 9 2025 May Phone Shop    220
-10 2026 Apr Phone Shop     90</code></pre>
-</div>
 </div>
 <p>We now have our sales data in a time aware tsibble format. The <code>yearmonth()</code> is an index function to represent our <strong>Date</strong> in a <strong>year-month</strong> format.</p>
 <section id="practice-tsibble-conversion" class="level3" data-number="4.2.1"><h3 data-number="4.2.1" class="anchored" data-anchor-id="practice-tsibble-conversion">
@@ -390,7 +343,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Here we will learn how to convert real world data into a tsibble. The data we will use is a time series data for Ghana containing certain world bank indicators. The data can be found here <a href="https://github.com/gkagyen/tstidyway/blob/main/data/gh_data.csv">gh_data.csv</a>. The data comes in a wide format (where years are columns). To make it <strong>tidy,</strong> where each row represents one indicator so that we a <code>year</code> and <code>value</code> column, we first need to reshape it into a <strong>long format</strong></p>
 <p>We will use <code>pivot_longer</code> from <code>tidyr</code> to reshape the data</p>
 <div class="cell">
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># load data</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># load data</span></span>
 <span><span class="va">gh_data_raw</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">'data/gh_data.csv'</span>, show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </span>
 <span>  </span>
 <span><span class="co"># convert wide data to long</span></span>
@@ -418,12 +371,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Success! Now each row is an observation of an indicator in a given year</p>
 <p>The next step is to convert the Year to a Proper Date. Right now <code>Year</code> is a character. We need it as a date so <code>tsibble</code> can understand time ordering. we will use the <code>lubridate</code> package functions and convert it to a Date object (assuming January 1st of each year).</p>
 <div class="cell">
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert year to date</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert year to date</span></span>
 <span><span class="va">gh_data_long</span> <span class="op">&lt;-</span>  <span class="va">gh_data_long</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
-<span>    Year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span>,                      <span class="co"># convert to integer number</span></span>
+<span>    Year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span>,                       <span class="co"># convert to integer number</span></span>
 <span>    Date <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html">ymd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">Year</span>, <span class="st">"-01-01"</span><span class="op">)</span><span class="op">)</span>, <span class="co"># Create date:Jan 1 of each year</span></span>
-<span>    .after <span class="op">=</span> <span class="va">Year</span>                                 <span class="co"># add new Date column after year column</span></span>
+<span>    .after <span class="op">=</span> <span class="va">Year</span>                                  <span class="co"># add new Date column after year column</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># check structure</span></span>
@@ -435,7 +388,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Now <code>Date</code> is a proper <strong>Date object</strong> essential for time series analysis.</p>
 <p>Finally we can convert our data to a time series dataframe (<code>tsibble</code>) that is time aware of - <strong>index</strong> (time)and <strong>keys</strong> (unique series identifiers). In our case the <code>Date</code> column is our <strong>index</strong> and the <code>Indicator_name</code> becomes our <strong>index</strong> since we have multiple time series -population, life expectancy etc.</p>
 <div class="cell">
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert data to tsibble</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert data to tsibble</span></span>
 <span><span class="va">gh_ts</span> <span class="op">&lt;-</span> <span class="va">gh_data_long</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">as_tsibble</span><span class="op">(</span></span>
 <span>    index <span class="op">=</span> <span class="va">Date</span>,              <span class="co"># Time index</span></span>
@@ -462,7 +415,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 # ℹ 1,420 more rows</code></pre>
 </div>
 </div>
-<p>We have out time series tsibble ready!. But there are some nuances in the data the first obvious ones are the column names- <code>Country Name</code>, <code>Indicator Name</code> and <code>Indicator Code</code>-we see that they are surrounded in back ticks <code>(`)</code> . This tells us that they do not follow the correct naming convention for <strong>variables</strong> in R (no spaces between word). The next one is the interval [1D]. The tsibble package thinks our data is supposed to be a daily data because we have a full date with month and days available. We will see how to fix this in the next chapter</p>
+<p>We have our time series tsibble ready! But there are some nuances in the data, the first obvious ones are the column names- <code>Country Name</code>, <code>Indicator Name</code> and <code>Indicator Code</code>-we see that they are surrounded in back ticks <code>(`)</code> . This tells us that they do not follow the correct naming convention for <strong>variables</strong> in R (no spaces between words). The next one is the interval [1D]. The tsibble package thinks our data is supposed to be a daily data because we have a full date with month and days available. We will see how to fix this in the next chapter</p>
 
 
 </section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
