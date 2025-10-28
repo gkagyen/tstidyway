@@ -44,6 +44,12 @@ book:
         - stabilise-variance.qmd
         - check-stationary.qmd
         - split-data.qmd
+        
+    - part: forecast.qmd
+      chapters: 
+        - simple-models.qmd
+        - advanced-models.qmd
+        - forecast-evaluation.qmd
     
     - references.qmd
 

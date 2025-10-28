@@ -1,4 +1,4 @@
-# Using `Lubridate` for Date Manipulation {#sec-using-lubridate-for-date-manipulation}
+# Using `lubridate` for Date Manipulation {#sec-using-lubridate-for-date-manipulation}
 
 Now that we know how to create a tidy time series data (`tsibble`) we will dive deeper into manipulating dates and times using the powerful `lubridate` package (part of the tidyverse package collection). In R this package makes working with dates and times very intuitive. In this chapter you will learn how to:
 
@@ -229,7 +229,7 @@ This sections deals with a sophisticated yet crucial concept in time series and 
 ### The Core Difference
 
 | Concept | Function type | Definition | Impact on Time |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | Period | `years(), months(), days(), hours()` | Represents a human-defined **calendar-aware** unit of time | The length in seconds is **variable.** Adding one month from January !st means landing exactly on February 1st |
 | Duration | `dmonths(), dyears(), ddays(), dseconds(), dminutes()` | Represents an **exact, absolute** span of time, measured in seconds | The length in seconds is fixed. Adding 1 month duration is always **2,629,800** seconds (the average month length) |
 

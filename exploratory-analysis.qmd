@@ -29,16 +29,12 @@ This section will explore two powerful approaches to time series exploration; th
     -   customise plots to highlight specific features and insights
     -   create publication-quality visualisations that tell clear stories
 
--   @sec-exploring-patterns-with-feasts: Here we will dive deep into the `feasts` package, which provides specialised tools for time series exploration. You will discover how to
+-   @sec-exploring-patterns-with-feasts-and-fabletools: Here we will dive deep into the `feasts` package, which provides specialised tools for time series exploration together with `fabletool`. You will discover how to
 
     -   Decompose time series into trend, seasonal and remainder components
-
     -   Analyse autocorrelation patterns to understand temporal dependencies
-
     -   Identify seasonal patterns and their strength.
-
     -   Use summary statistics to characterise time series behaviour
-
     -   create comprehensive diagnostic plots for model selection.
 
 Time series data has special characteristics that require special exploration techniques, unlike cross-sectional data, time series observations are connected through time and often contains several layers (trend, cycles, seasonality, noise). For instance yesterday's sales influence today's sales and last year's seasonal pattern likely repeats this year. Again the same time series can look dramatically different depending on whether you view it daily, weekly, monthly or annually.

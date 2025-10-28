@@ -191,7 +191,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>lubridate</code> for Date Manipulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -220,7 +220,65 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./exploring-patterns.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./forecast-prepare.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preparing for Forecasting</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stabilise-variance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Transformations for Variance Stabilisation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./check-stationary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Checking for Stationarity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./split-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Splitting Temporal Data for Modelling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forecasting with the fable Framework</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simple-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Simple Forecasting Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Advanced Forecasting Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./forecast-evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Model Evaluation and Forecasting</span></span></a>
   </div>
 </li>
       </ul>
@@ -293,13 +351,13 @@ ul.task-list li input[type="checkbox"] {
 <li>customise plots to highlight specific features and insights</li>
 <li>create publication-quality visualisations that tell clear stories</li>
 </ul></li>
-<li><p><a href="exploring-patterns.html" class="quarto-xref"><span>10&nbsp; Exploring Patterns with feasts</span></a>: Here we will dive deep into the <code>feasts</code> package, which provides specialised tools for time series exploration. You will discover how to</p>
+<li><p><a href="exploring-patterns.html" class="quarto-xref"><span>10&nbsp; Exploring Patterns with feasts and fabletools</span></a>: Here we will dive deep into the <code>feasts</code> package, which provides specialised tools for time series exploration together with <code>fabletool</code>. You will discover how to</p>
 <ul>
-<li><p>Decompose time series into trend, seasonal and remainder components</p></li>
-<li><p>Analyse autocorrelation patterns to understand temporal dependencies</p></li>
-<li><p>Identify seasonal patterns and their strength.</p></li>
-<li><p>Use summary statistics to characterise time series behaviour</p></li>
-<li><p>create comprehensive diagnostic plots for model selection.</p></li>
+<li>Decompose time series into trend, seasonal and remainder components</li>
+<li>Analyse autocorrelation patterns to understand temporal dependencies</li>
+<li>Identify seasonal patterns and their strength.</li>
+<li>Use summary statistics to characterise time series behaviour</li>
+<li>create comprehensive diagnostic plots for model selection.</li>
 </ul></li>
 </ul>
 <p>Time series data has special characteristics that require special exploration techniques, unlike cross-sectional data, time series observations are connected through time and often contains several layers (trend, cycles, seasonality, noise). For instance yesterday’s sales influence today’s sales and last year’s seasonal pattern likely repeats this year. Again the same time series can look dramatically different depending on whether you view it daily, weekly, monthly or annually.</p>

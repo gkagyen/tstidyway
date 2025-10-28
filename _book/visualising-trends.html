@@ -211,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>lubridate</code> for Date Manipulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -240,7 +240,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./exploring-patterns.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./forecast-prepare.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preparing for Forecasting</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./stabilise-variance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Transformations for Variance Stabilisation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./check-stationary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Checking for Stationarity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./split-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Splitting Temporal Data for Modelling</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forecasting with the fable Framework</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simple-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Simple Forecasting Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Advanced Forecasting Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./forecast-evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Model Evaluation and Forecasting</span></span></a>
   </div>
 </li>
       </ul>
@@ -493,7 +551,7 @@ Figure&nbsp;10.6: Time Series Plot of Ghana Annual Total Cereal Yield with Addit
 </div>
 <p>The plot above tells a detailed story about the Cereal Yield in Ghana from 1960 to 2024. Here we explicitly combine the time series data (<code>gh_key</code> ) with two very interesting <strong>engineered features</strong> – a <strong>threshold flag</strong> (red and green points) and a <strong>policy intervention marker</strong> (dashed vertical line) with a smoothed trend line (blue curved line). we use the <code>ggplot2</code> package to build this detailed visualisation layer by layer.</p>
 <p>We start the whole process by filtering out the data to only include <code>cereal yield _kg per hectare</code> just like we did for <a href="#fig-gh-cereal" class="quarto-xref">Figure&nbsp;<span>10.4</span></a> we then initialise our plot, mapping the <code>date</code> and <code>value</code> columns to the x and y-axis respectively. <code>geom_line(...)</code> draws the the raw time series data. Inside the <code>geom_point()</code> function we create a threshold flag (High Yield) where we add points to the time series line and the colour is determined by the logical expression <code>value &gt;= 1000</code>. If the yield is ≥ 1000, the colour is mapped to <code>TRUE</code> and if the yield is ˂ 1000, the colour is mapped to <code>FALSE.</code></p>
-<p>We use <code>scale_colour_manual(...)</code> to explicitly assign <code>TRUE</code> and <code>FALSE</code> logical values to specific colours and label names where <code>TRUE</code> (High Yield) is mapped to <strong>dark green</strong> and <code>FALSE</code> (Lowv Yield) is mapped to <strong>red</strong>. <code>name = "High Yield"</code> sets the title of the legend to “High Yield”. The yield value filtered from the data contains some data so our logical expression will utomatically return <code>NA</code>’s together with the logical flag of <code>TRUE</code> and <code>FALSE</code>. By default the <code>NA</code>’s a labelled as part of the legend so we need to explicitly omit them with <code>na.translate = FALSE</code> and then map its colour to <code>NULL</code>.</p>
+<p>We use <code>scale_colour_manual(...)</code> to explicitly assign <code>TRUE</code> and <code>FALSE</code> logical values to specific colours and label names where <code>TRUE</code> (High Yield) is mapped to <strong>dark green</strong> and <code>FALSE</code> (Low Yield) is mapped to <strong>red</strong>. <code>name = "High Yield"</code> sets the title of the legend to “High Yield”. The yield value filtered from the data contains some data so our logical expression will automatically return <code>NA</code>’s together with the logical flag of <code>TRUE</code> and <code>FALSE</code>. By default the <code>NA</code>’s a labelled as part of the legend so we need to explicitly omit them with <code>na.translate = FALSE</code> and then map its colour to <code>NULL</code>.</p>
 <p>The next feature that enhances the plots visual appeal is a vertical line that marks the point of policy change, a crucial contextual feature. <code>geom_vline()</code> helps us to achieve this feat. It draws a vertical line fixed at a particular point on the x-axis. This fixed x-intercept is set at the exact date of the intervention corresponding to the adoption of Ghana’s Economic Recovery Program (ERP) using <code>xintercept = ymd("1983-04-20")</code>.</p>
 <p>The final feature is a smoothed trend line which is drawn using the <strong>LOESS</strong> (Locally estimated Scatter-plot Smoothing) method with the help of <code>geom_smooth()</code>. This method is an excellent tool for creating flexible non-linear trend lines. <code>se = FALSE</code> suppresses the standard error band around the smooth line, keeping the plot clean. <code>theme(...)</code> is used to customise all aspects of the plot but for this we only use it to centre the <strong>title</strong> and <strong>subtitle</strong>.</p>
 </section></section><section id="multiple-time-series-plots-for-comparison" class="level2" data-number="10.2"><h2 data-number="10.2" class="anchored" data-anchor-id="multiple-time-series-plots-for-comparison">
@@ -560,7 +618,7 @@ Figure&nbsp;10.9: Faceted Time Series Plot of All Keys within the <code>gh_key</
 <p>Faceted plots are the standard, most effective way to visualise multiple disparate time series data streams.</p>
 </section></section><section id="visualising-monthly-data" class="level2" data-number="10.3"><h2 data-number="10.3" class="anchored" data-anchor-id="visualising-monthly-data">
 <span class="header-section-number">10.3</span> Visualising Monthly Data</h2>
-<p>So far we have only seen the series plot of yearly data from the <code>gh_ts</code> data set. While the yearly visuals is a good way of identifying long term trends it mostly lacks seasonality. On the other hand a monthly dataset has monthly frequency, which opens up possibilties for detecting cyclical <strong>seasonal patterns</strong></p>
+<p>So far we have only seen the series plot of yearly data from the <code>gh_ts</code> data set. While the yearly visuals is a good way of identifying long term trends it mostly lacks seasonality. On the other hand a monthly dataset has monthly frequency, which opens up possibilities for detecting cyclical <strong>seasonal patterns</strong></p>
 <section id="seasonal-patterns-and-trends" class="level3" data-number="10.3.1"><h3 data-number="10.3.1" class="anchored" data-anchor-id="seasonal-patterns-and-trends">
 <span class="header-section-number">10.3.1</span> Seasonal Patterns and Trends</h3>
 <p>To demonstrate seasonal patterns which is mostly common in monthly datasets (repeating every 12 months) we will use the <code>sales_ts</code> tsibble.</p>
@@ -624,7 +682,7 @@ Figure&nbsp;10.12: A Time Series Seasonal Sub-series Plot of Monthly Sales for 5
 </div>
 </div>
 <p>In terms of trend, there is no clear strong long term trend (upward or downward) across the 5-year period. for the monthly series plot in <a href="#fig-month-plot-1" class="quarto-xref">Figure&nbsp;<span>10.10</span></a> and <a href="#fig-month-plot-2" class="quarto-xref">Figure&nbsp;<span>10.11</span></a>. The overall level of sales appears stationary fluctuating between GH₵10,000 and GH₵50,000. The seasonal plot however shows some declining trend in the 2016 season (olive green line) and a positive trend in the 2019 season (pink line).</p>
-<p>The Sold items plot mirrors the Sales plot, showing the same seasonal pattern with minimal long-term trend. These plots confirm that any forecastung model for this data must account for the seasonal component.</p>
+<p>The Sold items plot mirrors the Sales plot, showing the same seasonal pattern with minimal long-term trend. These plots confirm that any forecasting model for this data must account for the seasonal component.</p>
 <p>In the next chapter we will delve into a more detailed visualisation of seasonal patterns ans trends.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1069,8 +1127,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./exploring-patterns.html" class="pagination-link" aria-label="Exploring Patterns with `feasts`">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./exploring-patterns.html" class="pagination-link" aria-label="Exploring Patterns with `feasts` and `fabletools`">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -16,7 +16,6 @@ gh_ts <- read_csv('data/gh_ts.csv', show_col_types = FALSE) |>
   janitor::clean_names() |> 
   as_tsibble(index = year, key = indicator_name)
 
-
 sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |> 
   janitor::clean_names(case = "none") |> 
   mutate(Month = yearmonth(Month)) |> 
@@ -123,7 +122,7 @@ We can clearly see the **dominant** time series characteristic of these plots wh
 
 The plot for annual infant mortality has a **continuous negative trend**, indicating how infant mortality has fallen dramatically, dropping from over 120 per 1000 births in 1960 to under 30 in 2024. This reinforces the conclusion of improving health and sanitation from the life expectancy plot. The yearly cereal yield over the 64-year period also shows a generally **positive long-term trend,** but with significant fluctuations (spikes and dips) compared to the other plots. A pronounced upward acceleration is visible after the mid 1980s and especially after 2000. The sharp rise after 1980 likely reflects the intervention of the IMF (international monetary fund) and adoption of the Economic Recovery Program (ERP) in 1983 which significantly boosted the countries economy and reduced poverty levels.
 
-### Introducing `autoplot()` 
+### Introducing `autoplot()`
 
 Whiles ggplot gives you control, `autoplot()` from the feasts package provides intelligent defaults specifically designed for time series data. We can plot the same cereal yield time series in @fig-gh-cereal with the `autoplt()` function using the code below
 
@@ -186,7 +185,7 @@ The plot above tells a detailed story about the Cereal Yield in Ghana from 1960 
 
 We start the whole process by filtering out the data to only include `cereal yield _kg per hectare` just like we did for @fig-gh-cereal we then initialise our plot, mapping the `date` and `value` columns to the x and y-axis respectively. `geom_line(...)` draws the the raw time series data. Inside the `geom_point()` function we create a threshold flag (High Yield) where we add points to the time series line and the colour is determined by the logical expression `value >= 1000`. If the yield is ≥ 1000, the colour is mapped to `TRUE` and if the yield is ˂ 1000, the colour is mapped to `FALSE.`
 
-We use `scale_colour_manual(...)` to explicitly assign `TRUE` and `FALSE` logical values to specific colours and label names where `TRUE` (High Yield) is mapped to **dark green** and `FALSE` (Lowv Yield) is mapped to **red**. `name = "High Yield"` sets the title of the legend to "High Yield". The yield value filtered from the data contains some data so our logical expression will utomatically return `NA`'s together with the logical flag of `TRUE` and `FALSE`. By default the `NA`'s a labelled as part of the legend so we need to explicitly omit them with `na.translate = FALSE` and then map its colour to `NULL`.
+We use `scale_colour_manual(...)` to explicitly assign `TRUE` and `FALSE` logical values to specific colours and label names where `TRUE` (High Yield) is mapped to **dark green** and `FALSE` (Low Yield) is mapped to **red**. `name = "High Yield"` sets the title of the legend to "High Yield". The yield value filtered from the data contains some data so our logical expression will automatically return `NA`'s together with the logical flag of `TRUE` and `FALSE`. By default the `NA`'s a labelled as part of the legend so we need to explicitly omit them with `na.translate = FALSE` and then map its colour to `NULL`.
 
 The next feature that enhances the plots visual appeal is a vertical line that marks the point of policy change, a crucial contextual feature. `geom_vline()` helps us to achieve this feat. It draws a vertical line fixed at a particular point on the x-axis. This fixed x-intercept is set at the exact date of the intervention corresponding to the adoption of Ghana's Economic Recovery Program (ERP) using `xintercept = ymd("1983-04-20")`.
 
@@ -241,7 +240,7 @@ Faceted plots are the standard, most effective way to visualise multiple dispara
 
 ## Visualising Monthly Data
 
-So far we have only seen the series plot of yearly data from the `gh_ts` data set. While the yearly visuals is a good way of identifying long term trends it mostly lacks seasonality. On the other hand a monthly dataset has monthly frequency, which opens up possibilties for detecting cyclical **seasonal patterns**
+So far we have only seen the series plot of yearly data from the `gh_ts` data set. While the yearly visuals is a good way of identifying long term trends it mostly lacks seasonality. On the other hand a monthly dataset has monthly frequency, which opens up possibilities for detecting cyclical **seasonal patterns**
 
 ### Seasonal Patterns and Trends
 
@@ -289,7 +288,7 @@ sales_ts |>
 
 In terms of trend, there is no clear strong long term trend (upward or downward) across the 5-year period. for the monthly series plot in @fig-month-plot-1 and @fig-month-plot-2. The overall level of sales appears stationary fluctuating between GH₵10,000 and GH₵50,000. The seasonal plot however shows some declining trend in the 2016 season (olive green line) and a positive trend in the 2019 season (pink line).
 
-The Sold items plot mirrors the Sales plot, showing the same seasonal pattern with minimal long-term trend. These plots confirm that any forecastung model for this data must account for the seasonal component.
+The Sold items plot mirrors the Sales plot, showing the same seasonal pattern with minimal long-term trend. These plots confirm that any forecasting model for this data must account for the seasonal component.
 
 In the next chapter we will delve into a more detailed visualisation of seasonal patterns ans trends.
 
@@ -297,12 +296,12 @@ In the next chapter we will delve into a more detailed visualisation of seasonal
 The `gg_season()` function is part of the `feasts` package but has been **deprecated** and moved to the new `ggtime` package which was basically designed for visualising time series patterns. It contains functions for exploring time series patterns like trends, seasonality, cycles and holidays
 :::
 
-## Summary and Next Steps
+## Summary 
 
 So far you have mastered how to visualise our time series data using basic line plots with `ggplot2` and `autoplot()`. You have seen how `ggplot2` grants **absolute control** over every detail of your time series visualisations and how `autoplot()` delivers smart **time series-specific** defaults which drastically accelerates initial data exploration.
 
 You can now make basic time series plots that reveal long term trends and seasonal cycles and also visualise multiple series simultaneously for comparative analysis.
 
-In the next section, we are going to dive deeper into the `feasts` package to explore advanced time series decomposition, autocorrelation analysis and statistical pattern detection. The visual foundation we have built here will help us interpret those more advanced analysis.
+In the next chapter, we are going to dive deeper into the `feasts` package to explore advanced time series decomposition, autocorrelation analysis and statistical pattern detection. The visual foundation we have built here will help us interpret those more advanced analysis.
 
 Remember that visualisation is both an **art** and a **science**. The best plots are those that not only look good but also communicate clear, accurate insights about your time series data. Practice creating different types of visualisations and always consider what story your data is trying to tell!

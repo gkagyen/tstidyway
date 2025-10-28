@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.6.42">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>10&nbsp; Exploring Patterns with feasts – Timeseries Analysis - the Tidyverse Way</title>
+<title>10&nbsp; Exploring Patterns with feasts and fabletools – Timeseries Analysis - the Tidyverse Way</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -131,7 +131,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./exploratory-analysis.html">Exploratory Time Series Analysis</a></li><li class="breadcrumb-item"><a href="./exploring-patterns.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./exploratory-analysis.html">Exploratory Time Series Analysis</a></li><li class="breadcrumb-item"><a href="./exploring-patterns.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -236,7 +236,7 @@ window.Quarto = {
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>Lubridate</code> for Date Manipulation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>lubridate</code> for Date Manipulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -265,7 +265,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./exploring-patterns.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></span></a>
   </div>
 </li>
       </ul>
@@ -282,19 +282,48 @@ window.Quarto = {
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./stabilise-variance.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Transformations for Variance Stabilisation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./check-stationary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Checking for Stationarity</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./split-data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Splitting Temporal Data for Modelling</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./forecast.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Forecasting with the fable Framework</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./simple-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Simple Forecasting Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Advanced Forecasting Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./forecast-evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Model Evaluation and Forecasting</span></span></a>
   </div>
 </li>
       </ul>
@@ -313,12 +342,34 @@ window.Quarto = {
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#decomposing-a-time-series-with-stl" id="toc-decomposing-a-time-series-with-stl" class="nav-link active" data-scroll-target="#decomposing-a-time-series-with-stl"><span class="header-section-number">10.1</span> Decomposing a Time Series with <code>STL()</code></a></li>
+<li>
+<a href="#decomposing-a-time-series-with-stl" id="toc-decomposing-a-time-series-with-stl" class="nav-link active" data-scroll-target="#decomposing-a-time-series-with-stl"><span class="header-section-number">10.1</span> Decomposing a Time Series with <code>STL()</code></a>
+  <ul class="collapse">
+<li><a href="#basic-and-advanced-decomposition-with-special-arguments" id="toc-basic-and-advanced-decomposition-with-special-arguments" class="nav-link" data-scroll-target="#basic-and-advanced-decomposition-with-special-arguments"><span class="header-section-number">10.1.1</span> Basic and Advanced Decomposition with Special Arguments</a></li>
+  <li><a href="#extracting-and-viewing-components" id="toc-extracting-and-viewing-components" class="nav-link" data-scroll-target="#extracting-and-viewing-components"><span class="header-section-number">10.1.2</span> Extracting and Viewing Components</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#analysing-autocorrelation-patterns" id="toc-analysing-autocorrelation-patterns" class="nav-link" data-scroll-target="#analysing-autocorrelation-patterns"><span class="header-section-number">10.2</span> Analysing Autocorrelation Patterns</a>
+  <ul class="collapse">
+<li><a href="#autocorrelation-function-acf" id="toc-autocorrelation-function-acf" class="nav-link" data-scroll-target="#autocorrelation-function-acf"><span class="header-section-number">10.2.1</span> Autocorrelation Function (ACF)</a></li>
+  <li><a href="#partial-autocorrelation-function-pacf" id="toc-partial-autocorrelation-function-pacf" class="nav-link" data-scroll-target="#partial-autocorrelation-function-pacf"><span class="header-section-number">10.2.2</span> Partial Autocorrelation Function (PACF)</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#feature-based-explorations" id="toc-feature-based-explorations" class="nav-link" data-scroll-target="#feature-based-explorations"><span class="header-section-number">10.3</span> Feature Based Explorations</a>
+  <ul class="collapse">
+<li><a href="#identifying-seasonal-patterns-and-strength" id="toc-identifying-seasonal-patterns-and-strength" class="nav-link" data-scroll-target="#identifying-seasonal-patterns-and-strength"><span class="header-section-number">10.3.1</span> Identifying Seasonal Patterns and Strength</a></li>
+  <li><a href="#comprehensive-feature-analysis" id="toc-comprehensive-feature-analysis" class="nav-link" data-scroll-target="#comprehensive-feature-analysis"><span class="header-section-number">10.3.2</span> Comprehensive Feature Analysis</a></li>
+  </ul>
+</li>
+  <li><a href="#comprehensive-diagnostic-plots-for-model-selection" id="toc-comprehensive-diagnostic-plots-for-model-selection" class="nav-link" data-scroll-target="#comprehensive-diagnostic-plots-for-model-selection"><span class="header-section-number">10.4</span> Comprehensive Diagnostic Plots for Model Selection</a></li>
+  <li><a href="#summary-and-next-steps" id="toc-summary-and-next-steps" class="nav-link" data-scroll-target="#summary-and-next-steps"><span class="header-section-number">10.5</span> Summary and Next Steps</a></li>
   </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./exploratory-analysis.html">Exploratory Time Series Analysis</a></li><li class="breadcrumb-item"><a href="./exploring-patterns.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></a></li></ol></nav><div class="quarto-title">
-<h1 class="title"><span id="sec-exploring-patterns-with-feasts" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code></span></span></h1>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./exploratory-analysis.html">Exploratory Time Series Analysis</a></li><li class="breadcrumb-item"><a href="./exploring-patterns.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-exploring-patterns-with-feasts-and-fabletools" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exploring Patterns with <code>feasts</code> and <code>fabletools</code></span></span></h1>
 </div>
 
 
@@ -332,29 +383,287 @@ window.Quarto = {
   
 
 
-</header><p>Visual inspection with <code>ggplot2</code> and <code>autoplot()</code> gives us an intuitive feel for our time series. We might suspect a trend, see hints of seasonality, and notice unusual observations. But how can we move from intuition to a more formal, statistical understanding of these components? This is where the <code>feasts</code> package comes in.</p>
-<p>The package <code>feasts</code>, which stands for <strong>F</strong>eature <strong>E</strong>xtraction <strong>A</strong>nd <strong>S</strong>tatistics for <strong>T</strong>ime <strong>S</strong>eries, is a core part of the tidyverts framework which we have discussed earlier (<a href="intro.html" class="quarto-xref"><span>Chapter 1</span></a>). Its purpose is to provide a toolkit for analysing the <em>features</em> of a time series data (tsibble). Think of it as a Doctor’s diagnostic kit: It does not treat the patients (that is the job of forecasting models), but it runs the tests needed to understand what is going on.</p>
+</header><p>Visual inspection with <code>ggplot2</code> and <code>autoplot()</code> gives us an intuitive feel for our time series. We might suspect a trend, see hints of seasonality, and notice unusual observations. But how can we move from intuition to a more formal, statistical understanding of these components? This is where the <code>feasts</code> and <code>fabletools</code> package comes in.</p>
+<p>The package <code>feasts</code>, which stands for <strong>F</strong>eature <strong>E</strong>xtraction <strong>A</strong>nd <strong>S</strong>tatistics for <strong>T</strong>ime <strong>S</strong>eries, is a core part of the tidyverts framework which we have mentioned earlier (<a href="intro.html" class="quarto-xref"><span>Chapter 1</span></a>). Its purpose is to provide a toolkit for analysing the <em>features</em> of a time series data (tsibble), while <code>fabletools</code> supplies the underlying infrastructure that makes this analysis seamless and efficient. Think of it as a Doctor’s diagnostic kit: It does not treat the patients (that is the job of forecasting models in <a href="simple-models.html" class="quarto-xref"><span>Chapter 14</span></a> and <a href="advanced-models.html" class="quarto-xref"><span>Chapter 15</span></a>), but it runs the tests needed to understand what is going on.</p>
 <section id="decomposing-a-time-series-with-stl" class="level2" data-number="10.1"><h2 data-number="10.1" class="anchored" data-anchor-id="decomposing-a-time-series-with-stl">
 <span class="header-section-number">10.1</span> Decomposing a Time Series with <code>STL()</code>
 </h2>
-<p>A fundamental concept in time series analysis is decomposition. The idea is to split, <span class="math inline">\(y_{t}\)</span>, into three additive parts:</p>
+<p>A fundamental concept in time series analysis is decomposition. The idea is to split, <span class="math inline">\(y_{t}\)</span>, into three additive parts (where the time series is represented as the sum of its parts):</p>
 <ul>
-<li><p>Trend (<span class="math inline">\(T_{t}\)</span>): The long-term progression (the increasing or decreasing direction over time)</p></li>
-<li><p>Seasonal (<span class="math inline">\(S_{t}\)</span>): Regular, repeating patterns over a fixed period (example, yearly or quarterly).</p></li>
-<li><p>Remainder <span class="math inline">\(R_{t}\)</span> The “leftover” part after trend and seasonality are removed; this is often considered the random noisy component.</p></li>
+<li>
+<strong>Trend (</strong><span class="math inline">\(T_{t}\)</span><strong>):</strong> The long-term progression (the increasing or decreasing direction over time)</li>
+<li>
+<strong>Seasonal (</strong><span class="math inline">\(S_{t}\)</span><strong>):</strong> Regular, repeating patterns over a fixed period (example, yearly or quarterly).</li>
+<li>
+<strong>Remainder (</strong><span class="math inline">\(R_{t}\)</span><strong>):</strong> The “leftover” part after trend and seasonality are removed; this is often considered the random noisy component.</li>
 </ul>
-<p>The most robust method for this <strong>STL,</strong> which stands for <strong>S</strong>easonal and <strong>T</strong>rend decomposition using <strong>L</strong>oess. The <code>feasts</code> package provides the <code>STL()</code> function to perform this decomposition directly on a <code>tsibble</code> object. Let us decompose the <code>Sales</code> series in the <code>sales_ts</code> data.</p>
+<p><span class="math display">\[
+y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
+\]</span></p>
+<section id="basic-and-advanced-decomposition-with-special-arguments" class="level3" data-number="10.1.1"><h3 data-number="10.1.1" class="anchored" data-anchor-id="basic-and-advanced-decomposition-with-special-arguments">
+<span class="header-section-number">10.1.1</span> Basic and Advanced Decomposition with Special Arguments</h3>
+<p>The most robust method for this <strong>STL,</strong> which stands for <strong>S</strong>easonal and <strong>T</strong>rend decomposition using <strong>L</strong>oess. Loess is a method for estimating non-linear relationships, and its use makes STL method versatile and robust to outliers as it handles a wide range of seasonal and trend shapes. The <code>feasts</code> package provides the <code>STL()</code> function to perform this decomposition directly on a <code>tsibble</code> object. Let us decompose the <code>Sales</code> series in the <code>sales_ts</code> data.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Decompose the Sales series using STL</span></span>
 <span><span class="va">dcmp</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">model</span><span class="op">(</span><span class="fu">STL</span><span class="op">(</span><span class="va">Sales</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>model()</code> function from the <code>fabletools</code> package is used to fit a “model” (more information in )to our data</p>
-<p>The <code>dcmp</code> object now contains the fitted decomposition model. To see the results, we use the <code>components()</code> function</p>
+<p>The simplest implementation use the default <code>STL()</code> function, which automatically selects suitable window sizes for the trend and seasonal components as illustrated in the above code. The <code>model()</code> function from the <code>fabletools</code> package is used to fit a “model” (STL Decomposition) to the tsibble <code>sales_ts</code>. The variable to decomposed is specified inside the <code>STL</code> function.</p>
+<p>For greater control you can include the variable of interest as a formula where you manually define the smoothing window for the trend and the seasonal components using the special arguments <code>trend</code> and <code>season</code>.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># extract the components from the decomposition model</span></span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># decompose Sales series using STL with special arguments</span></span>
+<span><span class="va">dcmp_sp</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">model</span><span class="op">(</span>stl <span class="op">=</span> <span class="fu">STL</span><span class="op">(</span><span class="va">Sales</span> <span class="op">~</span> <span class="fu">trend</span><span class="op">(</span>window <span class="op">=</span> <span class="fl">7</span><span class="op">)</span> <span class="op">+</span> <span class="fu">season</span><span class="op">(</span>window <span class="op">=</span> <span class="st">"periodic"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>trend(window = 7)</code> sets the window size for the trend smoothing, specifying that a trend should be estimated using a window of <span class="math inline">\(2\times7+1=15\)</span> observations. This comes from how the <strong>Loess</strong> (Locally Estimated Scatterplot Smoothing) method is typically implemented within the STL algorithm to calculate the <strong>trend component</strong>. A larger window results in a smoother trend.</p>
+</section><section id="extracting-and-viewing-components" class="level3" data-number="10.1.2"><h3 data-number="10.1.2" class="anchored" data-anchor-id="extracting-and-viewing-components">
+<span class="header-section-number">10.1.2</span> Extracting and Viewing Components</h3>
+<p>The <code>dcmp</code> object we created now contains the fitted decomposition model. To see the results, we use the <code>components()</code> function.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># extract the components from the decomposition model</span></span>
 <span><span class="fu">components</span><span class="op">(</span><span class="va">dcmp</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>This returns a <code>fabletools</code> object dataset “<code>dable</code>” (decomposition table) which is a tsibble-like data structure for representing decompositions. It contains the original time index with the Sales series together with four new columns;</p>
+<ul>
+<li>
+<code>trend</code>: The estimated trend component.</li>
+<li>
+<code>season_year</code>: The estimated seasonal component.</li>
+<li>
+<code>remainder</code>: The residual or error component (noise).</li>
+<li>
+<code>season_adjust</code>: The final seasonally adjusted series (Original Series - Seasonal Component)</li>
+</ul>
+<p>This allows for direct analysis and visualisation of how much of the variations in the <code>Sales</code> series is attributed to long-term movements, seasonal factors, and irregular noise. The <code>autoplot()</code> function when applied on this <code>dable</code> output will automatically generate a multi-panel plot displaying the decomposition of the <code>Sales</code> series into its components as calculated by the STL method.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">components</span><span class="op">(</span><span class="va">dcmp</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">autoplot</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="exploring-patterns_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The plot features for main panels; the original Sales time series (<span class="math inline">\(y_{t}\)</span>), The long term direction of the trend, the estimated periodic pattern and the noise or irregular fluctuations.</p>
+<p>From the STL decomposed plot we see that the original series is highly affected by both seasonality and a trend. The smooth long-term trend shows the overall level of sales over the years. Its starts around 35000 and dips noticeably around early 2018 and then rises back up towards 40,000 by late 2019</p>
+<p>The seasonal panel shows a strong, consistent repeating pattern. The vertical scale (from approximately -5000 to 5000) indicates the magnitude of the seasonal effect relative to the trend.</p>
+<p>The last panel shows the irregular, left over variations (from approximately -10,000 to 10,000). The spikes are quite large relative to the seasonal components. This implies a high amount of <strong>irregular unexplained variability</strong> in the data. The large spikes indicate months where sales were unusually high or low, which could be attributed to a variety of factors.</p>
+</section></section><section id="analysing-autocorrelation-patterns" class="level2" data-number="10.2"><h2 data-number="10.2" class="anchored" data-anchor-id="analysing-autocorrelation-patterns">
+<span class="header-section-number">10.2</span> Analysing Autocorrelation Patterns</h2>
+<p>Another crucial property of time series is <strong>autocorrelation</strong>. Simply put, autocorrelation measures the relationship between a value in a series and its past values (called “lags”). For example, is today;s sales figure correlated with the sales figure from the same quarter last year? This is a key concept for building effective forecasting models.</p>
+<p>The <code>feasts</code> package provides two very useful functions, <code>ACF</code> (Autocorrelation Function) and <code>PACF()</code> (Partial Autocorrelation Function) to do this. Below, we see how to check autocorrelation for our <code>Sales</code> series.</p>
+<section id="autocorrelation-function-acf" class="level3" data-number="10.2.1"><h3 data-number="10.2.1" class="anchored" data-anchor-id="autocorrelation-function-acf">
+<span class="header-section-number">10.2.1</span> Autocorrelation Function (ACF)</h3>
+<p>The <strong>ACF</strong> measures the correlation between a time series <span class="math inline">\(y_{t}\)</span> and its past values <span class="math inline">\(y_{t-k}\)</span> (where <span class="math inline">\(k\)</span> is the lag) at all observed lags, without isolating the effect of intermediate lags. High autocorrelation at a seasonal lag (e.g.&nbsp;lag 12 for monthly data) is a strong indicator of seasonality. We use the <code>ACF()</code> function to calculate these correlations for the <code>Sales</code> series</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute the Autocorrelation for Sales</span></span>
+<span><span class="va">sales_acf</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">ACF</span><span class="op">(</span><span class="va">Sales</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sales_acf</span></span>
+<span><span class="co">## # A tsibble: 17 x 2 [1M]</span></span>
+<span><span class="co">##        lag      acf</span></span>
+<span><span class="co">##   &lt;cf_lag&gt;    &lt;dbl&gt;</span></span>
+<span><span class="co">## 1       1M -0.0897 </span></span>
+<span><span class="co">## 2       2M  0.0896 </span></span>
+<span><span class="co">## 3       3M -0.271  </span></span>
+<span><span class="co">## 4       4M -0.00704</span></span>
+<span><span class="co">## 5       5M -0.191  </span></span>
+<span><span class="co">## # ℹ 12 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can also specify the maximum number of lags to use for computing the correlations with the <code>lag_max</code> argument. By default it calculates this number using the formula “<span class="math inline">\(10\times log_{10}(N/m)\)</span>”.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute autocorrelation with specified lags</span></span>
+<span><span class="va">sales_acf</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> <span class="fu">ACF</span><span class="op">(</span><span class="va">Sales</span>, lag_max <span class="op">=</span> <span class="fl">24</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The resulting <code>sales_acf</code> object is a tsibble that contains the correlation coefficient at the different lags. A significant spike at a particular lag indicates a strong relationship.</p>
+<p>We can visualise the output for easier interpretation using <code>autoplot()</code>. The plot of the ACF displays a series of vertical lines known as <strong>correlogram</strong>, where the height of each line represents the correlation at that specific lag.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">autoplot</span><span class="op">(</span><span class="va">sales_acf</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-acf" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="exploring-patterns_files/figure-html/fig-acf-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.1: Correlogram of Sales series Autocorrelations
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>The dashed blue lines in the plot represents the significance bounds. Any bar extending outside these bounds is considered a statistically significant correlation. The spikes do not show any slow, steady decline in the values from positive to negative. This suggests there is no strong trend.</p>
+<p>There is no single large significant spike at regular intervals (like at lag 12M or 24M for monthly data). This indicates a lack of strong consistent annual seasonality. However there is a pattern of significant spikes in the first few lags, followed by a series of alternating pattern of negative and positive correlations in the short term. This implies a short term cyclical behaviour with a period of about 6 months.</p>
+<p>This is what this ACF plot might mean in a business context:</p>
+<ul>
+<li>A customer makes a purchase (<strong>Lag0</strong>).</li>
+<li>The negative correlation at <strong>Lag 3</strong> suggests that three months after a purchase, sales tend to be opposite to what they were. If sales were high in a given month, they are likely to be low three months later and vice versa.</li>
+<li>The positive correlation at <strong>Lag 6</strong> suggests that whatever the sales pattern was at a given time, it tends to <strong>repeat itself every 6 months</strong>.</li>
+</ul>
+<p>The other spikes later on at lag <strong>14, 15 and 18</strong> are likely harmonics of the primary 6-month cycle. Once a cyclical pattern is in the data, it can create correlations at multiple or fractions of its main period. They are part of the same underlying effect and not separate seasonal effects</p>
+</section><section id="partial-autocorrelation-function-pacf" class="level3" data-number="10.2.2"><h3 data-number="10.2.2" class="anchored" data-anchor-id="partial-autocorrelation-function-pacf">
+<span class="header-section-number">10.2.2</span> Partial Autocorrelation Function (PACF)</h3>
+<p>The <strong>PACF</strong> calculates the correlation between <span class="math inline">\(y_{t}\)</span> and <span class="math inline">\(y_{t-k}\)</span> <strong>after removing the influence of the</strong> <strong>intermediate lags</strong> <span class="math inline">\(y_{t-1}\)</span>, <span class="math inline">\(y_{t-2}\)</span>, <span class="math inline">\(\dots\)</span>, <span class="math inline">\(y_{t-(k-1)}\)</span>. This helps to precisely identify the direct relationship between the current observation and a past observation, filtering out the “flow-through” correlation effects. Think of it this way: The sales at lag 3 (3 months ago) might be correlated with sales today because;</p>
+<ul>
+<li>Sales today are correlated with sales at lag 1 (ACF at lag 1)</li>
+<li>Sales at lag 1 are correlated with sales at lag2.</li>
+<li>Sales at lag 2 are correlated with sales at lag 3.</li>
+</ul>
+<p>The PACF cuts through this chain and asks: “If I already know the values at lags 1 and 2, does lag 3 still provide new, direct information today?</p>
+<p>The <code>PACF()</code> function is used to calculate the partial autocorrelations.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute the Partial Autocorrelation for Sales</span></span>
+<span><span class="va">sales_pacf</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">PACF</span><span class="op">(</span><span class="va">Sales</span>, lag_max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">sales_pacf</span></span>
+<span><span class="co">## # A tsibble: 20 x 2 [1M]</span></span>
+<span><span class="co">##        lag    pacf</span></span>
+<span><span class="co">##   &lt;cf_lag&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">## 1       1M -0.0897</span></span>
+<span><span class="co">## 2       2M  0.0822</span></span>
+<span><span class="co">## 3       3M -0.260 </span></span>
+<span><span class="co">## 4       4M -0.0571</span></span>
+<span><span class="co">## 5       5M -0.170 </span></span>
+<span><span class="co">## # ℹ 15 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>similar to the ACF, the <code>sales_pacf</code> object also contains the partial autocorrelation values for each lag. We can again visualise this output using <code>autoplot()</code>. The PACF plot is primarily used to identify the <strong><em>order</em></strong> of an <strong><em>autoregressive</em></strong> <em>(<strong>AR</strong>)</em> component in a model</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sales_pacf</span> <span class="op">|&gt;</span> <span class="fu">autoplot</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-pacf" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-pacf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="exploring-patterns_files/figure-html/fig-pacf-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pacf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.2: Correlogram of Sales series Partial Autocorrelations
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>The most important aspect of our PACF plot is the behaviour in the first few lags. We notice that the is a significant negative spike at <strong>lag 3</strong>, with the subsequent lags generally becoming smaller and non significant, with no clear pattern. This is a classic signature of a PACF plot where the beginning few vertical bars shows a significant spike and the cuts off.</p>
+<p>The PACF and ACF plots are considered diagnostic plots for identifying an ARIMA model’s specification (more information in <a href="advanced-models.html" class="quarto-xref"><span>Chapter 15</span></a>).</p>
+</section></section><section id="feature-based-explorations" class="level2" data-number="10.3"><h2 data-number="10.3" class="anchored" data-anchor-id="feature-based-explorations">
+<span class="header-section-number">10.3</span> Feature Based Explorations</h2>
+<p>Another powerful aspect of the <code>fabletools</code> is its ability to compute a wide array of summary statistics or features from a time series. This is incredibly useful when you have many series (like in the <code>gh_ts</code> data with several indicators) and you want to quickly understand their characteristics or group similar series together.</p>
+<section id="identifying-seasonal-patterns-and-strength" class="level3" data-number="10.3.1"><h3 data-number="10.3.1" class="anchored" data-anchor-id="identifying-seasonal-patterns-and-strength">
+<span class="header-section-number">10.3.1</span> Identifying Seasonal Patterns and Strength</h3>
+<p>The most common feature to compute is the <strong>seasonal strength</strong>, which measures quantitatively how dominant the recurring patterns are compared to the overall trend and random noise. This is typically done using the <strong>STL decomposition</strong>. We demonstrate this with the <code><a href="https://tsibbledata.tidyverts.org/reference/aus_production.html">tsibbledata::aus_production</a></code> tsibble dataset which contains the quarterly production of selected commodities in Australia.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert wide data to long </span></span>
+<span><span class="va">aus_prod_long</span> <span class="op">&lt;-</span> <span class="va">aus_production</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span><span class="va">Quarter</span>, names_to <span class="op">=</span> <span class="st">'Product'</span>, values_to <span class="op">=</span> <span class="st">'Quantity'</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># calculate seasonal strength and other key features</span></span>
+<span><span class="va">aus_prod_features</span> <span class="op">&lt;-</span> <span class="va">aus_prod_long</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">features</span><span class="op">(</span><span class="va">Quantity</span>, features <span class="op">=</span> <span class="va">feat_stl</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display seasonal and trend metrics</span></span>
+<span><span class="va">aus_prod_features</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">Product</span>, <span class="fu">contains</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'seasonal'</span>, <span class="st">'trend'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 5</span></span>
+<span><span class="co">##   Product    seasonal_strength_year seasonal_peak_year seasonal_trough_year</span></span>
+<span><span class="co">##   &lt;chr&gt;                       &lt;dbl&gt;              &lt;dbl&gt;                &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Beer                        0.952                  0                    2</span></span>
+<span><span class="co">## 2 Bricks                      0.859                  3                    1</span></span>
+<span><span class="co">## 3 Cement                      0.834                  3                    1</span></span>
+<span><span class="co">## 4 Electrici…                  0.906                  3                    1</span></span>
+<span><span class="co">## 5 Gas                         0.981                  3                    1</span></span>
+<span><span class="co">## # ℹ 1 more row</span></span>
+<span><span class="co">## # ℹ 1 more variable: trend_strength &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You have to change the data to a long format so that the tsibble has a ‘key’ variable (<code>Product</code>). The structure is essential for the <code>fabletools</code> feature functions. The <code>features()</code> function calculates metrics based on the STL decomposition for each <code>Product</code> series separately. The <code>feat_stl</code> feature set automatically returns several key metrics including:</p>
+<ul>
+<li>
+<strong><code>seasonal_strength_year</code></strong>: Measures the proportion of variance explained by the seasonal components. The values range between 0 and 1 (higher values mean stronger seasonality).</li>
+<li>
+<strong><code>seasonal_peak</code>/<code>seasonal_trough_year</code></strong>: Identifies the periods (Month for monthly data &amp; Quarter for Quarterly data) of highest and lowest seasonal activity</li>
+<li>
+<strong><code>trend_strength</code></strong>: Measures the proportion of variance explained by the trend component (higher values mean stronger trend)</li>
+</ul></section><section id="comprehensive-feature-analysis" class="level3" data-number="10.3.2"><h3 data-number="10.3.2" class="anchored" data-anchor-id="comprehensive-feature-analysis">
+<span class="header-section-number">10.3.2</span> Comprehensive Feature Analysis</h3>
+<p>Beyond standard seasonality, <code>fabletools</code> allows you to calculate a wide array of statistics that characterises every nuance of a time series’ behaviour, including measures of shape, volatility and distribution.</p>
+<p><strong>STL Features for Non-Seasonal Characteristics</strong></p>
+<p>The STL feature set offers metrics beyond simple strength, focusing on the <strong>shape</strong> of the trend and the nature of the remainder (noise).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute stl feature set for non-seasonal (yearly) data </span></span>
+<span><span class="va">stl_features</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">features</span><span class="op">(</span><span class="va">value</span>, features <span class="op">=</span> <span class="fu">feature_set</span><span class="op">(</span>tags <span class="op">=</span> <span class="st">'stl'</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This line of code within the the <code>feature()</code> function; <code>faeture_set(tags = 'stl')</code> instructs <code>fabletools</code> to compute the full set of STL-related features. These features include;</p>
+<ul>
+<li><p><strong><code>trend_strength:</code></strong> Measures how strong the trend component is relative to the remainder (noise). Values close to 1 have strong trend and values close to zero have weak or no trend. Example “<em>Female population”</em> (<span class="math inline">\(0.9999953\)</span>) has and extremely strong trend but”<em>Annual GDP growth rate”</em> (<span class="math inline">\(0.3091004\)</span>) has a weak trend.</p></li>
+<li><p><strong><code>spikiness:</code></strong> Measures the presence of sharp intermittent spikes in the remainder (noise) component. High values = more spiky/volatile. Example <em>“Rural Population”</em> has <strong>extremely high spikiness</strong> (<span class="math inline">\(2.086846\times10^{14}\)</span>), indicating major irregularities.</p></li>
+<li><p><strong><code>linearity:</code></strong> Measures how linear the trend is (vs curved) based on fitting a linear model to the trend component. Positive values suggest trend can be well-approximated by a straight line. Negative values suggest non-linear trends. *“Cereal&nbsp;yield&nbsp;_kg&nbsp;per&nbsp;hectare”* (<span class="math inline">\(3395.64\)</span>) is highly linear.</p></li>
+<li><p><strong><code>curvature:</code></strong> Measures the degree of bending in the trend. It complements linearity -captures how much the trend curves. Higher absolute values means more curved. <em>“Female population percentage”</em> (<span class="math inline">\(-1.741482\)</span>) shows negative curvature (concave down)</p></li>
+<li><p><strong><code>stl_e_acf1:</code></strong> First order autocorrelation of the remainder component (lag1). The values ranges from -1 to 1. Values near 0 means remainders are random (which is good!). High positive or negative values indicates patterns left in residuals that the STL decomposition did not capture.</p></li>
+<li><p><strong><code>stl_e_acf10:</code></strong> Sum of squares of the first 10 autocorrelations of the remainder. Measures the overall autocorrelation structure in residuals. Low values are good and high value indicate significant patterns remain in the residuals.</p></li>
+</ul>
+<p><strong>Custom Feature Calculations with Lambda Expressions</strong></p>
+<p>If a desired feature is not pre-defined, you can compute it using a built in function or a simple lambda expression (a short, anonymous function)</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute any other features using their function or a lambda expression</span></span>
+<span><span class="va">percentile_features</span> <span class="op">&lt;-</span> <span class="va">aus_prod_long</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">features</span><span class="op">(</span><span class="va">Quantity</span>, features <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>features = ~quantile(., na.rm=TRUE)</code> defines a custom function to run on the Quantity values. The <code>~</code> symbol creates the lambda expression and the <code>.</code> refers to the vector of time series values. This is a compact way of calculating the <span class="math inline">\(0^{th}\)</span>, <span class="math inline">\(25^{th}\)</span>, <span class="math inline">\(50^{th}\)</span>, <span class="math inline">\(75^{th}\)</span> and <span class="math inline">\(100^{th}\)</span> percentiles for each <code>Product</code> series, giving insight into its distribution and volatility range.</p>
+<p><strong>Multiple Custom Features (List of Functions)</strong></p>
+<p>You can also calculate several custom features simultaneously by passing a named list of functions to the <code>features</code> argument.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># for multiple custom features create a list of functions </span></span>
+<span><span class="va">cent_tend_features</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">features</span><span class="op">(</span><span class="va">value</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>sd <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span>, median <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span>, mean <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">cent_tend_features</span></span>
+<span><span class="co">## # A tibble: 22 × 4</span></span>
+<span><span class="co">##   indicator_name                            sd     median       mean</span></span>
+<span><span class="co">##   &lt;chr&gt;                                  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Annual GDP growth rate                 4.20        4.40       3.71</span></span>
+<span><span class="co">## 2 Annual population groeth rate          0.290       2.46       2.50</span></span>
+<span><span class="co">## 3 Cereal yield _kg per hectare         476.       1141.      1249.  </span></span>
+<span><span class="co">## 4 Crude death rate_per 1000 people       4.18       11.4       12.6 </span></span>
+<span><span class="co">## 5 Female population                4132889.    8127176    8926929.  </span></span>
+<span><span class="co">## # ℹ 17 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The custom anonymous functions supplied to the <code>features</code> argument in a list, calculates t<strong>hree measures of central tendency and dispersion</strong>. For every indicator in the <code>gh_ts</code> data, the standard deviation (<code>sd</code>), the median, and the mean are calculated. This can help you understand the <strong>average level</strong> of the series and its overall volatility across the entire period.</p>
+</section></section><section id="comprehensive-diagnostic-plots-for-model-selection" class="level2" data-number="10.4"><h2 data-number="10.4" class="anchored" data-anchor-id="comprehensive-diagnostic-plots-for-model-selection">
+<span class="header-section-number">10.4</span> Comprehensive Diagnostic Plots for Model Selection</h2>
+<p>The <code>gg_tsdisplay()</code> function from the <code>feasts</code> package (now often found in the <code>ggtime</code> package) makes it possible to create specialised plots that combine multiple diagnostics to guide model selection. Especially an ARIMA model.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create a comprehensive diagnostic plot for Gross National Expenditure</span></span>
+<span><span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">indicator_name</span> <span class="op">==</span> <span class="st">"Gross national expenditure (% of GDP)"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">gg_tsdisplay</span><span class="op">(</span><span class="va">value</span>, plot_type <span class="op">=</span> <span class="st">"partial"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Comprehensive Diagnostic Plot for GNE (% of GDP)"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Series plot, ACF, and PACF for model selection guidance"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-diag-plot" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-diag-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="exploring-patterns_files/figure-html/fig-diag-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diag-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10.3: An Ensemble of TIme Series Plots Containing the Orignial Series(Top), ACF plot (bottom left) and PACF plot (bottom right)
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Here we filter the <code>gh_ts</code> data to isolate the specific series of interest; the <code>Gross national expenditure (% of GDP)</code> indicator. <code>gg_tsdisplay(value, plot_type = "partial")</code> generates a three panel plot:</p>
+<ul>
+<li>The main panel (top) shows the Series Plot of the <code>Gross national expenditure (% of GDP)</code> values over the time period</li>
+<li>The bottom left panel shows the ACF</li>
+<li>The bottom right panel shows the PACF (specified by <code>plot_type = "partial")</code> )</li>
+</ul>
+<p>The <code>plot_type</code> argument controls what type of plot is displayed in the bottom right panel it can either be a PACF, histogram, lagged scatterplot or spectral density depending on what you specify. The values that can be specified for this argument can be found in its help documentation.</p>
+<p>The series show high <strong>volatility</strong> with <strong>no</strong> <strong>clear</strong> <strong>trend</strong>, the ACF shows a slow decay where the spikes remain significantly positive until <strong>lag 7</strong>, the PACF shows a <strong>sharp cut-off</strong> after <strong>Lag 1</strong>. All these indications serve as diagnostic signs for a forecasting model selection.</p>
+</section><section id="summary-and-next-steps" class="level2" data-number="10.5"><h2 data-number="10.5" class="anchored" data-anchor-id="summary-and-next-steps">
+<span class="header-section-number">10.5</span> Summary and Next Steps</h2>
+<p>In this chapter we moved beyond visual inspection and explored the <code>feasts</code> and <code>fabletools</code> package to perform a rigorous, quantitative diagnosis of our time series. We systematically:</p>
+<ul>
+<li><p>Decomposed the a time series using <code>STL</code> to isolate the trend, seasonal and remainder components.</p></li>
+<li><p>Analysed autocorrelation with <code>ACF</code> and <code>PACF</code> to understand how each value depends on its past.</p></li>
+<li><p>Quantified pattern strength using <code>features()</code> to calculate statistics like <code>seasonal_strength</code> and <code>trend_strenght</code>, confirming our visual observations with hard numbers.</p></li>
+<li><p>Created diagnostic plots using <code>gg_tsdisplay()</code> to get comprehensive multi-panel view of a time series’ behaviour, which is essential for guiding our model selection.</p></li>
+</ul>
+<p>With a deep understanding of patterns in our data, we are now ready to build forecasting models. But before we do, a critical step remains. In the next section, we will cover <strong>“Preparing Data for Forecasting”</strong>.</p>
 
 
 </section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">

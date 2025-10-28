@@ -37,6 +37,8 @@ library(tidyverse)
 library(tsibble)
 library(fable)
 library(feasts)
+library(tsibbledata)
+library(ggtime)
 
 # Set a consistent theme for all ggplot2 plots 
 ggplot2::theme_set(ggplot2::theme_minimal(12))

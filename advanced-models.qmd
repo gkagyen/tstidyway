@@ -1,0 +1,16 @@
+# Advanced Forecasting Models {#sec-advanced-forecasting}
+
+by checking the patterns of the bars and their significance. Generally you can read the plots patterns and suggest a model type as follows:
+
++----------------------------------------------------------------+-------------------------------------------+
+| Pattern                                                        | Suggests Model Type                       |
++================================================================+===========================================+
+| **ACF:** Dies down slowly / geometrically\                     | AR(p) - Autoregressive model of order *p* |
+| **PACF:** Significant spikes for first *p* lags, then cuts off |                                           |
++----------------------------------------------------------------+-------------------------------------------+
+| **ACF:** Significant spikes for first *q* lags, then cuts off\ | MA(q) - Moving Average model of order *q* |
+| **PACF:** Dies down slowly / geometrically                     |                                           |
++----------------------------------------------------------------+-------------------------------------------+
+| **ACF:** Dies down slowly\                                     | ARMA(p,q) or data needs differencing      |
+| **PACF:** Dies down slowly                                     |                                           |
++----------------------------------------------------------------+-------------------------------------------+

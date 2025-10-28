@@ -1,1 +1,3 @@
 # Checking for Stationarity {#sec-checking-stationarity}
+
+Stationarity is one of the most important concepts in time series forecasting. A stationary time series has statistical properties – mean, variance, and covariance – that do not change over time. Think of it as a series that fluctuates around a constant mean with consistent variability and where the relationship between observations depends only on how far apart they are in time, not on when you look at them.
