@@ -1,1 +1,11 @@
 # Simple Forecasting Models {#sec-simple-forecasting}
+
+In the world of forecasting, complexity does not always equal accuracy. Before we dive into sophisticated algorithms with dozens of parameters, we start with simple benchmark models that serve crucial purposes in any forecasting workflow. These elementary models provide:
+
+-   **Performance Baselines:**
+
+-   **Model Diagnostics:**
+
+-   **Computational Efficiency:**
+
+-   **Business Understanding:**
