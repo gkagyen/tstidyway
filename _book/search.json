@@ -739,22 +739,11 @@
     ]
   },
   {
-    "objectID": "advanced-models.html",
-    "href": "advanced-models.html",
-    "title": "15  Advanced Forecasting Models",
-    "section": "",
-    "text": "by checking the patterns of the bars and their significance. Generally you can read the plots patterns and suggest a model type as follows:\n\n\n\n\n\n\n\nPattern\nSuggests Model Type\n\n\n\n\nACF: Dies down slowly / geometrically\nPACF: Significant spikes for first p lags, then cuts off\nAR(p) - Autoregressive model of order p\n\n\nACF: Significant spikes for first q lags, then cuts off\nPACF: Dies down slowly / geometrically\nMA(q) - Moving Average model of order q\n\n\nACF: Dies down slowly\nPACF: Dies down slowly\nARMA(p,q) or data needs differencing",
-    "crumbs": [
-      "Forecasting with the fable Framework",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Advanced Forecasting Models</span>"
-    ]
-  },
-  {
     "objectID": "forecast.html",
     "href": "forecast.html",
     "title": "Forecasting with the fable Framework",
     "section": "",
-    "text": "Why the fable Framework\nAfter everything we have gone through – from preparing our data through to careful exploration, data transformations and rigorous train-test splitting – we now arrive at the most exciting and interesting phase of our time series journey; building forecasting models that can predict the future. This is where all our preparations pay the dividends and where the true power of the tidyverts ecosystem shine through\nThe fable package provides our forecasting toolkit offering a unified framework for time series modelling that seamlessly integrates with the tidyverse philosophy we have embraced throughout this book. What make fabl particularly powerful is its consistent syntax across different model types, its automated model selection capabilities and its native integration with the tsibble data structure we have been carefully building.\nTraditional Time series forecasting in R often involved jumping between different packages with inconsistent interfaces, manual model specification, and cumbersome results extraction. The fable framework revolutionises this by providing:",
+    "text": "Why the fable Framework\nAfter everything we have gone through – from preparing our data through to careful exploration, data transformations and rigorous train-test splitting – we now arrive at the most exciting and interesting phase of our time series journey; building forecasting models that can predict the future. This is where all our preparations pay the dividends and where the true power of the tidyverts ecosystem shine through\nThe fable package provides our forecasting toolkit offering a unified framework for time series modelling that seamlessly integrates with the tidyverse philosophy we have embraced throughout this book. What make fable particularly powerful is its consistent syntax across different model types, its automated model selection capabilities and its native integration with the tsibble data structure we have been carefully building.\nTraditional Time series forecasting in R often involved jumping between different packages with inconsistent interfaces, manual model specification, and cumbersome results extraction. The fable framework revolutionises this by providing:",
     "crumbs": [
       "Forecasting with the fable Framework"
     ]
@@ -787,6 +776,17 @@
     "text": "What Makes This Approach Different\nUnlike the traditional time series forecasting that often feels like a black box, the fable approach gives us complete transparency and control. You will understand not just what your modes are predicting but why they are making those predictions. More importantly, you will be building forecasting workflows that are reproducible, scalable, and maintainable.\nWhether you are forecasting sales for the next quarter, predicting resource needs for the coming year, or anticipating market movements, the skills you will learn in this section will transform you from a passive analyst of past data to an active predictor of future trends.\nReady to peer into the future 🚀? let us begin with the simplest models.",
     "crumbs": [
       "Forecasting with the fable Framework"
+    ]
+  },
+  {
+    "objectID": "advanced-models.html",
+    "href": "advanced-models.html",
+    "title": "15  Advanced Forecasting Models",
+    "section": "",
+    "text": "by checking the patterns of the bars and their significance. Generally you can read the plots patterns and suggest a model type as follows:\n\n\n\n\n\n\n\nPattern\nSuggests Model Type\n\n\n\n\nACF: Dies down slowly / geometrically\nPACF: Significant spikes for first p lags, then cuts off\nAR(p) - Autoregressive model of order p\n\n\nACF: Significant spikes for first q lags, then cuts off\nPACF: Dies down slowly / geometrically\nMA(q) - Moving Average model of order q\n\n\nACF: Dies down slowly\nPACF: Dies down slowly\nARMA(p,q) or data needs differencing",
+    "crumbs": [
+      "Forecasting with the fable Framework",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Advanced Forecasting Models</span>"
     ]
   }
 ]
