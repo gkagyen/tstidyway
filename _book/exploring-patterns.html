@@ -437,7 +437,11 @@ y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
 <p>This allows for direct analysis and visualisation of how much of the variations in the <code>Sales</code> series is attributed to long-term movements, seasonal factors, and irregular noise. The <code>autoplot()</code> function when applied on this <code>dable</code> output will automatically generate a multi-panel plot displaying the decomposition of the <code>Sales</code> series into its components as calculated by the STL method.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">components</span><span class="op">(</span><span class="va">dcmp</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">autoplot</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu">autoplot</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
+<span><span class="co">## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">## ℹ Please use `linewidth` instead.</span></span>
+<span><span class="co">## ℹ The deprecated feature was likely used in the ggtime package.</span></span>
+<span><span class="co">##   Please report the issue to the authors.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="exploring-patterns_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>

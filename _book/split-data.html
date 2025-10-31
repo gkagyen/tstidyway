@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.6.42">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-
 <title>13&nbsp; Splitting Temporal Data for Modelling – Timeseries Analysis - the Tidyverse Way</title>
 <style>
 code{white-space: pre-wrap;}
@@ -20,8 +17,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
-
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
@@ -41,8 +71,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -68,17 +97,37 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>
-
-
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 </head>
-
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
@@ -89,13 +138,9 @@ ul.task-list li input[type="checkbox"] {
         <i class="bi bi-search"></i>
       </button>
     </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Timeseries Analysis - the Tidyverse Way</a> 
         <div class="sidebar-tools-main">
@@ -115,7 +160,7 @@ ul.task-list li input[type="checkbox"] {
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
@@ -135,8 +180,8 @@ ul.task-list li input[type="checkbox"] {
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./required-packages.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Required Packages</span></span></a>
@@ -149,7 +194,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./tidy-timeseries.html" class="sidebar-item-text sidebar-link">
@@ -158,8 +203,8 @@ ul.task-list li input[type="checkbox"] {
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./timeseries-basics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Tidy Time Series Basics</span></span></a>
@@ -178,7 +223,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./dates-and-time.html" class="sidebar-item-text sidebar-link">
@@ -187,8 +232,8 @@ ul.task-list li input[type="checkbox"] {
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lubridate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using <code>lubridate</code> for Date Manipulation</span></span></a>
@@ -201,7 +246,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./exploratory-analysis.html" class="sidebar-item-text sidebar-link">
@@ -210,8 +255,8 @@ ul.task-list li input[type="checkbox"] {
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./visualising-trends.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Visualising Trends with <code>ggplot2</code> and <code>autoplot()</code></span></span></a>
@@ -224,7 +269,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./forecast-prepare.html" class="sidebar-item-text sidebar-link">
@@ -233,8 +278,8 @@ ul.task-list li input[type="checkbox"] {
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./stabilise-variance.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Transformations for Variance Stabilisation</span></span></a>
@@ -253,7 +298,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./forecast.html" class="sidebar-item-text sidebar-link">
@@ -262,8 +307,8 @@ ul.task-list li input[type="checkbox"] {
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./simple-models.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Simple Forecasting Models</span></span></a>
@@ -282,7 +327,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
@@ -290,18 +335,39 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
     </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#importance-of-temporal-splitting" id="toc-importance-of-temporal-splitting" class="nav-link active" data-scroll-target="#importance-of-temporal-splitting"><span class="header-section-number">13.1</span> Importance of Temporal Splitting</a></li>
+  <li>
+<a href="#proper-temporal-train-test-splitting" id="toc-proper-temporal-train-test-splitting" class="nav-link" data-scroll-target="#proper-temporal-train-test-splitting"><span class="header-section-number">13.2</span> Proper Temporal Train-Test Splitting</a>
+  <ul class="collapse">
+<li><a href="#creating-training-and-testing-datasets" id="toc-creating-training-and-testing-datasets" class="nav-link" data-scroll-target="#creating-training-and-testing-datasets"><span class="header-section-number">13.2.1</span> Creating Training and Testing Datasets</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#time-series-cross-validation" id="toc-time-series-cross-validation" class="nav-link" data-scroll-target="#time-series-cross-validation"><span class="header-section-number">13.3</span> Time Series Cross Validation</a>
+  <ul class="collapse">
+<li><a href="#visualise-cross-validation-folds" id="toc-visualise-cross-validation-folds" class="nav-link" data-scroll-target="#visualise-cross-validation-folds"><span class="header-section-number">13.3.1</span> Visualise Cross-Validation Folds</a></li>
+  <li><a href="#walk-forward-validation" id="toc-walk-forward-validation" class="nav-link" data-scroll-target="#walk-forward-validation"><span class="header-section-number">13.3.2</span> Walk-Forward Validation</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#handling-multiple-series" id="toc-handling-multiple-series" class="nav-link" data-scroll-target="#handling-multiple-series"><span class="header-section-number">13.4</span> Handling Multiple Series’</a>
+  <ul class="collapse">
+<li><a href="#consistent-temporal-splitting-by-date" id="toc-consistent-temporal-splitting-by-date" class="nav-link" data-scroll-target="#consistent-temporal-splitting-by-date"><span class="header-section-number">13.4.1</span> Consistent Temporal Splitting by Date</a></li>
+  <li><a href="#automated-splitting-and-extraction" id="toc-automated-splitting-and-extraction" class="nav-link" data-scroll-target="#automated-splitting-and-extraction"><span class="header-section-number">13.4.2</span> Automated Splitting and Extraction</a></li>
+  </ul>
+</li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">13.5</span> Summary</a></li>
+  </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./forecast-prepare.html">Preparing for Forecasting</a></li><li class="breadcrumb-item"><a href="./split-data.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Splitting Temporal Data for Modelling</span></a></li></ol></nav>
-<div class="quarto-title">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./forecast-prepare.html">Preparing for Forecasting</a></li><li class="breadcrumb-item"><a href="./split-data.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Splitting Temporal Data for Modelling</span></a></li></ol></nav><div class="quarto-title">
 <h1 class="title"><span id="sec-splitting-data" class="quarto-section-identifier"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Splitting Temporal Data for Modelling</span></span></h1>
 </div>
 
@@ -316,14 +382,516 @@ ul.task-list li input[type="checkbox"] {
   
 
 
-</header>
+</header><p>We have now reached a pivotal point in our forecasting journey. Our data has been cleaned, its variance stabilised and stationarity confirmed. Yet, before we proceed to build forecasting models, one fundamental question remains: How will we determine whether our forecasts are truly effective?</p>
+<p>This is where proper data splitting becomes essential. Unlike cross-sectional data where random sampling is appropriate, time series data has a strict temporal order that must be preserved. Splitting time series data incorrectly can lead to <strong>data leakage</strong>, where future information unintentionally influences past predictions, making model evaluations completely unreliable.</p>
+<section id="importance-of-temporal-splitting" class="level2" data-number="13.1"><h2 data-number="13.1" class="anchored" data-anchor-id="importance-of-temporal-splitting">
+<span class="header-section-number">13.1</span> Importance of Temporal Splitting</h2>
+<p>In standard predictive models that uses cross-sectional data like linear regression, the goal is to predict an outcome without regard to order, so random train-test splitting is common. However, with time series data care must be taken to maintain the chronological order when splitting because it has observations that are dependent on previous observations (autocorrelation).</p>
+<p>A random split ignores the time dependency, leading to data leakage and unrealistic evaluations. First, let us understand why time series requires special care when splitting.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># demonstrate the wrong way to split time series data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">523</span><span class="op">)</span>  </span>
+<span></span>
+<span><span class="co"># WRONG: random sampling for time series</span></span>
+<span><span class="va">wrong_split</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>Split <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0.7</span>, <span class="st">"Testing"</span>, <span class="st">"Training"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The above code creates a random 70/30 split. We set a seed ‘<code>set.seed(523)</code>’ so thst the random numbers generated will remain the same anytime the code runs. This approach is problematic because the testing points are scattered throughout the timeline as displayed in <a href="#fig-wrong-split" class="quarto-xref">Figure&nbsp;<span>13.1</span></a> below. Fitting a model using this data could make it appear accurate by “memorising” nearby values, but will fail in real forecasting scenarios.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-wrong-split" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-wrong-split-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="split-data_files/figure-html/fig-wrong-split-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wrong-split-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.1: A Scatter Plot Showing Random Splitting of Temporal Data with Clear Signs of Data Leakage
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>This plot shows a clear example of data leakage because the model will train on past data but then has to predict values for periods where it has already seen future information (e.g., training on 2019 sales but testing on 2016 sales).</p>
+<p>A model evaluated this way will report optimistically high accuracy on the test data because it is not performing true forecasting into an unknown future (unrealistic evaluation).</p>
+</section><section id="proper-temporal-train-test-splitting" class="level2" data-number="13.2"><h2 data-number="13.2" class="anchored" data-anchor-id="proper-temporal-train-test-splitting">
+<span class="header-section-number">13.2</span> Proper Temporal Train-Test Splitting</h2>
+<p>The correct approach is to maintain the temporal order, using earlier data for training and later data for testing. When this happens, the model uses the past to predict the future which is exactly what you need your model to do.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># proper temporal split</span></span>
+<span><span class="va">temporal_split</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    Split <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">Month</span> <span class="op">&lt;</span> <span class="fu">yearmonth</span><span class="op">(</span><span class="st">"2018 Jul"</span><span class="op">)</span>, <span class="st">"Training"</span>, <span class="st">"Testing"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This new code splits based on a specific time point. All data before July 2018 is used for training and all data after for testing. This preserves the temporal sequence as can be seen in <a href="#fig-proper-split" class="quarto-xref">Figure&nbsp;<span>13.2</span></a> below, and simulates real forecasting scenarios.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-proper-split" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-proper-split-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="split-data_files/figure-html/fig-proper-split-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-proper-split-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.2: A Time Series Plot Showing Proper Splitting of Temporal Data with Clear Chronological Order
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>We see in this plot how the entire data before the split point (dashed vertical line-July 2018) is used as the training data (blue), followed orderly by the testing data (red). This train-test split is necessary for a valid forecasting evaluation.</p>
+<section id="creating-training-and-testing-datasets" class="level3" data-number="13.2.1"><h3 data-number="13.2.1" class="anchored" data-anchor-id="creating-training-and-testing-datasets">
+<span class="header-section-number">13.2.1</span> Creating Training and Testing Datasets</h3>
+<p>Now we can formally create our training and testing datasets the right way. To make the splitting easier, we are going to use the <code><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_time_split()</a></code> function from the <code>rsample</code> package. This function will automatically split the data proportionally while maintaining the temporal order.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># create forma training and testing datasets</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rsample.tidymodels.org">rsample</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_time_split</a></span><span class="op">(</span><span class="va">sales_ts</span>, prop <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">training_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">training</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span>
+<span><span class="va">testing_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">testing</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># verify order of splits</span></span>
+<span><span class="va">partition_table</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  Partition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"training data"</span>, <span class="st">"testing data"</span><span class="op">)</span>,</span>
+<span>  Start_period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">training_data</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span>,</span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">testing_data</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span></span>
+<span>                   <span class="op">)</span>,</span>
+<span>  End_period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">training_data</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span>,</span>
+<span>                 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">testing_data</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span></span>
+<span>                 <span class="op">)</span>,</span>
+<span>  N_Obs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">training_data</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">testing_data</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: left;">Partition</th>
+<th style="text-align: left;">Start_period</th>
+<th style="text-align: left;">End_period</th>
+<th style="text-align: right;">N_Obs</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">training data</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 Jun</td>
+<td style="text-align: right;">42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">testing data</td>
+<td style="text-align: left;">2018 Jul</td>
+<td style="text-align: left;">2019 Dec</td>
+<td style="text-align: right;">18</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>initial_time_split(sales_ts, prop = 0.7)</code> is the core function for our temporal splitting. It takes our time series data (<code>sales_ts</code>) and automatically creates the split object such that the first <span class="math inline">\(70\%\)</span> (<code>prop = 0.7</code>) of the data chronologically forms the training set, and the remaining <span class="math inline">\(30\%\)</span> forms the testing set.</p>
+<p><code>training(split)</code> / <code>testing(split)</code> are accessor functions that extract the actual data frames (tibble) for the respective partitions. To confirm we have the right train-test split create a table to verify the chronological order. As expected we see in the table that the test data is immediately after the end date of the training data, confirming that the split is purely temporal and not random.</p>
+</section></section><section id="time-series-cross-validation" class="level2" data-number="13.3"><h2 data-number="13.3" class="anchored" data-anchor-id="time-series-cross-validation">
+<span class="header-section-number">13.3</span> Time Series Cross Validation</h2>
+<p>For more robust model evaluation, we can use time series cross-validation (TS-CV). This creates multiple training and testing folds while preserving temporal order. We us the <code>stretch _tsibble()</code> function from the <code>tsibble</code> package to create cross-validation folds in a time series data.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># create time series cross-validation folds</span></span>
+<span><span class="va">tscv_folds</span> <span class="op">&lt;-</span> <span class="va">training_data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">stretch_tsibble</span><span class="op">(</span>.init <span class="op">=</span> <span class="fl">26</span>, .step <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># examine the cross-validation structure</span></span>
+<span><span class="va">cv_summary</span> <span class="op">&lt;-</span> <span class="va">tscv_folds</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">.id</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">summarise</span><span class="op">(</span></span>
+<span>    start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">Month</span><span class="op">)</span>,</span>
+<span>    end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">Month</span><span class="op">)</span>,</span>
+<span>    n_obs <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: right;">.id</th>
+<th style="text-align: left;">start_date</th>
+<th style="text-align: left;">end_date</th>
+<th style="text-align: right;">n_obs</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Feb</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Mar</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Apr</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 May</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Jun</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Jul</td>
+<td style="text-align: right;">31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Aug</td>
+<td style="text-align: right;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Sep</td>
+<td style="text-align: right;">33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Oct</td>
+<td style="text-align: right;">34</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Nov</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Dec</td>
+<td style="text-align: right;">36</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 Jan</td>
+<td style="text-align: right;">37</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 Feb</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 Mar</td>
+<td style="text-align: right;">39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 Apr</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 May</td>
+<td style="text-align: right;">41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2018 Jun</td>
+<td style="text-align: right;">42</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>stretch_tsibble(.init = 25, .step = 1)</code> creates expanding window folds. <code>.init</code> sets the initial training window size and <code>.step</code> specifies how many months to move forward for each fold. Our code creates multiple folds where each fold starts with at least 25 observations (months) and expands by 1 observation each time. Here the first fold uses months 1to 25 for training and month 26 for testing. The next fold uses months 1 to 37 for training and month 38 for testing and so on till the end of the series.</p>
+<p>Each fold is marked by an <code>.id</code> column allowing us to track different train-test combinations. This approach provides multiple evaluations across different time periods.</p>
+<section id="visualise-cross-validation-folds" class="level3" data-number="13.3.1"><h3 data-number="13.3.1" class="anchored" data-anchor-id="visualise-cross-validation-folds">
+<span class="header-section-number">13.3.1</span> Visualise Cross-Validation Folds</h3>
+<p>Let us visualise how our cross validation works</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># visualise the first few cross-validation folds</span></span>
+<span><span class="va">tscv_folds</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">.id</span> <span class="op">&lt;=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">|&gt;</span>      <span class="co"># show first 4 folds</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">.id</span><span class="op">)</span> <span class="op">|&gt;</span>         <span class="co"># temporarily group data</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    fold_info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Fold"</span>,<span class="va">.id</span>,<span class="st">": "</span>,<span class="fu">first</span><span class="op">(</span><span class="va">Month</span><span class="op">)</span>,<span class="st">"to"</span>,<span class="fu">last</span><span class="op">(</span><span class="va">Month</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span>             <span class="co"># remove grouping</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Month</span>, y <span class="op">=</span> <span class="va">Sales</span>, group <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="fu">vars</span><span class="op">(</span><span class="va">fold_info</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-tscv" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-tscv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="split-data_files/figure-html/fig-tscv-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tscv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.3: Time Series Cross Validation Folds For A 5-Year Period Monthly Sales
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>The above plot displays the expanding nature of the cross validation folds produced from <code>stretch_tsibble</code>. We clearly see how each fold contains all the data from the previous fold plus the additional (<code>step</code>) month.</p>
+</section><section id="walk-forward-validation" class="level3" data-number="13.3.2"><h3 data-number="13.3.2" class="anchored" data-anchor-id="walk-forward-validation">
+<span class="header-section-number">13.3.2</span> Walk-Forward Validation</h3>
+<p>For forecasting, walk-forward validation (also known as rolling-origin evaluation) provides the most realistic assessment. The <code>slide_tsibble()</code> function from the <code>tsibble</code> package is designed for walk-forward validation. It creates overlapping windows of data that move step by step.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># implement walk forward vaidation</span></span>
+<span><span class="va">walkf_cv_folds</span> <span class="op">&lt;-</span> <span class="va">training_data</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">slide_tsibble</span><span class="op">(</span>.size <span class="op">=</span> <span class="fl">28</span>, .step <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># examine the walk-forward cv structure</span></span>
+<span><span class="va">walkf_cv_summary</span> <span class="op">&lt;-</span> <span class="va">walkf_cv_folds</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">.id</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">summarise</span><span class="op">(</span></span>
+<span>    start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">Month</span><span class="op">)</span>,</span>
+<span>    end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">Month</span><span class="op">)</span>,</span>
+<span>    n_obs <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: right;">.id</th>
+<th style="text-align: left;">start_date</th>
+<th style="text-align: left;">end_date</th>
+<th style="text-align: right;">n_obs</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">2015 Jan</td>
+<td style="text-align: left;">2017 Apr</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">2015 Feb</td>
+<td style="text-align: left;">2017 May</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">2015 Mar</td>
+<td style="text-align: left;">2017 Jun</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">2015 Apr</td>
+<td style="text-align: left;">2017 Jul</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">2015 May</td>
+<td style="text-align: left;">2017 Aug</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">2015 Jun</td>
+<td style="text-align: left;">2017 Sep</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">2015 Jul</td>
+<td style="text-align: left;">2017 Oct</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">2015 Aug</td>
+<td style="text-align: left;">2017 Nov</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">2015 Sep</td>
+<td style="text-align: left;">2017 Dec</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">2015 Oct</td>
+<td style="text-align: left;">2018 Jan</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">2015 Nov</td>
+<td style="text-align: left;">2018 Feb</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">2015 Dec</td>
+<td style="text-align: left;">2018 Mar</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">2016 Jan</td>
+<td style="text-align: left;">2018 Apr</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">2016 Feb</td>
+<td style="text-align: left;">2018 May</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">2016 Mar</td>
+<td style="text-align: left;">2018 Jun</td>
+<td style="text-align: right;">28</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><code>slide_tsibble(.size = 28, .step = 1)</code> creates fixed-size windows that slides forward. Here <code>size = 28</code> uses 28 months for the first fold (fixed) and each new fold (window) moves forward by 1 month (<code>.step = 1</code>). This simulates real-world forecasting where we use available history to predict the future.</p>
+<p>The key difference between the <code>stretch_tsibble()</code> and <code>slide_tsibble()</code> functions is that the former uses expanding folds (i.e., training sets grow over time) whiles the latter uses fixed folds (old observations drop off as new ones come in, keeping the window fixed). Implementing TS-CV either with <code>stretch_tsibble</code> or <code>slide_tsibble</code> provide more robust model error estimates than a single train-test split.</p>
+</section></section><section id="handling-multiple-series" class="level2" data-number="13.4"><h2 data-number="13.4" class="anchored" data-anchor-id="handling-multiple-series">
+<span class="header-section-number">13.4</span> Handling Multiple Series’</h2>
+<p>When dealing with a collection of time series (tsibble with 2 or more keys), a proper train-test split must be applied to each series individually but based on a consistent temporal rule.</p>
+<section id="consistent-temporal-splitting-by-date" class="level3" data-number="13.4.1"><h3 data-number="13.4.1" class="anchored" data-anchor-id="consistent-temporal-splitting-by-date">
+<span class="header-section-number">13.4.1</span> Consistent Temporal Splitting by Date</h3>
+<p>This demonstration manually applies a split boundary (<code>year &lt; 2005</code>) to a selection of indicator names in the <code>gh_ts</code> tibble.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># split multiple series consistently</span></span>
+<span><span class="va">multi_series_split</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">indicator_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Annual GDP growth rate"</span>,</span>
+<span>    <span class="st">"Cereal yield _kg per hectare"</span>,</span>
+<span>    <span class="st">"Gross national expenditure (% of GDP)"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">indicator_name</span>, <span class="va">year</span>, <span class="va">value</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">indicator_name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    split <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">year</span> <span class="op">&lt;</span> <span class="fl">2005</span>, <span class="st">"Training"</span>, <span class="st">"Testing"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In order to apply the split boundary logic to all the series independently, the data is grouped by their unique indicator name for the series. The consistent temporal rule specified in the mutate function creates a marker for the training and testing split.</p>
+<p>All data before the year 2005 <span class="math inline">\((~70%)\)</span> is marked as the <strong>training set</strong> and 2005 upwards <span class="math inline">\((~30)\)</span> is the <strong>testing set</strong>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># visualise the splits for all series</span></span>
+<span><span class="va">multi_series_split</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">value</span>, colour <span class="op">=</span> <span class="va">split</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>linewidth  <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="fu">vars</span><span class="op">(</span><span class="va">indicator_name</span><span class="op">)</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_colour_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-mult-tscv" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-mult-tscv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="split-data_files/figure-html/fig-mult-tscv-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mult-tscv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13.4: Temporal Time Split for Multiple Series - Consistent Split Points Across All Series
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Visualising the series, we see that each of the three indicators - GDP growth rate, Cereal yield and GNE (% of GDP) - are all split exactly at the year 2005, as indicated by the separate <strong>red</strong> and <strong>blue</strong> lines. This confirms our intended chronological split for each series where the training period precedes the testing period for all series simultaneously.</p>
+</section><section id="automated-splitting-and-extraction" class="level3" data-number="13.4.2"><h3 data-number="13.4.2" class="anchored" data-anchor-id="automated-splitting-and-extraction">
+<span class="header-section-number">13.4.2</span> Automated Splitting and Extraction</h3>
+<p>While manual splitting works, automatically creating and extracting the training and testing datasets for many series requires a more programmatic approach compared to doing the same for a single series by utilising some useful functions from the <code>purrr</code> and <code>rsample</code> packages.</p>
+<p><strong>A. Applying the Split per Series Key</strong></p>
+<p>The <code>fable</code> ecosystem relies on the key columns (here, <code>indicator_name</code>) to perform operations across multiple series in a tsibble.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># apply initial time split per key</span></span>
+<span><span class="va">splits_multiple</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">indicator_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Annual GDP growth rate"</span>,</span>
+<span>    <span class="st">"Cereal yield _kg per hectare"</span>,</span>
+<span>    <span class="st">"Gross national expenditure (% of GDP)"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">indicator_name</span>, <span class="va">year</span>, <span class="va">value</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">group_by_key</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">group_map</span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_time_split</a></span><span class="op">(</span><span class="va">.x</span>, prop <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>group_by_key()</code> function is specific to <code>tsibbles</code>. It groups the data by the unique time series identifier (<code>indicator_name</code>). The core operation of what we want to achieve is carried out by <code>group_map()</code>, which iterates over each series (each indicator) and applies the <code><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_time_split()</a></code> function to create a chronological split, using the first <span class="math inline">\(70\%\)</span> of the observations for training. The resulting output from this code is a list of <strong>3</strong> split objects, each representing a unique series.</p>
+<div class="cell" data-layout-align="center">
+<pre><code>## [[1]]
+## &lt;Training/Testing/Total&gt;
+## &lt;45/20/65&gt;
+## 
+## [[2]]
+## &lt;Training/Testing/Total&gt;
+## &lt;45/20/65&gt;
+## 
+## [[3]]
+## &lt;Training/Testing/Total&gt;
+## &lt;45/20/65&gt;</code></pre>
+</div>
+<p><strong>B. Extracting and Organising the Datasets</strong></p>
+<p>This next code uses <code>purrr</code>’s <code>map()</code> function to extract the training and testing datasets from the list of split objects, and then organising them into a tidy tibble.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># extract training and testing sets and convert back to tsibble</span></span>
+<span><span class="va">train_sets</span> <span class="op">&lt;-</span> <span class="fu">map</span><span class="op">(</span><span class="va">splits_multiple</span>, <span class="va">training</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">as_tsibble</span>, index <span class="op">=</span> <span class="va">year</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">test_sets</span> <span class="op">&lt;-</span> <span class="fu">map</span><span class="op">(</span><span class="va">splits_multiple</span>, <span class="va">testing</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">as_tsibble</span>, index <span class="op">=</span> <span class="va">year</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># combine with labels (indicator names) and convert to a tidy tibble</span></span>
+<span><span class="va">keys</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">indicator_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Annual GDP growth rate"</span>,</span>
+<span>    <span class="st">"Cereal yield _kg per hectare"</span>,</span>
+<span>    <span class="st">"Gross national expenditure (% of GDP)"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">distinct</span><span class="op">(</span><span class="va">indicator_name</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">pull</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">multi_split_list</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
+<span>  series <span class="op">=</span> <span class="va">keys</span>, training <span class="op">=</span> <span class="va">train_sets</span>, testing <span class="op">=</span> <span class="va">test_sets</span></span>
+<span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>the <code>map()</code> function works similarly to the <code>group_map()</code> function. It also iterates through the list of split objects (<code>splits_multiple</code>) and applies the <code><a href="https://rsample.tidymodels.org/reference/initial_split.html">training()</a></code> and <code><a href="https://rsample.tidymodels.org/reference/initial_split.html">testing()</a></code> accessor functions to each one , returning a list of three separate training and testing <code>tibbles</code> (one for each series). The <code><a href="https://rdrr.io/r/base/lapply.html">lapply()</a></code> function converts all the returned <code>tibbles</code> back to time series <code>tsibbles</code>.</p>
+<p>We then combine everything into a single structured tibble (<code>multi_split_list</code>)</p>
+<div class="cell" data-layout-align="center">
+<pre><code>## # A tibble: 3 × 3
+##   series                                training          testing          
+##   &lt;chr&gt;                                 &lt;list&gt;            &lt;list&gt;           
+## 1 Annual GDP growth rate                &lt;tbl_ts [45 × 2]&gt; &lt;tbl_ts [20 × 2]&gt;
+## 2 Cereal yield _kg per hectare          &lt;tbl_ts [45 × 2]&gt; &lt;tbl_ts [20 × 2]&gt;
+## 3 Gross national expenditure (% of GDP) &lt;tbl_ts [45 × 2]&gt; &lt;tbl_ts [20 × 2]&gt;</code></pre>
+</div>
+<p>The <code>multi_split_list</code> object is a tidy summary where each row represents a single time series, and the <code>training</code> and <code>testing</code> columns contain the properly split <code>tsibbles</code>. This structure is ideal for cross-validation and concurrent model fitting on multiple series.</p>
+</section></section><section id="summary" class="level2" data-number="13.5"><h2 data-number="13.5" class="anchored" data-anchor-id="summary">
+<span class="header-section-number">13.5</span> Summary</h2>
+<p>In this chapter we have addressed an important aspect of time series forecasting; creating a validation framework that produces honest, reliable performance assessments. We moved beyond simple random sampling to embrace the temporal nature of our data</p>
+<p>You have seen the reason why preserving chronological order prevents data leakage and ensures realistic model evaluation. You now understand that testing should always follow training in time and performing cross-validation on time series gives us multiple assessments of model performance, making our evaluation more reliable than a single train-test split.</p>
+<p>With our data properly prepared, variance stabilised, stationarity achieved and rigorous validation splits established we are now ready for the most exciting phase: building actual forecasting models. In our next section we will explore various forecasting models and how they effectively they fit to our temporal data.</p>
 
 
-
-
-
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -739,9 +1307,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
       <a href="./check-stationary.html" class="pagination-link" aria-label="Checking for Stationarity">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Checking for Stationarity</span></span>
       </a>          
@@ -753,8 +1319,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
+<footer class="footer"><div class="nav-footer">
     <div class="nav-footer-left">
 <p>Copyright 2025, George Kyei Agyen</p>
 </div>   
@@ -766,8 +1331,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-
-
 
 
 </body></html>

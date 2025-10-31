@@ -1,1 +1,329 @@
 # Splitting Temporal Data for Modelling {#sec-splitting-data}
+
+We have now reached a pivotal point in our forecasting journey. Our data has been cleaned, its variance stabilised and stationarity confirmed. Yet, before we proceed to build forecasting models, one fundamental question remains: How will we determine whether our forecasts are truly effective?
+
+This is where proper data splitting becomes essential. Unlike cross-sectional data where random sampling is appropriate, time series data has a strict temporal order that must be preserved. Splitting time series data incorrectly can lead to **data leakage**, where future information unintentionally influences past predictions, making model evaluations completely unreliable.
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+```{r}
+#| include: false
+gh_ts <- read_csv('data/gh_ts.csv', show_col_types = FALSE) |>
+  janitor::clean_names() |> 
+  as_tsibble(index = year, key = indicator_name)
+
+sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |> 
+  janitor::clean_names(case = "none") |> 
+  mutate(Month = yearmonth(Month)) |> 
+  as_tsibble(index  = Month)
+```
+
+## Importance of Temporal Splitting
+
+In standard predictive models that uses cross-sectional data like linear regression, the goal is to predict an outcome without regard to order, so random train-test splitting is common. However, with time series data care must be taken to maintain the chronological order when splitting because it has observations that are dependent on previous observations (autocorrelation).
+
+A random split ignores the time dependency, leading to data leakage and unrealistic evaluations. First, let us understand why time series requires special care when splitting.
+
+```{r}
+# demonstrate the wrong way to split time series data
+set.seed(523)  
+
+# WRONG: random sampling for time series
+wrong_split <- sales_ts |> 
+  mutate(Split = if_else(runif(n()) > 0.7, "Testing", "Training"))
+```
+
+The above code creates a random 70/30 split. We set a seed '`set.seed(523)`' so thst the random numbers generated will remain the same anytime the code runs. This approach is problematic because the testing points are scattered throughout the timeline as displayed in @fig-wrong-split below. Fitting a model using this data could make it appear accurate by "memorising" nearby values, but will fail in real forecasting scenarios.
+
+```{r}
+#| echo: false
+#| label: fig-wrong-split
+#| fig-cap: "A Scatter Plot Showing Random Splitting of Temporal Data with Clear Signs of Data Leakage"
+wrong_split |> 
+  ggplot(aes(x = Month, y = Sales, colour = Split)) +
+  geom_point(size = 1.5) +
+  scale_colour_manual(values = c("red", "blue")) +
+  labs(
+    title = "Wrong: Random Split of Time series Data",
+    subtitle = "This causes data leakage and unrealistic evaluation",
+    x = "Year-Month"
+  )
+```
+
+This plot shows a clear example of data leakage because the model will train on past data but then has to predict values for periods where it has already seen future information (e.g., training on 2019 sales but testing on 2016 sales).
+
+A model evaluated this way will report optimistically high accuracy on the test data because it is not performing true forecasting into an unknown future (unrealistic evaluation).
+
+## Proper Temporal Train-Test Splitting
+
+The correct approach is to maintain the temporal order, using earlier data for training and later data for testing. When this happens, the model uses the past to predict the future which is exactly what you need your model to do.
+
+```{r}
+# proper temporal split
+temporal_split <- sales_ts |> 
+  mutate(
+    Split = if_else(Month < yearmonth("2018 Jul"), "Training", "Testing")
+  )
+
+```
+
+This new code splits based on a specific time point. All data before July 2018 is used for training and all data after for testing. This preserves the temporal sequence as can be seen in @fig-proper-split below, and simulates real forecasting scenarios.
+
+```{r}
+#| echo: false
+#| label: fig-proper-split
+#| fig-cap: "A Time Series Plot Showing Proper Splitting of Temporal Data with Clear Chronological Order"
+temporal_split |> 
+  ggplot(aes(x = Month, y = Sales, colour = Split)) +
+  geom_line(linewidth = 0.7) +
+  geom_vline(xintercept = yearmonth("2018 Jul"), 
+             linetype = "dashed", colour = "black",
+             linewidth = 0.8) +
+  scale_colour_manual(values = c("red", "blue")) +
+  labs(
+    title = "Proper Temporal Train-Test Split",
+    subtitle = "Training data precedes testing data chronologically",
+    x = "Year-Month"
+  )
+```
+
+We see in this plot how the entire data before the split point (dashed vertical line-July 2018) is used as the training data (blue), followed orderly by the testing data (red). This train-test split is necessary for a valid forecasting evaluation.
+
+### Creating Training and Testing Datasets
+
+Now we can formally create our training and testing datasets the right way. To make the splitting easier, we are going to use the `initial_time_split()` function from the `rsample` package. This function will automatically split the data proportionally while maintaining the temporal order.
+
+```{r}
+# create forma training and testing datasets
+library(rsample)
+
+split <- initial_time_split(sales_ts, prop = 0.7)
+
+training_data <- training(split)
+testing_data <- testing(split)
+
+# verify order of splits
+partition_table <- tibble(
+  Partition = c("training data", "testing data"),
+  Start_period = c(min(training_data$Month),
+                   min(testing_data$Month)
+                   ),
+  End_period = c(max(training_data$Month),
+                 max(testing_data$Month)
+                 ),
+  N_Obs = c(nrow(training_data), nrow(testing_data))
+  )
+```
+
+```{r}
+#| echo: false
+kableExtra::kable(partition_table)
+```
+
+`initial_time_split(sales_ts, prop = 0.7)` is the core function for our temporal splitting. It takes our time series data (`sales_ts`) and automatically creates the split object such that the first $70\%$ (`prop = 0.7`) of the data chronologically forms the training set, and the remaining $30\%$ forms the testing set.
+
+`training(split)` / `testing(split)` are accessor functions that extract the actual data frames (tibble) for the respective partitions. To confirm we have the right train-test split create a table to verify the chronological order. As expected we see in the table that the test data is immediately after the end date of the training data, confirming that the split is purely temporal and not random.
+
+## Time Series Cross Validation
+
+For more robust model evaluation, we can use time series cross-validation (TS-CV). This creates multiple training and testing folds while preserving temporal order. We us the `stretch _tsibble()` function from the `tsibble` package to create cross-validation folds in a time series data.
+
+```{r}
+# create time series cross-validation folds
+tscv_folds <- training_data |> 
+  stretch_tsibble(.init = 26, .step = 1) 
+
+# examine the cross-validation structure
+cv_summary <- tscv_folds |> 
+  as_tibble() |> 
+  group_by(.id) |> 
+  summarise(
+    start_date = min(Month),
+    end_date = max(Month),
+    n_obs = n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+#| echo: false
+kableExtra::kable(cv_summary)
+
+```
+
+`stretch_tsibble(.init = 25, .step = 1)` creates expanding window folds. `.init` sets the initial training window size and `.step` specifies how many months to move forward for each fold. Our code creates multiple folds where each fold starts with at least 25 observations (months) and expands by 1 observation each time. Here the first fold uses months 1to 25 for training and month 26 for testing. The next fold uses months 1 to 37 for training and month 38 for testing and so on till the end of the series.
+
+Each fold is marked by an `.id` column allowing us to track different train-test combinations. This approach provides multiple evaluations across different time periods.
+
+### Visualise Cross-Validation Folds
+
+Let us visualise how our cross validation works
+
+```{r}
+#| label: fig-tscv
+#| fig-cap: "Time Series Cross Validation Folds For A 5-Year Period Monthly Sales"
+# visualise the first few cross-validation folds
+tscv_folds |> 
+  filter(.id <= 4) |>      # show first 4 folds
+  group_by(.id) |>         # temporarily group data
+  mutate(
+    fold_info = paste("Fold",.id,": ",first(Month),"to",last(Month)),
+  ) |> 
+  ungroup() |>             # remove grouping
+  ggplot(aes(x = Month, y = Sales, group = .id)) + 
+  geom_line(linewidth = 0.7) +
+  facet_wrap(vars(fold_info), ncol = 2) 
+
+```
+
+The above plot displays the expanding nature of the cross validation folds produced from `stretch_tsibble`. We clearly see how each fold contains all the data from the previous fold plus the additional (`step`) month.
+
+### Walk-Forward Validation
+
+For forecasting, walk-forward validation (also known as rolling-origin evaluation) provides the most realistic assessment. The `slide_tsibble()` function from the `tsibble` package is designed for walk-forward validation. It creates overlapping windows of data that move step by step.
+
+```{r}
+# implement walk forward vaidation
+walkf_cv_folds <- training_data |> 
+  slide_tsibble(.size = 28, .step = 1) 
+
+# examine the walk-forward cv structure
+walkf_cv_summary <- walkf_cv_folds |> 
+  as_tibble() |> 
+  group_by(.id) |> 
+  summarise(
+    start_date = min(Month),
+    end_date = max(Month),
+    n_obs = n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+#| echo: false
+kableExtra::kable(walkf_cv_summary)
+
+```
+
+`slide_tsibble(.size = 28, .step = 1)` creates fixed-size windows that slides forward. Here `size = 28` uses 28 months for the first fold (fixed) and each new fold (window) moves forward by 1 month (`.step = 1`). This simulates real-world forecasting where we use available history to predict the future.
+
+The key difference between the `stretch_tsibble()` and `slide_tsibble()` functions is that the former uses expanding folds (i.e., training sets grow over time) whiles the latter uses fixed folds (old observations drop off as new ones come in, keeping the window fixed). Implementing TS-CV either with `stretch_tsibble` or `slide_tsibble` provide more robust model error estimates than a single train-test split.
+
+## Handling Multiple Series'
+
+When dealing with a collection of time series (tsibble with 2 or more keys), a proper train-test split must be applied to each series individually but based on a consistent temporal rule.
+
+### Consistent Temporal Splitting by Date
+
+This demonstration manually applies a split boundary (`year < 2005`) to a selection of indicator names in the `gh_ts` tibble.
+
+```{r}
+# split multiple series consistently
+multi_series_split <- gh_ts |> 
+  filter(indicator_name %in% c(
+    "Annual GDP growth rate",
+    "Cereal yield _kg per hectare",
+    "Gross national expenditure (% of GDP)"
+  )) |> 
+  select(indicator_name, year, value) |> 
+  group_by(indicator_name) |> 
+  mutate(
+    split = if_else(year < 2005, "Training", "Testing")
+    ) |> 
+  ungroup()
+```
+
+In order to apply the split boundary logic to all the series independently, the data is grouped by their unique indicator name for the series. The consistent temporal rule specified in the mutate function creates a marker for the training and testing split.
+
+All data before the year 2005 $(~70%)$ is marked as the **training set** and 2005 upwards $(~30)$ is the **testing set**.
+
+```{r}
+#| warning: false
+#| label: fig-mult-tscv
+#| fig-cap: "Temporal Time Split for Multiple Series - Consistent Split Points Across All Series"
+# visualise the splits for all series
+multi_series_split |> 
+  ggplot(aes(x = year, y = value, colour = split)) +
+  geom_line(linewidth  = 0.7) +
+  facet_wrap(vars(indicator_name), scales = "free_y", ncol = 2) +
+  scale_colour_manual(values = c("red", "blue")) +
+  theme(legend.position = "bottom")
+```
+
+Visualising the series, we see that each of the three indicators - GDP growth rate, Cereal yield and GNE (% of GDP) - are all split exactly at the year 2005, as indicated by the separate **red** and **blue** lines. This confirms our intended chronological split for each series where the training period precedes the testing period for all series simultaneously.
+
+### Automated Splitting and Extraction 
+
+While manual splitting works, automatically creating and extracting the training and testing datasets for many series requires a more programmatic approach compared to doing the same for a single series by utilising some useful functions from the `purrr` and `rsample` packages.
+
+**A. Applying the Split per Series Key**
+
+The `fable` ecosystem relies on the key columns (here, `indicator_name`) to perform operations across multiple series in a tsibble.
+
+```{r}
+# apply initial time split per key
+splits_multiple <- gh_ts |> 
+  filter(indicator_name %in% c(
+    "Annual GDP growth rate",
+    "Cereal yield _kg per hectare",
+    "Gross national expenditure (% of GDP)"
+  )) |> 
+  select(indicator_name, year, value) |> 
+  group_by_key() |> 
+  group_map(~ initial_time_split(.x, prop = 0.7))
+```
+
+The `group_by_key()` function is specific to `tsibbles`. It groups the data by the unique time series identifier (`indicator_name`). The core operation of what we want to achieve is carried out by `group_map()`, which iterates over each series (each indicator) and applies the `initial_time_split()` function to create a chronological split, using the first $70\%$ of the observations for training. The resulting output from this code is a list of **3** split objects, each representing a unique series.
+
+```{r}
+#| echo: false
+splits_multiple
+```
+
+**B. Extracting and Organising the Datasets**
+
+This next code uses `purrr`'s `map()` function to extract the training and testing datasets from the list of split objects, and then organising them into a tidy tibble.
+
+```{r}
+# extract training and testing sets and convert back to tsibble
+train_sets <- map(splits_multiple, training) |> 
+  lapply(as_tsibble, index = year)
+
+test_sets <- map(splits_multiple, testing) |> 
+  lapply(as_tsibble, index = year)
+
+# combine with labels (indicator names) and convert to a tidy tibble
+keys <- gh_ts |> 
+  filter(indicator_name %in% c(
+    "Annual GDP growth rate",
+    "Cereal yield _kg per hectare",
+    "Gross national expenditure (% of GDP)"
+  )) |> 
+  distinct(indicator_name) |> pull()
+
+multi_split_list <- tibble(
+  series = keys, training = train_sets, testing = test_sets
+)
+```
+
+the `map()` function works similarly to the `group_map()` function. It also iterates through the list of split objects (`splits_multiple`) and applies the `training()` and `testing()` accessor functions to each one , returning a list of three separate training and testing `tibbles` (one for each series). The `lapply()` function converts all the returned `tibbles` back to time series `tsibbles`.
+
+We then combine everything into a single structured tibble (`multi_split_list`)
+
+```{r}
+#| echo: false
+print(multi_split_list)
+```
+
+The `multi_split_list` object is a tidy summary where each row represents a single time series, and the `training` and `testing` columns contain the properly split `tsibbles`. This structure is ideal for cross-validation and concurrent model fitting on multiple series.
+
+## Summary
+
+In this chapter we have addressed an important aspect of time series forecasting; creating a validation framework that produces honest, reliable performance assessments. We moved beyond simple random sampling to embrace the temporal nature of our data
+
+You have seen the reason why preserving chronological order prevents data leakage and ensures realistic model evaluation. You now understand that testing should always follow training in time and performing cross-validation on time series gives us multiple assessments of model performance, making our evaluation more reliable than a single train-test split.
+
+With our data properly prepared, variance stabilised, stationarity achieved and rigorous validation splits established we are now ready for the most exciting phase: building actual forecasting models. In our next section we will explore various forecasting models and how they effectively they fit to our temporal data.

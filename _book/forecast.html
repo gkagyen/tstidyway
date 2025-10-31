@@ -294,8 +294,16 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#why-the-fable-framework" id="toc-why-the-fable-framework" class="nav-link active" data-scroll-target="#why-the-fable-framework">Why the <code>fable</code> Framework</a></li>
+  <li><a href="#the-forecasting-journey-ahead" id="toc-the-forecasting-journey-ahead" class="nav-link" data-scroll-target="#the-forecasting-journey-ahead">The Forecasting Journey Ahead</a></li>
+  <li><a href="#what-makes-this-approach-different" id="toc-what-makes-this-approach-different" class="nav-link" data-scroll-target="#what-makes-this-approach-different">What Makes This Approach Different</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -319,8 +327,36 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>After everything we have gone through – from preparing our data through to careful exploration, data transformations and rigorous train-test splitting – we now arrive at the most exciting and interesting phase of our time series journey; building forecasting models that can predict the future. This is where all our preparations pay the dividends and where the true power of the <strong><code>tidyverts</code></strong> ecosystem shine through</p>
+<p>The <code>fable</code> package provides our forecasting toolkit offering a unified framework for time series modelling that seamlessly integrates with the tidyverse philosophy we have embraced throughout this book. What make <code>fabl</code> particularly powerful is its consistent syntax across different model types, its automated model selection capabilities and its native integration with the tsibble data structure we have been carefully building.</p>
+<section id="why-the-fable-framework" class="level2">
+<h2 class="anchored" data-anchor-id="why-the-fable-framework">Why the <code>fable</code> Framework</h2>
+<p>Traditional Time series forecasting in R often involved jumping between different packages with inconsistent interfaces, manual model specification, and cumbersome results extraction. The <code>fable</code> framework revolutionises this by providing:</p>
+<ul>
+<li><p><strong>Unified Modelling syntax:</strong> Learn once apply to many model types</p></li>
+<li><p><strong>Automated Model Selection:</strong> Leverage algorithms to find optimal parameters</p></li>
+<li><p><strong>Tidy Results Output:</strong> Forecast outputs that work seamlessly with tidyverse verbs</p></li>
+<li><p><strong>Reproducible Workflows:</strong> Complete, documented forecasting pipelines</p></li>
+<li><p><strong>Professional-Grade Outputs:</strong> Production-ready forecast and intervals</p></li>
+</ul>
+</section>
+<section id="the-forecasting-journey-ahead" class="level2">
+<h2 class="anchored" data-anchor-id="the-forecasting-journey-ahead">The Forecasting Journey Ahead</h2>
+<p>This comprehensive section we will progress from foundational concepts to sophisticated modelling techniques.</p>
+<ul>
+<li><p><a href="simple-models.html" class="quarto-xref"><span>14&nbsp; Simple Forecasting Models</span></a>: We begin in this chapter with simple benchmark models that provide surprising insight and crucial performance baselines. These models may be elementary, but they serve as essential reference points–if your sophisticated model cannot outperform a simple naive forecast, you may be overcomplicating your approach.</p></li>
+<li><p><a href="advanced-models.html" class="quarto-xref"><span>15&nbsp; Advanced Forecasting Models</span></a>: Here we will explore the workhorses of time series forecasting. Exponential Smoothing (ETS) models that automatically capture trend and seasonality patterns and ARIMA models that leverage the autocorrelation structures we diagnosed in our exploratory phase. We will also touch on regression approaches and modern combinations</p></li>
+<li><p><a href="forecast-evaluation.html" class="quarto-xref"><span>16&nbsp; Model Evaluation and Forecasting</span></a>: This is where we bring everything together–fitting multiple models, generating future predictions and evaluating performance using the testing framework we established. We will compare models using multiple accuracy metrics, create compelling visuals and select the most reliable approach for our specific context.</p></li>
+</ul>
+</section>
+<section id="what-makes-this-approach-different" class="level2">
+<h2 class="anchored" data-anchor-id="what-makes-this-approach-different">What Makes This Approach Different</h2>
+<p>Unlike the traditional time series forecasting that often feels like a black box, the <code>fable</code> approach gives us complete transparency and control. You will understand not just what your modes are predicting but <strong><em>why</em></strong> they are making those predictions. More importantly, you will be building forecasting workflows that are reproducible, scalable, and maintainable.</p>
+<p>Whether you are forecasting sales for the next quarter, predicting resource needs for the coming year, or anticipating market movements, the skills you will learn in this section will transform you from a passive analyst of past data to an active predictor of future trends.</p>
+<p><strong>Ready to peer into the future 🚀?</strong> let us begin with the simplest models.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

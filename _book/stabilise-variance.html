@@ -357,6 +357,7 @@ window.Quarto = {
   <li><a href="#assessing-transformation-effectiveness" id="toc-assessing-transformation-effectiveness" class="nav-link" data-scroll-target="#assessing-transformation-effectiveness"><span class="header-section-number">11.3.2</span> Assessing Transformation Effectiveness</a></li>
   </ul>
 </li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">11.4</span> Summary</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -530,9 +531,9 @@ Note
 <p>The <strong>Box-Cox</strong> transformation is governed by the parameter <span class="math inline">\(\lambda\)</span> (lambda), which dictates the power applied to the data. Different lambda values correspond to different transformations. Understanding the relationship between lambda and the resulting transformation is key to time series data preparation.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 22%">
 <col style="width: 33%">
-<col style="width: 44%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead><tr class="header">
 <th>lambda <span class="math inline">\((\lambda)\)</span> value</th>
@@ -608,6 +609,19 @@ Figure&nbsp;11.5: Comparing Different Box-Cox Transformations with their Origina
 </div>
 </div>
 <p>The comparative plot confirms that transformations with lambda values near zero (Log, Cube Root, and Optimal λ) produce visually similar variance-stabilised series, while the Square Root transform <span class="math inline">\((\lambda=0.5)\)</span> slightly undershoots the required stabilisation. Notice how each series has varying y-scale due to the type of transformation applied.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For log transformations use <code><a href="https://rdrr.io/r/base/Log.html">log1p()</a></code> if your series data contains zeros</p>
+</div>
+</div>
 </section><section id="assessing-transformation-effectiveness" class="level3" data-number="11.3.2"><h3 data-number="11.3.2" class="anchored" data-anchor-id="assessing-transformation-effectiveness">
 <span class="header-section-number">11.3.2</span> Assessing Transformation Effectiveness</h3>
 <p>Although visual inspections provide insightful patterns and trends, we can statistically verify that the transformation successfully made the variance independent of the mean. This is done by examining the relationship between the rolling mean (level) and the rolling standard deviation (volatility)</p>
@@ -666,7 +680,7 @@ Figure&nbsp;11.6: Mean-Variance Relationship For Original Series and Transformed
 </div>
 <p>The code above uses the <code>slide_dbl</code> function from the <code>slider</code> package to calculate the rolling standard deviation over a 17-quarter window (<code>.before = 16</code>)</p>
 <p>The Left plot (Original Series) shows a clear linear relationship between its rolling mean and rolling standard deviation (SD). This is a clear heteroscedasticity where variance grows with the series’ level, which further confirms that the original series has a <strong>variance proportional to the mean</strong>. The nearly flat blue line in the left plot indicates how the transformation has now <strong>stabilised the variance</strong> across all levels. The rolling SD stays relatively constant (~0.07 to ~0.125) regardless of the rolling mean.</p>
-<p>Picking a rolling window that captures the full business cycle is very essential for a stable estimation while still remaining sensitive to local patterns. With quarterly data 17 quarters or ~4 years (rolling window) is a good compromise between smoothness and responsiveness. You could also quantify this relationship with correlations</p>
+<p>Picking a rolling window that captures the full business cycle is very essential for a stable estimation while still remaining sensitive to local patterns. With quarterly data, 17 quarters or ~4 years (rolling window) is a good compromise between smoothness and responsiveness. We could also quantify this relationship with correlations</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># correlation for original series and transformed series </span></span>
 <span><span class="va">cor_original</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span></span>
@@ -683,10 +697,16 @@ Figure&nbsp;11.6: Mean-Variance Relationship For Original Series and Transformed
 <pre><code>## Original Series correlation (mean vs SD): 0.883
 ## Transformed series correlation (mean vs SD: 0.018</code></pre>
 </div>
-<p>This is the most objective evidence for assessing the transformations effectiveness. The strong positive correlation <strong>(88.3%)</strong> in the original series confirms heteroscedasticity (volatility depends on the level). The near zero correlation <strong>(1.8%)</strong> in the transformed data provides conclusive statistical evidence that the Box-Cox transformation was highly effective and has properly prepared the Cement Production time series for subsequent time series modelling</p>
+<p>This is the most objective evidence for assessing the transformations effectiveness. The strong positive correlation <strong>(88.3%)</strong> in the original series confirms heteroscedasticity (volatility depends on the level). The near zero correlation <strong>(1.8%)</strong> in the transformed data provides conclusive statistical evidence that the Box-Cox transformation was highly effective and has properly prepared the Cement Production time series for subsequent time series modelling.</p>
+<p>The optimal transformation often represents a balance between variance stabilization and interpretability. While mathematical optimization helps, domain knowledge should guide final decisions, for example, log-transformed sales data can be interpreted in terms of percentage changes, which may be more meaningful for business stakeholders.</p>
+</section></section><section id="summary" class="level2" data-number="11.4"><h2 data-number="11.4" class="anchored" data-anchor-id="summary">
+<span class="header-section-number">11.4</span> Summary</h2>
+<p>We have tackled a fundamental challenge in time series forecasting; dealing with changing variances over time. We learned that many forecasting models assume constant variance, but real world data often displays a changing variance, where variability decreases or increases with the series level.</p>
+<p>The key insight emerged that variance stabilisation is not just a mathematical exercise, it is about creating a series where forecasting models can learn consistent patterns rather than being misled by changing variability.</p>
+<p>In our next chapter we will look at another critical assumption of time series modelling - stationarity. We will explore what it means for a data to be stationary tests to confirm it and techniques to transform our series into a stationary one.</p>
 
 
-</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
