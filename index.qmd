@@ -4,13 +4,21 @@
 >
 > ✔️Tools Used: `tidyverse` `tsibble` `fable` `feasts` `lubridate`
 >
+<<<<<<< HEAD
 > 📈Datasets: Built-in data from the `tsibble` package and custom datasets (`local gh time series data in csv format`)
+=======
+> 📈Datasets: Built-in data from the `tsibble` and `tsibbledata` packages and custom datasets (`local gh time series data in csv format`)
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 ## Welcome {.unnumbered}
 
 Have you ever looked at a line chart of sales, website traffic, stock prices or weather patterns and thought, *"I wonder what happens next?"* – then you are in the right place.
 
+<<<<<<< HEAD
 In this book, we will take your basic R skills and transform them into **real-world forecasting power –** all using the clean modern tools of the `Tidyverse`. No black-box algorithms or confusing jargon. Just a step by step journey into understanding patterns over time and predicting the future with confidence.
+=======
+In this book, we will take your basic R skills and transform them into **real-world forecasting power** all using the clean modern tools of the `Tidyverse`. No black-box algorithms or confusing jargon. Just a step by step journey into understanding patterns over time and predicting the future with confidence.
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 Whether you are a student, analyst or data enthusiast, time series skills are essential in your field – and surprisingly accessible. By the end of this guide, you will be able to:
 

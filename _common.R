@@ -9,8 +9,13 @@ knitr::opts_chunk$set(
   # Hide messages generated during code execution (e.g., from library() calls).
   message = FALSE,
   
+<<<<<<< HEAD
   # Concatenate all output from a chunk into a single block.
   collapse = TRUE,
+=======
+  # Do not concatenate all output from a chunk into a single block.
+  collapse = FALSE,
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
   
   # Set the default figure alignment to centre.
   fig.align = "center",
@@ -29,7 +34,11 @@ options(
   stringr.view_n = 10,
   
   # Set the width of the console output for better readability.
+<<<<<<< HEAD
   width = 75
+=======
+  width = 80
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 )
 
 # Load mainly used R packages in this book
@@ -39,6 +48,13 @@ library(fable)
 library(feasts)
 library(tsibbledata)
 library(ggtime)
+<<<<<<< HEAD
 
 # Set a consistent theme for all ggplot2 plots 
 ggplot2::theme_set(ggplot2::theme_minimal(12))
+=======
+library(rsample)
+
+# Set a consistent theme for all ggplot2 plots 
+ggplot2::theme_set(ggplot2::theme_grey(12))
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6

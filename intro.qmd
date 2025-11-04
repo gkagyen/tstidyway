@@ -2,7 +2,11 @@
 
 ## What is Time Series Data?
 
+<<<<<<< HEAD
 Time series data consists of observations recorded over time, usually at regular intervals (e.g., daily, monthly, yearly). Some examples include:
+=======
+Time series data consists of observations recorded over time, usually at regular intervals (e.g., daily, weekly, monthly, quarterly, yearly etc.). Some examples include:
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 -   Monthly rainfall totals
 -   Daily COVID-19 cases
@@ -26,7 +30,11 @@ In many cases, this analysis supports decision making — whether it is planning
 
 Historically, time series in R has been handled using `ts` objects and packages like `forecast`. These are still useful, but they do not fit perfectly with the modern **tidy philosophy**; data frames, pipelines and consistent syntax.
 
+<<<<<<< HEAD
 We will follow the tidy time series workflow using the tidyverse ecosystem. The workflow uses packages from the **`tidyverts`** ecosystem:
+=======
+We will follow the tidy time series workflow using the tidyverse standards. The workflow uses packages from the **`tidyverts`** ecosystem:
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 -   `tsibble`: A tidy data structure for time series (like a tibble but with special time handling)
 -   `fable`: For forecasting models (ARIMA, ETS, etc) in a tidy way.

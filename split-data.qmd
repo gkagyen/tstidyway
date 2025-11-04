@@ -255,7 +255,11 @@ multi_series_split |>
 
 Visualising the series, we see that each of the three indicators - GDP growth rate, Cereal yield and GNE (% of GDP) - are all split exactly at the year 2005, as indicated by the separate **red** and **blue** lines. This confirms our intended chronological split for each series where the training period precedes the testing period for all series simultaneously.
 
+<<<<<<< HEAD
 ### Automated Splitting and Extraction 
+=======
+### Automated Splitting and Extraction
+>>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 While manual splitting works, automatically creating and extracting the training and testing datasets for many series requires a more programmatic approach compared to doing the same for a single series by utilising some useful functions from the `purrr` and `rsample` packages.
 
