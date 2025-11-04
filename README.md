@@ -1,7 +1,9 @@
 # tstidyway
 
 <!-- badges: start -->
-
+![Made with R](https://img.shields.io/badge/Made%20with-R-1f425f.svg)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg?style=flat-square&logo=creativecommons)](https://creativecommons.org/licenses/by/4.0/)
+![Built with Quarto](https://img.shields.io/badge/Built_with-Quarto-006BA1.svg?style=flat-square&logo=quarto&logoColor=white)
 <!-- badges: end -->
 
 ## 📘 Overview
