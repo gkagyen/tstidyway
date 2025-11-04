@@ -99,5 +99,5 @@ You are free to **share**, **adapt**, and **build upon** this material for any p
 Data Analyst and Researcher\
 Ghana R User Community
 
-📧 [*Contact*](gkagyen@live.com)\
+📧 *Contact*: gkagyen@live.com\
 🌍 [Github](https://github.com/gkagyen)
