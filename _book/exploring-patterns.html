@@ -423,7 +423,7 @@ window.Quarto = {
 <strong>Remainder (</strong><span class="math inline">\(R_{t}\)</span><strong>):</strong> The “leftover” part after trend and seasonality are removed; this is often considered the random noisy component.</li>
 </ul>
 <p><span class="math display">\[
-y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
+y_{t}=Trend_{t}+Seasonal_{t}+Remainder_{t}
 \]</span></p>
 <section id="basic-and-advanced-decomposition-with-special-arguments" class="level3" data-number="10.1.1"><h3 data-number="10.1.1" class="anchored" data-anchor-id="basic-and-advanced-decomposition-with-special-arguments">
 <span class="header-section-number">10.1.1</span> Basic and Advanced Decomposition with Special Arguments</h3>
@@ -461,14 +461,9 @@ y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
 </ul>
 <p>This allows for direct analysis and visualisation of how much of the variations in the <code>Sales</code> series is attributed to long-term movements, seasonal factors, and irregular noise. The <code>autoplot()</code> function when applied on this <code>dable</code> output will automatically generate a multi-panel plot displaying the decomposition of the <code>Sales</code> series into its components as calculated by the STL method.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">components</span><span class="op">(</span><span class="va">dcmp</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># visualise components</span></span>
+<span><span class="fu">components</span><span class="op">(</span><span class="va">dcmp</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">autoplot</span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-ℹ Please use `linewidth` instead.
-ℹ The deprecated feature was likely used in the ggtime package.
-  Please report the issue to the authors.</code></pre>
-</div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="exploring-patterns_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
@@ -488,7 +483,7 @@ y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
 <span class="header-section-number">10.2.1</span> Autocorrelation Function (ACF)</h3>
 <p>The <strong>ACF</strong> measures the correlation between a time series <span class="math inline">\(y_{t}\)</span> and its past values <span class="math inline">\(y_{t-k}\)</span> (where <span class="math inline">\(k\)</span> is the lag) at all observed lags, without isolating the effect of intermediate lags. High autocorrelation at a seasonal lag (e.g.&nbsp;lag 12 for monthly data) is a strong indicator of seasonality. We use the <code>ACF()</code> function to calculate these correlations for the <code>Sales</code> series</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute the Autocorrelation for Sales</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute the Autocorrelation for Sales</span></span>
 <span><span class="va">sales_acf</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">ACF</span><span class="op">(</span><span class="va">Sales</span><span class="op">)</span></span>
 <span></span>
@@ -507,13 +502,13 @@ y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
 </div>
 <p>We can also specify the maximum number of lags to use for computing the correlations with the <code>lag_max</code> argument. By default it calculates this number using the formula “<span class="math inline">\(10\times log_{10}(N/m)\)</span>”.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute autocorrelation with specified lags</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute autocorrelation with specified lags</span></span>
 <span><span class="va">sales_acf</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> <span class="fu">ACF</span><span class="op">(</span><span class="va">Sales</span>, lag_max <span class="op">=</span> <span class="fl">24</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The resulting <code>sales_acf</code> object is a tsibble that contains the correlation coefficient at the different lags. A significant spike at a particular lag indicates a strong relationship.</p>
 <p>We can visualise the output for easier interpretation using <code>autoplot()</code>. The plot of the ACF displays a series of vertical lines known as <strong>correlogram</strong>, where the height of each line represents the correlation at that specific lag.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">autoplot</span><span class="op">(</span><span class="va">sales_acf</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">autoplot</span><span class="op">(</span><span class="va">sales_acf</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-acf" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-acf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -545,7 +540,7 @@ Figure&nbsp;10.1: Correlogram of Sales series Autocorrelations
 <p>The PACF cuts through this chain and asks: “If I already know the values at lags 1 and 2, does lag 3 still provide new, direct information today?</p>
 <p>The <code>PACF()</code> function is used to calculate the partial autocorrelations.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute the Partial Autocorrelation for Sales</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute the Partial Autocorrelation for Sales</span></span>
 <span><span class="va">sales_pacf</span> <span class="op">&lt;-</span> <span class="va">sales_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">PACF</span><span class="op">(</span><span class="va">Sales</span>, lag_max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> </span>
 <span></span>
@@ -564,7 +559,7 @@ Figure&nbsp;10.1: Correlogram of Sales series Autocorrelations
 </div>
 <p>similar to the ACF, the <code>sales_pacf</code> object also contains the partial autocorrelation values for each lag. We can again visualise this output using <code>autoplot()</code>. The PACF plot is primarily used to identify the <strong><em>order</em></strong> of an <strong><em>autoregressive</em></strong> <em>(<strong>AR</strong>)</em> component in a model</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sales_pacf</span> <span class="op">|&gt;</span> <span class="fu">autoplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sales_pacf</span> <span class="op">|&gt;</span> <span class="fu">autoplot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-pacf" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-pacf-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -585,7 +580,7 @@ Figure&nbsp;10.2: Correlogram of Sales series Partial Autocorrelations
 <span class="header-section-number">10.3.1</span> Identifying Seasonal Patterns and Strength</h3>
 <p>The most common feature to compute is the <strong>seasonal strength</strong>, which measures quantitatively how dominant the recurring patterns are compared to the overall trend and random noise. This is typically done using the <strong>STL decomposition</strong>. We demonstrate this with the <code><a href="https://tsibbledata.tidyverts.org/reference/aus_production.html">tsibbledata::aus_production</a></code> tsibble dataset which contains the quarterly production of selected commodities in Australia.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert wide data to long </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># convert wide data to long </span></span>
 <span><span class="va">aus_prod_long</span> <span class="op">&lt;-</span> <span class="va">aus_production</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span><span class="va">Quarter</span>, names_to <span class="op">=</span> <span class="st">'Product'</span>, values_to <span class="op">=</span> <span class="st">'Quantity'</span><span class="op">)</span></span>
 <span></span>
@@ -623,7 +618,7 @@ Figure&nbsp;10.2: Correlogram of Sales series Partial Autocorrelations
 <p><strong>STL Features for Non-Seasonal Characteristics</strong></p>
 <p>The STL feature set offers metrics beyond simple strength, focusing on the <strong>shape</strong> of the trend and the nature of the remainder (noise).</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute stl feature set for non-seasonal (yearly) data </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute stl feature set for non-seasonal (yearly) data </span></span>
 <span><span class="va">stl_features</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">features</span><span class="op">(</span><span class="va">value</span>, features <span class="op">=</span> <span class="fu">feature_set</span><span class="op">(</span>tags <span class="op">=</span> <span class="st">'stl'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -639,7 +634,7 @@ Figure&nbsp;10.2: Correlogram of Sales series Partial Autocorrelations
 <p><strong>Custom Feature Calculations with Lambda Expressions</strong></p>
 <p>If a desired feature is not pre-defined, you can compute it using a built in function or a simple lambda expression (a short, anonymous function)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute any other features using their function or a lambda expression</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># compute any other features using their function or a lambda expression</span></span>
 <span><span class="va">percentile_features</span> <span class="op">&lt;-</span> <span class="va">aus_prod_long</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">features</span><span class="op">(</span><span class="va">Quantity</span>, features <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -647,7 +642,7 @@ Figure&nbsp;10.2: Correlogram of Sales series Partial Autocorrelations
 <p><strong>Multiple Custom Features (List of Functions)</strong></p>
 <p>You can also calculate several custom features simultaneously by passing a named list of functions to the <code>features</code> argument.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># for multiple custom features create a list of functions </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># for multiple custom features create a list of functions </span></span>
 <span><span class="va">cent_tend_features</span> <span class="op">&lt;-</span> <span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">features</span><span class="op">(</span><span class="va">value</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>sd <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span>, median <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span>, mean <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">.</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">cent_tend_features</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -668,7 +663,7 @@ Figure&nbsp;10.2: Correlogram of Sales series Partial Autocorrelations
 <span class="header-section-number">10.4</span> Comprehensive Diagnostic Plots for Model Selection</h2>
 <p>The <code>gg_tsdisplay()</code> function from the <code>feasts</code> package (now often found in the <code>ggtime</code> package) makes it possible to create specialised plots that combine multiple diagnostics to guide model selection. Especially an ARIMA model.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create a comprehensive diagnostic plot for Gross National Expenditure</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create a comprehensive diagnostic plot for Gross National Expenditure</span></span>
 <span><span class="va">gh_ts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">indicator_name</span> <span class="op">==</span> <span class="st">"Gross national expenditure (% of GDP)"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">gg_tsdisplay</span><span class="op">(</span><span class="va">value</span>, plot_type <span class="op">=</span> <span class="st">"partial"</span><span class="op">)</span> <span class="op">+</span></span>

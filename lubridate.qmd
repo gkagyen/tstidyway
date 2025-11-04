@@ -13,8 +13,7 @@ Now that we know how to create a tidy time series data (`tsibble`) we will dive 
 We will explore these features using some in-built datasets from the `tsibble` package. Make sure all required packages are loaded
 
 ```{r}
-#| echo: false
-
+#| include: false
 source("_common.R")
 ```
 

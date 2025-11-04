@@ -672,7 +672,12 @@ Figure&nbsp;14.2: Sales Series and SNAIVE Predictions + Forecast (12 months)
 </div>
 <p>The fitted models are passed to the <code>accuracy()</code> function, which calculates metrics based on the residuals generated from the training data used to fit the models. The output is a tibble displaying several common error metrics.</p>
 <table class="caption-top table">
-<caption>Key Metric in Accuracy Output</caption>
+<caption>Key Metrics in Accuracy Output</caption>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 33%">
+<col style="width: 50%">
+</colgroup>
 <thead><tr class="header">
 <th>Metric</th>
 <th>Full Name</th>
@@ -682,29 +687,32 @@ Figure&nbsp;14.2: Sales Series and SNAIVE Predictions + Forecast (12 months)
 <tr class="odd">
 <td>MAE</td>
 <td>Mean Absolute Error</td>
-<td></td>
+<td>The average magnitude of the forecast errors</td>
 </tr>
 <tr class="even">
 <td>RMSE</td>
 <td>Root Mean Square Error</td>
-<td></td>
+<td>Penalises larger errors more heavily than MAE Always <span class="math inline">\(RMSE\ge MAE\)</span>.</td>
 </tr>
 <tr class="odd">
 <td>MASE</td>
-<td>Mean Absolute Error</td>
-<td></td>
+<td>Mean Absolute Scaled Error</td>
+<td>
+<strong><em>Key Scaled Metric.</em></strong> Measures accuracy relative to the NAIVE model.</td>
 </tr>
 <tr class="even">
 <td>ACF1</td>
-<td></td>
-<td></td>
+<td>Autocorrelation of Residuals</td>
+<td>Measures the correlation between the error at time <span class="math inline">\(t\)</span> and the error at time <span class="math inline">\(t-1\)</span>. Should be close to zero for a good model</td>
 </tr>
 </tbody>
 </table>
-<p>to calculate multiple error metrics on the training data. Key metrics include MAE (Mean Absolute Error), RMSE (Root Mean Square Error), MASE (Mean Absolute Scaled Error). MASE &lt; 1 indicates better performance than naive forecast.</p>
+<p>The low <span class="math inline">\(MASE\)</span> score for the <code>mean</code> model (0.892) indicates that even the simplest forecast (the historical average) performs better on the training data than the <code>naive</code> model. The <code>snaive</code> model has a value of 1 under <span class="math inline">\(MASE\)</span>, indicating a benchmark for the seasonality in the data.</p>
+<p>For a time series with seasonality (like Monthly Sales Data), the appropriate reference point for evaluating forecast accuracy is in the <strong>Seasonal Naive model (<code>snaive</code></strong>). By standard convention in time series analysis, the <span class="math inline">\(MASE\)</span> is typically scaled against the <code>snaive</code> error when the data is seasonal. The unscaled error vales of the <code>snaive</code> model (<span class="math inline">\(RMSE=11999\)</span> and <span class="math inline">\(MAE=9393\)</span>) suggests its ability to capture some seasonality making it the best benchmark model for this training data. The true test, however, will be its accuracy on the unseen testing data.</p>
 </section><section id="understanding-simple-models-for-strategic-decision-making" class="level2" data-number="14.4"><h2 data-number="14.4" class="anchored" data-anchor-id="understanding-simple-models-for-strategic-decision-making">
 <span class="header-section-number">14.4</span> Understanding Simple Models For Strategic Decision Making</h2>
-<p>Let us try to make sense of our technical forecasts in a practical context.</p>
+<p>Forecasting models, even simpe benchmarks, provide essential information for business planning, inventory management, budgeting and others. By summarising the 12-month forecast horizon, we can extract three key data points; the overall expected demand, the most pessimistic forecast, and the stability of the prediction.</p>
+<p>The following code aggregates the month-by-month forecast for each model to provide these high-level strategic summaries.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">insightful_summary</span> <span class="op">&lt;-</span> <span class="va">simple_forecasts</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -731,6 +739,12 @@ Figure&nbsp;14.2: Sales Series and SNAIVE Predictions + Forecast (12 months)
 3 snaive           25802.      0.451 seasonal    </code></pre>
 </div>
 </div>
+<p>For easier manipulation, the <strong>fable object</strong> (<code>simple_forecast</code>) which is actually a specialises <code>tsibble</code> is converted to a tibble and then grouped by the model name (<code>.model</code>) so that we can calculate our preferred summary statistics separately for each model’s forecast. We calculate the average forecasted value over the 12-month horizon, the coefficient of variation (<code>confodence</code>) which measures the variability in the data compared to its mean, and then finally add a description column <code>growth_trend</code> to explicitly label the pattern that each model projects.</p>
+<p>The <strong>Mean</strong> model provides a stable, conservative forecast that ignores both trends and seasonality. It is the most optimistic and the coefficient of variation (CV) value of 0 confirms it is a perfectly flat line. Useful as an Absolute minimum performance benchmark. Management can use this forecast <strong>(28,745)</strong> as an optimistic baseline for revenue goals.</p>
+<p>The <strong>Naive</strong> model captures the most recent level but assumes no change going forward. Since the last value was low, this model drags the 12-month average down significantly, representing a worst case baseline. Surprisingly it could be difficult to beat sometimes for many short term forecasting problems, especially in volatile environments. Management can use this as a highly conservative estimate for minimum expected sales.</p>
+<p>The <strong>Seasonal Naive</strong> excels at capturing stable seasonal patterns. It has the highest average among all the 3 models and the CV value of 0.451 confirms the model predicts some monthly fluctuations (peaks and troughs) due to seasonality. This model can remarkably be effective for data with consistent seasonality and provides an excellent seasonal benchmark. It is the most actionable for operations. The identified variability signals the need for flexible inventory and staffing plans to handle predictable surges and drops throughout the year. The actual values from this model’s forecast could be used to set monthly targets, not the overall average.</p>
+<p>The difference between these forecasts reveal fundamental characteristics of our data. Large discrepancies between models indicate strong trend or seasonality that more sophisticated models should capture. If complex models cannot outperform these simple benchmarks, it may indicate over-fitting or that our data lacks predictable patterns beyond basic persistence.</p>
+<p>These simple models are not just academic exercises – they are practical tools that establish the minimum performance threshold any advanced model must clear. They teach us humility in forecasting and provide interpretable baselines that stakeholders can easily understand.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

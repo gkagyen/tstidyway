@@ -59,6 +59,8 @@ bibliography: references.bib
 nocite: "@*"
 
 toc: true
+execute: 
+  freeze: auto
 
 format:
   html:

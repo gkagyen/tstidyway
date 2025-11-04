@@ -215,11 +215,13 @@ The fitted models are passed to the `accuracy()` function, which calculates metr
 
 The low $MASE$ score for the `mean` model (0.892) indicates that even the simplest forecast (the historical average) performs better on the training data than the `naive` model. The `snaive` model has a value of 1 under $MASE$, indicating a benchmark for the seasonality in the data.
 
-For a time series with seasonality (like Monthly Sales Data), the appropriate reference point for evaluating forecast accuracy is in the **Seasonal Naive model (`snaive`**). By standard convention in time series analysis, the $MASE$ is typically scaled against the `snaive` error when the data is seasonal.
+For a time series with seasonality (like Monthly Sales Data), the appropriate reference point for evaluating forecast accuracy is in the **Seasonal Naive model (`snaive`**). By standard convention in time series analysis, the $MASE$ is typically scaled against the `snaive` error when the data is seasonal. The unscaled error vales of the `snaive` model ($RMSE=11999$ and $MAE=9393$) suggests its ability to capture some seasonality making it the best benchmark model for this training data. The true test, however, will be its accuracy on the unseen testing data.
 
 ## Understanding Simple Models For Strategic Decision Making
 
-Let us try to make sense of our technical forecasts in a practical context.
+Forecasting models, even simpe benchmarks, provide essential information for business planning, inventory management, budgeting and others. By summarising the 12-month forecast horizon, we can extract three key data points; the overall expected demand, the most pessimistic forecast, and the stability of the prediction.
+
+The following code aggregates the month-by-month forecast for each model to provide these high-level strategic summaries.
 
 ```{r}
 insightful_summary <- simple_forecasts |> 
@@ -239,3 +241,15 @@ insightful_summary <- simple_forecasts |>
 
 print(insightful_summary)
 ```
+
+For easier manipulation, the **fable object** (`simple_forecast`) which is actually a specialises `tsibble` is converted to a tibble and then grouped by the model name (`.model`) so that we can calculate our preferred summary statistics separately for each model's forecast. We calculate the average forecasted value over the 12-month horizon, the coefficient of variation (`confodence`) which measures the variability in the data compared to its mean, and then finally add a description column `growth_trend` to explicitly label the pattern that each model projects.
+
+The **Mean** model provides a stable, conservative forecast that ignores both trends and seasonality. It is the most optimistic and the coefficient of variation (CV) value of 0 confirms it is a perfectly flat line. Useful as an Absolute minimum performance benchmark. Management can use this forecast **(28,745)** as an optimistic baseline for revenue goals.
+
+The **Naive** model captures the most recent level but assumes no change going forward. Since the last value was low, this model drags the 12-month average down significantly, representing a worst case baseline. Surprisingly it could be difficult to beat sometimes for many short term forecasting problems, especially in volatile environments. Management can use this as a highly conservative estimate for minimum expected sales.
+
+The **Seasonal Naive** excels at capturing stable seasonal patterns. It has the highest average among all the 3 models and the CV value of 0.451 confirms the model predicts some monthly fluctuations (peaks and troughs) due to seasonality. This model can remarkably be effective for data with consistent seasonality and provides an excellent seasonal benchmark. It is the most actionable for operations. The identified variability signals the need for flexible inventory and staffing plans to handle predictable surges and drops throughout the year. The actual values from this model's forecast could be used to set monthly targets, not the overall average.
+
+The difference between these forecasts reveal fundamental characteristics of our data. Large discrepancies between models indicate strong trend or seasonality that more sophisticated models should capture. If complex models cannot outperform these simple benchmarks, it may indicate over-fitting or that our data lacks predictable patterns beyond basic persistence.
+
+These simple models are not just academic exercises – they are practical tools that establish the minimum performance threshold any advanced model must clear. They teach us humility in forecasting and provide interpretable baselines that stakeholders can easily understand.

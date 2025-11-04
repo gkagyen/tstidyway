@@ -411,65 +411,12 @@ window.Quarto = {
 <li><p>Handle time zones and durations</p></li>
 </ul>
 <p>We will explore these features using some in-built datasets from the <code>tsibble</code> package. Make sure all required packages are loaded</p>
-<div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.2
-✔ ggplot2   4.0.0     ✔ tibble    3.3.0
-✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-✔ purrr     1.1.0     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
-Registered S3 method overwritten by 'tsibble':
-  method               from 
-  as_tibble.grouped_df dplyr
-
-
-Attaching package: 'tsibble'
-
-
-The following object is masked from 'package:lubridate':
-
-    interval
-
-
-The following objects are masked from 'package:base':
-
-    intersect, setdiff, union
-
-
-Loading required package: fabletools</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'feasts' was built under R version 4.5.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Registered S3 methods overwritten by 'ggtime':
-  method                  from      
-  +.gg_tsensemble         feasts    
-  autolayer.tbl_ts        fabletools
-  autoplot.dcmp_ts        fabletools
-  autoplot.tbl_ts         fabletools
-  grid.draw.gg_tsensemble feasts    
-  print.gg_tsensemble     feasts    
-
-Attaching package: 'ggtime'
-
-The following objects are masked from 'package:feasts':
-
-    gg_arma, gg_irf, gg_lag, gg_season, gg_subseries, gg_tsdisplay,
-    gg_tsresiduals</code></pre>
-</div>
-</div>
 <section id="understanding-date-formats" class="level2" data-number="7.1"><h2 data-number="7.1" class="anchored" data-anchor-id="understanding-date-formats">
 <span class="header-section-number">7.1</span> Understanding Date Formats</h2>
 <p>Dates come in many formats: “2025-01-22”, “22/01/2025”, “January 22, 2025”, 22-Jan-2025”. Without <code>lubridate</code> parsing these can be frustrating.</p>
 <p><code>lubridate</code> provides intuitive functions that match the order of your date components</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Different date formats parsed easily</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Different date formats parsed easily</span></span>
 <span><span class="va">date1</span> <span class="op">&lt;-</span> <span class="fu">ymd</span><span class="op">(</span><span class="st">"2023-03-15"</span><span class="op">)</span>        <span class="co"># Year-Month-Day</span></span>
 <span><span class="va">date2</span> <span class="op">&lt;-</span> <span class="fu">dmy</span><span class="op">(</span><span class="st">"15/03/2023"</span><span class="op">)</span>        <span class="co"># Day-Month-Year  </span></span>
 <span><span class="va">date3</span> <span class="op">&lt;-</span> <span class="fu">mdy</span><span class="op">(</span><span class="st">"March 15, 2023"</span><span class="op">)</span>    <span class="co"># Month-Day-Year</span></span>
@@ -480,7 +427,7 @@ The following objects are masked from 'package:feasts':
 <span class="header-section-number">7.2</span> Working with Real Data</h2>
 <p>We will use the <code>pedestrian</code> dataset from the <code>tsibble</code> package which contains hourly pedestrian counts from sensors around Melbourne in Australia. We will practice our <code>lubridate</code> skills on this data.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pedestrian</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">pedestrian</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tsibble: 6 x 5 [1h] &lt;Australia/Melbourne&gt;
 # Key:       Sensor [1]
@@ -510,13 +457,13 @@ Tip
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Isolate Date_Time column from the rest of the data</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Isolate Date_Time column from the rest of the data</span></span>
 <span><span class="va">pedestrain_date_times</span> <span class="op">&lt;-</span> <span class="va">pedestrian</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">Date_Time</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This is an hourly timestamp which contains lots of temporal information. We will go ahead and extract components using functions from the <code>lubridate</code> package.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># extract a single timestamp</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># extract a single timestamp</span></span>
 <span><span class="va">single_timestamp</span> <span class="op">&lt;-</span> <span class="va">pedestrain_date_times</span><span class="op">$</span><span class="va">Date_Time</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># extract temporal components</span></span>
@@ -536,7 +483,7 @@ Tip
 <span class="header-section-number">7.3</span> Date Arithmetic</h2>
 <p><code>lubridate</code> also contains functions to perform simple arithmetic on dates. This type of manipulation can be vital when preparing your data for time series modelling. we will use the same <code>single timestamp</code> variable to demonstrate this.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># rename to start date</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># rename to start date</span></span>
 <span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="va">single_timestamp</span></span>
 <span></span>
 <span><span class="co"># perform various date calculations</span></span>
@@ -552,7 +499,7 @@ Tip
 <p>Here we learn the critical concept of time zone handling using <code>lubridate</code>. We will use the <code>pedestrian</code> data which contains dates in the <code>"AEDT"</code> (Australian Eastern Daylight Time) [The time zone in Melbourne] time zone and convert them into various global time zones. This demonstrates how the same moment in time is represented differently around the world.</p>
 <p>We will first sample a few timelines from the pedestrian data and the use the <code>with_tz()</code> function to convert these times to several international time zones</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># sample time stamps (first 5) from data</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># sample time stamps (first 5) from data</span></span>
 <span><span class="va">time_examples</span> <span class="op">&lt;-</span> <span class="va">pedestrain_date_times</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
@@ -570,7 +517,7 @@ Tip
 </div>
 <p>We then go ahead to create new time zones (time zone conversion) from the original time zone as new columns in the data</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">more_time_examples</span> <span class="op">&lt;-</span> <span class="va">time_examples</span> <span class="op">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">more_time_examples</span> <span class="op">&lt;-</span> <span class="va">time_examples</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
 <span>    utc_time <span class="op">=</span> <span class="fu">with_tz</span><span class="op">(</span><span class="va">Date_Time</span>, tzone <span class="op">=</span> <span class="st">'UTC'</span><span class="op">)</span>,</span>
 <span>    london_time <span class="op">=</span> <span class="fu">with_tz</span><span class="op">(</span><span class="va">Date_Time</span>, tzone <span class="op">=</span> <span class="st">'Europe/London'</span><span class="op">)</span>,</span>
@@ -613,7 +560,7 @@ Tip
 <span class="header-section-number">7.5.1</span> Handling Multiple Date Formats</h3>
 <p>When raw data comes from different sources, it may lead to dates stored as string/characters in unpredictable non-standard formats (<code>YYYY-MM-DD</code>). We demonstrate how to use an all purpose function <code>parse_date_time()</code> to handle such irregularities</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># simulate messy dates data</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># simulate messy dates data</span></span>
 <span><span class="va">messy_dates</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  date_string <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"2016-01-01 08:00:00"</span>,</span>
@@ -679,7 +626,7 @@ Important
 <span class="header-section-number">7.5.2</span> Working with Partial Dates and Creating Sequences</h3>
 <p>Time series analysis often requires a complete, ordered sequence of time points, even if the raw data is sparse or irregular. We have already seen how to check and repair implicit missing time stamps in our data but what we want to learn here is to generate a series of dates/times between two specified endpoints. To achieve this, we can use <code>seq.Date</code> and <code><a href="https://rdrr.io/r/base/seq.POSIXt.html">seq.POSIXt()</a></code> to generate these continuous sequences. These two functions are all base R functions that can be very handy sometimes</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># create date sequences for analysis</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># create date sequences for analysis</span></span>
 <span><span class="va">start_date</span> <span class="op">&lt;-</span>  <span class="fu">ymd</span><span class="op">(</span><span class="st">'2016-01-01'</span><span class="op">)</span></span>
 <span><span class="va">end_date</span> <span class="op">&lt;-</span>  <span class="fu">ymd</span><span class="op">(</span><span class="st">'2016-01-31'</span><span class="op">)</span></span>
 <span></span>
@@ -734,7 +681,7 @@ Important
 </table>
 <p>The code below demonstrates this sophistication</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># understanding the difference between periods and duration</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># understanding the difference between periods and duration</span></span>
 <span><span class="va">time_concepts</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span></span>
 <span>  description <span class="op">=</span> <span class="st">'start of analysis period'</span>,</span>
 <span>  start_time <span class="op">=</span> <span class="fu">ymd_hms</span><span class="op">(</span><span class="st">"2016-01-01 00:00:00"</span><span class="op">)</span>,</span>
