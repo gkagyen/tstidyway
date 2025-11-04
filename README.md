@@ -8,7 +8,7 @@
 
 ## 📘 Overview
 
-***Time Series Analysis in R the Tidyverse Way***
+***Time Series Analysis in R the Tidyverse Way***\
 *A practical, beginner-friendly guide using `tsibble`, `fable` and friends*
 
 `tstidyway` is an educational book designed to introduce time series analysis using modern *tidyverse* framework in R. It offers a clear, step-by-step learning journey–from understanding time series data and exploring patterns, to forecasting using state-of-the-art models in the `fable` ecosystem.
