@@ -52,7 +52,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
@@ -900,6 +920,65 @@ Figure&nbsp;13.4: Temporal Time Split for Multiple Series - Consistent Split Poi
 <p>With our data properly prepared, variance stabilised, stationarity achieved and rigorous validation splits established we are now ready for the most exciting phase: building actual forecasting models. In our next section we will explore various forecasting models and how they effectively they fit to our temporal data.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-rmarkdown2024" class="csl-entry" role="listitem">
+Allaire, JJ, Yihui Xie, Christophe Dervieux, Jonathan McPherson, Javier Luraschi, Kevin Ushey, Aron Atkins, et al. 2024. <em><span class="nocase">rmarkdown</span>: Dynamic Documents for r</em>. <a href="https://github.com/rstudio/rmarkdown">https://github.com/rstudio/rmarkdown</a>.
+</div>
+<div id="ref-janitor" class="csl-entry" role="listitem">
+Firke, Sam. 2024. <em><span class="nocase">janitor</span>: Simple Tools for Examining and Cleaning Dirty Data</em>. <a href="https://doi.org/10.32614/CRAN.package.janitor">https://doi.org/10.32614/CRAN.package.janitor</a>.
+</div>
+<div id="ref-rsample" class="csl-entry" role="listitem">
+Frick, Hannah, Fanny Chow, Max Kuhn, Michael Mahoney, Julia Silge, and Hadley Wickham. 2025. <em><span class="nocase">rsample</span>: General Resampling Infrastructure</em>. <a href="https://doi.org/10.32614/CRAN.package.rsample">https://doi.org/10.32614/CRAN.package.rsample</a>.
+</div>
+<div id="ref-fpp3" class="csl-entry" role="listitem">
+Hyndman, Rob. 2024. <em>Fpp3: Data for "Forecasting: Principles and Practice" (3rd Edition)</em>. <a href="https://doi.org/10.32614/CRAN.package.fpp3">https://doi.org/10.32614/CRAN.package.fpp3</a>.
+</div>
+<div id="ref-ggtime" class="csl-entry" role="listitem">
+O’Hara-Wild, Mitchell, Cynthia A. Huang, Matthew Kay, and Rob Hyndman. 2025. <em><span class="nocase">ggtime</span>: Grammar of Graphics and Plot Helpers for Time Series Visualization</em>. <a href="https://doi.org/10.32614/CRAN.package.ggtime">https://doi.org/10.32614/CRAN.package.ggtime</a>.
+</div>
+<div id="ref-fable" class="csl-entry" role="listitem">
+O’Hara-Wild, Mitchell, Rob Hyndman, and Earo Wang. 2024. <em><span class="nocase">fable</span>: Forecasting Models for Tidy Time Series</em>. <a href="https://doi.org/10.32614/CRAN.package.fable">https://doi.org/10.32614/CRAN.package.fable</a>.
+</div>
+<div id="ref-feasts" class="csl-entry" role="listitem">
+———. 2025. <em><span class="nocase">feasts</span>: Feature Extraction and Statistics for Time Series</em>. <a href="https://doi.org/10.32614/CRAN.package.feasts">https://doi.org/10.32614/CRAN.package.feasts</a>.
+</div>
+<div id="ref-tsibbledata" class="csl-entry" role="listitem">
+O’Hara-Wild, Mitchell, Rob Hyndman, Earo Wang, and Rakshitha Godahewa. 2022. <em><span class="nocase">tsibbledata</span>: Diverse Datasets for <span>“<span class="nocase">tsibble</span>”</span></em>. <a href="https://doi.org/10.32614/CRAN.package.tsibbledata">https://doi.org/10.32614/CRAN.package.tsibbledata</a>.
+</div>
+<div id="ref-patchwork" class="csl-entry" role="listitem">
+Pedersen, Thomas Lin. 2025. <em><span class="nocase">patchwork</span>: The Composer of Plots</em>. <a href="https://doi.org/10.32614/CRAN.package.patchwork">https://doi.org/10.32614/CRAN.package.patchwork</a>.
+</div>
+<div id="ref-base" class="csl-entry" role="listitem">
+R Core Team. 2025. <em><span>R</span>: A Language and Environment for Statistical Computing</em>. Vienna, Austria: R Foundation for Statistical Computing. <a href="https://www.R-project.org/">https://www.R-project.org/</a>.
+</div>
+<div id="ref-slider" class="csl-entry" role="listitem">
+Vaughan, Davis. 2024. <em><span class="nocase">slider</span>: Sliding Window Functions</em>. <a href="https://doi.org/10.32614/CRAN.package.slider">https://doi.org/10.32614/CRAN.package.slider</a>.
+</div>
+<div id="ref-tsibble" class="csl-entry" role="listitem">
+Wang, Earo, Dianne Cook, and Rob J Hyndman. 2020. <span>“A New Tidy Data Structure to Support Exploration and Modeling of Temporal Data.”</span> <em>Journal of Computational and Graphical Statistics</em> 29 (3): 466–78. <a href="https://doi.org/10.1080/10618600.2019.1695624">https://doi.org/10.1080/10618600.2019.1695624</a>.
+</div>
+<div id="ref-tidyverse" class="csl-entry" role="listitem">
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. <span>“Welcome to the <span class="nocase">tidyverse</span>.”</span> <em>Journal of Open Source Software</em> 4 (43): 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.
+</div>
+<div id="ref-knitr2014" class="csl-entry" role="listitem">
+Xie, Yihui. 2014. <span>“<span class="nocase">knitr</span>: A Comprehensive Tool for Reproducible Research in <span>R</span>.”</span> In <em>Implementing Reproducible Computational Research</em>, edited by Victoria Stodden, Friedrich Leisch, and Roger D. Peng. Chapman; Hall/CRC.
+</div>
+<div id="ref-knitr2015" class="csl-entry" role="listitem">
+———. 2015. <em>Dynamic Documents with <span>R</span> and Knitr</em>. 2nd ed. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://yihui.org/knitr/">https://yihui.org/knitr/</a>.
+</div>
+<div id="ref-knitr2025" class="csl-entry" role="listitem">
+———. 2025. <em><span class="nocase">knitr</span>: A General-Purpose Package for Dynamic Report Generation in <span>R</span></em>. <a href="https://yihui.org/knitr/">https://yihui.org/knitr/</a>.
+</div>
+<div id="ref-rmarkdown2018" class="csl-entry" role="listitem">
+Xie, Yihui, J. J. Allaire, and Garrett Grolemund. 2018. <em>R Markdown: The Definitive Guide</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown">https://bookdown.org/yihui/rmarkdown</a>.
+</div>
+<div id="ref-rmarkdown2020" class="csl-entry" role="listitem">
+Xie, Yihui, Christophe Dervieux, and Emily Riederer. 2020. <em>R Markdown Cookbook</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown-cookbook">https://bookdown.org/yihui/rmarkdown-cookbook</a>.
+</div>
+<div id="ref-kableExtra" class="csl-entry" role="listitem">
+Zhu, Hao. 2024. <em><span class="nocase">kableExtra</span>: Construct Complex Table with <span>“<span class="nocase">kable</span>”</span> and Pipe Syntax</em>. <a href="https://doi.org/10.32614/CRAN.package.kableExtra">https://doi.org/10.32614/CRAN.package.kableExtra</a>.
+</div>
+</div>
 </section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

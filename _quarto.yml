@@ -54,10 +54,12 @@ book:
     - references.qmd
 
 bibliography: references.bib
+nocite: "@*"
+
+toc: true
 
 format:
   html:
-    toc: true
     theme:
       - cosmo
     code-link: true
