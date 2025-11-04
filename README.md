@@ -8,12 +8,12 @@
 
 ## 📘 Overview
 
-***Time Series Analysis in R the Tidyverse Way\
-**A practical, beginner-friendly guide using `tsibble`, `fable` and friends*
+***Time Series Analysis in R the Tidyverse Way***\
+*A practical, beginner-friendly guide using `tsibble`, `fable` and friends*
 
 `tstidyway` is an educational book designed to introduce time series analysis using modern *tidyverse* framework in R. It offers a clear, step-by-step learning journey–from understanding time series data and exploring patterns, to forecasting using state-of-the-art models in the `fable` ecosystem.
 
-The book emphasises tidy principles, helping learners and researchers move seamlessly from data wrangling to analysis and visualisations – all within the same grammar of data manipulation that makes the tidyverse so intuitive. This repository contains the source code for the book which was created in RStudio with [Quarto](to.org/docs/books/)
+The book emphasises tidy principles, helping learners and researchers move seamlessly from data wrangling to analysis and visualisations – all within the same grammar of data manipulation that makes the tidyverse so intuitive. This repository contains the source code for the book [tstidyway](https://gkagyen.quarto.pub/tstidyway/) which was created in RStudio with [Quarto](to.org/docs/books/)
 
 ## 🎯 Objectives
 
@@ -99,5 +99,5 @@ You are free to **share**, **adapt**, and **build upon** this material for any p
 Data Analyst and Researcher\
 Ghana R User Community
 
-📧 [*Contact*](gkagyen@live.com)\
+📧 *Contact*: gkagyen@live.com\
 🌍 [Github](https://github.com/gkagyen)
