@@ -1,0 +1,15 @@
+{
+  "hash": "2386b78e253b505daddc3b9ec52becc9",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Setting Up Your RStudio Environment {#sec-setting-up-your-rstudio-environment}\n\nWe can go ahead and start building our time series analysis task right away after installing and loading the needed packages. However, to keep things organised you might want to;\n\n1.  **Create a new project** in RStudio (`File > New > Project`).\n\n2.  **Set your working directory** to the folder on your PC where you prefer.\n\n\n    ::: {.cell}\n    \n    ```{.r .cell-code}\n    setwd(\"path/to/folder\")\n    ```\n    :::\n\n\n    ::: callout-tip\n    When creating a new project you can directly set your project directory to your preferred directory by choosing **`\"Existing Directory\"`** and selecting the directory manually.\n    :::\n\n3.  Keep all scripts, data, and outputs in separate folders for better workflow\n\n## Quick Test Run\n\nLet's run a quick test to ensure everything is working. We shall use a built in dataset\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Use the 'us_employment' dataset from the fpp3 package\nlibrary(fpp3)\nhead(us_employment)\n\n# Lets see if it is a proper tsibble and then we can plot it\nus_employment |> \n  filter(Title == \"Total Private\") |> \n  autoplot(Employed) +\n  labs(title = \"US Total Private Employment\",\n       y = \"People\")\n```\n:::\n\n\nThis \"`head(us_employment)` \" line of code should show you a tidy time series dataset with **index (time column)** and **key (group identifier)**. The codes that follow, if it runs without errors, should also produce a time series plot.\n\nIf you see all the things mentioned earlier, congratulations! Your environment is ready.\n\n::: callout-note\nThe `fpp3` package is a collection of tools and datasets (which we have already seen) for time series forecasting. It was built to accompany the third edition of the book [***Forecasting: Principles and Practice***](https://otexts.com/fpp3/) by *`Rob J Hyndman and George Athanasopoulos`* .\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
