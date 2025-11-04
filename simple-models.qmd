@@ -2,15 +2,6 @@
 
 In the world of forecasting, complexity does not always equal accuracy. Before we dive into sophisticated algorithms with dozens of parameters, we start with simple benchmark models that serve crucial purposes in any forecasting workflow. These elementary models provide:
 
-<<<<<<< HEAD
--   **Performance Baselines:**
-
--   **Model Diagnostics:**
-
--   **Computational Efficiency:**
-
--   **Business Understanding:**
-=======
 -   **Performance Baselines:** If your advanced model cannot beat a simple naive forecast, it is not adding value
 -   **Model Diagnostics:** Simple models reveal fundamental patterns and outliers in your data
 -   **Computational Efficiency:** Quick to fit and easy to interpret
@@ -185,4 +176,4 @@ snaive_plot
 ```
 
 This final plot provides powerful insight: the **SNAIVE** model forecast by simply projecting the last observed seasonal cycle into the future.
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
+

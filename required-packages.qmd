@@ -1,16 +1,9 @@
 # Required Packages {#sec-required-packages}
 
-<<<<<<< HEAD
 As stated earlier we will be using a combination of `tidyverse` and time series specific packages (`tidyverts`)
 
 | Package | Purpose |
-|----|----|
-=======
-As stated earlier we will be using a combination of `tidyverse` packages and a collection of time series specific packages (`tidyverts`)
-
-| Package | Purpose |
 |------------------------------------|------------------------------------|
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 | `tidyverse` | Core suite for data wrangling and visualisation (`dplyr`, `tibble`, `ggplot2`, `readr`, etc) |
 | `tsibble` | Tidy data frames for time series, handles dates, keys and indexing |
 | `fable` | Forecasting models (ETS, ARIMA, Naive, etc) with tidy outputs |
@@ -21,11 +14,7 @@ As stated earlier we will be using a combination of `tidyverse` packages and a c
 
 : Essential packages required for this journey
 
-<<<<<<< HEAD
 There is another supporting package in the **tidyverts** ecosystem called `fabletools`. This is a supporting package that provides some underlying tools for the `fables` package
-=======
-There is another supporting package in the **tidyverts** ecosystem called `fabletools`. This is a supporting package that provides some underlying tools for the `fables` package.
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 ::: callout-note
 the `readr` and `lubridate` packages are already part of the **tidyverse package collections**. Once you install `tidyverse`, you do not need to install them again separately. `fabletools` is installed together with the `fables` package.

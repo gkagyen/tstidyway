@@ -1,10 +1,6 @@
 # Setting Up {#sec-setting-up}
 
-<<<<<<< HEAD
 Before diving into analysis, let's make sure we have all the **tools** we need to get ready. We need to set up our R environment with the right tools. The **`tidyverts`** ecosystem — built around the **`tidyverse`** — makes time series analysis intuitive, consistent and visual.
-=======
-Before diving into analysis, We will make sure we have all the **tools** we need to get ready. We need to set up our R environment with the right tools. The **`tidyverts`** ecosystem — built around the **`tidyverse`** — makes time series analysis intuitive, consistent and visual.
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 [![Tidyverts Package Collection](images/clipboard-351646644.png){fig-align="center"}](https://tidyverts.org/)
 

@@ -3,12 +3,7 @@
 Real-world data is messy. Sensors fails, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but `tsibble` helps you find and handle them.
 
 ```{r}
-<<<<<<< HEAD
-#| echo: false
-
-=======
 #| include: false
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 source("_common.R")
 ```
 

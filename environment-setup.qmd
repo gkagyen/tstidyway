@@ -2,42 +2,24 @@
 
 We can go ahead and start building our time series analysis task right away after installing and loading the needed packages. However, to keep things organised you might want to;
 
-<<<<<<< HEAD
-1.  **Create a new project** in RStudio (`File > New > Project`)
-
-2.  **Set your working directory** to the folder on your PC where your datasets are stored.
-=======
 1.  **Create a new project** in RStudio (`File > New > Project`).
 
 2.  **Set your working directory** to the folder on your PC where you prefer.
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
     ```{r}
     #| eval: false
     setwd("path/to/folder")
-<<<<<<< HEAD
-
-=======
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
     ```
 
     ::: callout-tip
     When creating a new project you can directly set your project directory to your preferred directory by choosing **`"Existing Directory"`** and selecting the directory manually.
     :::
 
-<<<<<<< HEAD
 3.  Keep all scripts, data, and outputs in separate folders for better workflow
 
 ## Quick Test Run
 
 Let's run a quick test to ensure everything is working. We shall use a built in dataset
-=======
-3.  Keep all scripts, data, and outputs in separate folders in your working directory for better workflow.
-
-## Quick Test Run
-
-Let's run a quick test to ensure everything is working. We shall use a built in dataset from the `fpp3` package.
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
 
 ```{r}
 #| eval: false
