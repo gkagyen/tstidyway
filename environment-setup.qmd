@@ -1,0 +1,45 @@
+# Setting Up Your RStudio Environment {#sec-setting-up-your-rstudio-environment}
+
+We can go ahead and start building our time series analysis task right away after installing and loading the needed packages. However, to keep things organised you might want to;
+
+1.  **Create a new project** in RStudio (`File > New > Project`).
+
+2.  **Set your working directory** to the folder on your PC where you prefer.
+
+    ```{r}
+    #| eval: false
+    setwd("path/to/folder")
+    ```
+
+    ::: callout-tip
+    When creating a new project you can directly set your project directory to your preferred directory by choosing **`"Existing Directory"`** and selecting the directory manually.
+    :::
+
+3.  Keep all scripts, data, and outputs in separate folders in your working directory for better workflow.
+
+## Quick Test Run
+
+Let's run a quick test to ensure everything is working. We shall use a built in dataset from the `fpp3` package.
+
+```{r}
+#| eval: false
+
+# Use the 'us_employment' dataset from the fpp3 package
+library(fpp3)
+head(us_employment)
+
+# Lets see if it is a proper tsibble and then we can plot it
+us_employment |> 
+  filter(Title == "Total Private") |> 
+  autoplot(Employed) +
+  labs(title = "US Total Private Employment",
+       y = "People")
+```
+
+This "`head(us_employment)` " line of code should show you a tidy time series dataset with **index (time column)** and **key (group identifier)**. The codes that follow, if it runs without errors, should also produce a time series plot.
+
+If you see all the things mentioned earlier, congratulations! Your environment is ready.
+
+::: callout-note
+The `fpp3` package is a collection of tools and datasets (which we have already seen) for time series forecasting. It was built to accompany the third edition of the book [***Forecasting: Principles and Practice***](https://otexts.com/fpp3/) by *`Rob J Hyndman and George Athanasopoulos`* .
+:::

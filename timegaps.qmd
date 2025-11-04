@@ -1,0 +1,159 @@
+# Dealing with Time Gaps and Irregularities {#sec-dealing-with-time-gaps-and-irregularities}
+
+Real-world data is messy. Sensors fails, public holidays happen, data does not get entered. This leads to gaps in your time series – missing entries in the index where we expect a measurement. Traditional data frames ignore this, but `tsibble` helps you find and handle them.
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+## Why Time Gaps Matter
+
+Many time series models and visualisations assume ***regular spaced data.*** Gaps can lead to errors, misleading plots and inaccurate forecasts.
+
+## How tsibble Helps
+
+We can check the time gaps in our tsibble using the `scan_gaps` function from the `tsibble` package. This is a very handy function that compares our actual data against a complete regular timeline and tells us exactly what is missing. Other equally useful functions for handling time gaps include `count_gaps` and `has_gaps`.
+
+We will scan our `gh_ts` tsibble to check if there are gaps. But before that, we will fix the column names with `janitor::clean_names()` to avoid complications later on in our analysis due to the unconventional column names.
+
+```{r}
+#| include: false
+gh_ts <- read_csv('data/gh_ts.csv', show_col_types = F) |> 
+  as_tsibble(index = Date, key = `Indicator Name`)
+```
+
+```{r}
+gh_ts <- gh_ts |> 
+  janitor::clean_names() 
+
+gh_ts |> scan_gaps()
+```
+
+the scan gaps returns a long list of missing dates. However, this is not true for our data set. We are getting this many gaps because the inner workings of tsibble thinks that the days of all the months a missing, meanwhile our data is not a daily data but a yearly series. This whole misinterpretation comes from the incorrect interval \[1D\]. To fix this we can change the date to a year-month format or use the year column as the index and then rescan for gaps
+
+```{r}
+# fix interval  by assigning index to year
+gh_ts |> 
+  as_tsibble(
+    index = year
+  ) |> head(2)
+```
+
+Here we see that the interval is now correctly represented a \[1Y\] which is exactly what we expect. We do not want to change our index variable so what we will do is keep the date as index but modify it somehow for it to be recognised as a year interval.
+
+```{r}
+gh_ts <- gh_ts |> 
+  mutate(date = yearmonth(date))
+
+gh_ts |> head(3)
+```
+
+Our interval is \[12M\]-meaning 12 months, essentially indicating a year. We can go ahead and check for gaps now.
+
+```{r}
+gh_ts |> scan_gaps()
+
+```
+
+This returns an empty tsibble, telling us that there are no time gaps. we can confirm again with the `has_gaps()` function.
+
+```{r}
+gh_ts |> has_gaps() |> 
+  pull(.gaps) |> sum()
+```
+
+Confirms **Zero Gaps** in our `gh_ts` data!
+
+## Handling Time Gaps
+
+In order for us to understand the concept of time gaps and how to handle to properly I will simulate a data with implicit time gaps and then we will see how to deal with them using functions from the `tsibble` package
+
+We will use the same product sales concept to simulate this series. Here we compare sales for 2 products `Smart Phone` and `Laptop` over a 12 month period
+
+```{r}
+# create a sequence of sales dates
+start_date <- ym('2025-01')  
+end_date <- ym('2025-12')
+sales_period <- seq.Date(
+  from = start_date,
+  to = end_date,
+  by = 'month'
+) |> 
+  yearmonth()     # change format to year-month
+
+# simulate data with missing dates for different products
+sales_data_gaps <- tsibble(
+  Product = c(rep('Smart Phone', 10), rep('Laptop', 8)),
+  Sales = round(c(rnorm(10,300,65), runif(8, 620, 1000))),
+  Date = c(
+    sales_period[c(1:5,8:12)],      # Smart phone is missing Jun & Jul
+    sales_period[c(2,3,4,5,6,9:11)] # Laptop is missing Jan, Jul, Aug & Dec
+  ),
+  index = Date,
+  key = Product
+)
+
+print(sales_data_gaps)
+```
+
+Our simulated tsibble (`sales_data_gaps`) is now ready. I visual inspection of the `Date` column will reveal that there are missing dates (implicit). we can confirm this with the functions we learnt earlier and then decide what to do later.
+
+::: callout-note
+More information on the `seq.Date` function in (@sec-using-lubridate-for-date-manipulation)
+:::
+
+```{r}
+scan_gaps(sales_data_gaps)
+```
+
+The scan gaps tells us the gaps in our data. Notice how it is only showing only **2 months** are missing for `Laptop` even though we know there are **4 months** missing rather. We will see how to handle this very soon.
+
+::: callout-important
+The tsibble assumes that our data only starts from **Feb** and Ends in **Nov** for the `Laptop` **Product**.
+:::
+
+The `tsibble` package makes it really easy to handle gaps in our time series data with the `fill_gaps()` function. The `fill_gaps()` makes the **implicit** gaps **explicit** by inserting rows for missing time periods and assigning `NA` to the observation values (the `Sales` column in our case)
+
+```{r}
+# fill in the missing time points 
+sales_data_gaps |> 
+  fill_gaps() |> pull(Date)
+```
+
+The `fill_gaps()` function filled only the gaps which were identified by the `scan_gaps` function evidenced by only **22 time points** instead of **24**.
+
+So you might be wondering, how do we deal with the missing Jan and Dec. Well! the `fill_gaps()` function creates provision for such cases. The function can even help us set a start/ending time that allows us to expand the existing time span (we are not doing that).
+
+Back to our issue, we can set `.full = TRUE` inside `fill_gaps` to fill the time gaps over the entire time span of our data. What it does is, it checks the time span for the `Smart Phone`'s series and notices that it starts from Jan and ends in Dec so it applies the same time span to `Laptops`
+
+```{r}
+#| eval: false
+# fill gaps over entire time span
+sales_data_filled <- sales_data_gaps |> 
+  fill_gaps(.full = TRUE)
+```
+
+Also, instead of assigning the values of the filled time gaps with `NAs` we can specify a value of our choosing which is very useful if we want to record zero (0) sales for the missing months instead of missing data.
+
+```{r}
+#| eval: false
+# fill gaps in Sales column with 0
+sales_data_gaps |> 
+  fill_gaps(
+    .full = TRUE,
+    Sales = 0
+  )
+```
+
+Now, all missing time points have a Sales value of 0 instead of NA. This can be crucial for consistent time series modelling or calculations. Sometimes too the data might not have time gaps but rather missing values for a particular time period. We can deal with them by filtering out complete cases (which automatically introduces time gaps) or use models that can handle `NA`s within a time series data. The later choice would not help much. Since we will not go into imputing missing data my advice is to rely on the `fill_gaps()` and replacing `NA`s with **zeros**.
+
+::: callout-tip
+the `imputeTS` package provides several robust methods for estimating missing values in a time series data.
+:::
+
+::: callout-caution
+Always apply domain knowledge and check time series data characteristics before applying a particular imputation method from `imputeTS`
+:::
+
+The next chapter is a bonus one. It briefly describes how to import data (time series data) into R from various sources with a simple code illustration. You can decide to skip it if you already know how to import the data from some common file formats like `.csv` or `.xlsx` (excel file) into R.

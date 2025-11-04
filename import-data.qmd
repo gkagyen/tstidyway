@@ -1,0 +1,56 @@
+# Importing Data and Creating a tsibble (Bonus) {#sec-importing-data-and-creating-a-tsibble}
+
+## Get your Data into R
+
+The journey always starts by getting your data into your R environment. The goal is to get a standard tibble/data frame with at least one column representing a date or datetime.
+
+## Common Workflows
+
+1.  **From CSV/XLSX files:** Use `readr::read_csv()` or `readxl::read_excel()`. Your date column might be a character string initially (e.g. `"2023/01/15"`) which you can convert to an actual date later.
+2.  **From Databases**: Use `dbplyr` to query and pull into a tibble (beyond the scope of this book).
+3.  **From APIs:** Use `httr2` or `jasonlite` to pull JSON data, then parse it into a tibble (also beyond the scope of this book)
+
+## The Crucial Step: Parse Date
+
+Once the data is in a tibble, we must ensure our data column is the correct `Date` or `POSIXct` data type This is where `lubridate` shines.
+
+For instance functions like `ymd()`, `mdy()`, `dmy()` converts character strings like "2023-01-12" or "15/01/22" into proper dates. Also `as_date()` and `as_datetime()`, coerce numeric timestamps or other objects into dates.
+
+A simple import and parse pipeline is demonstrated below. the data used can be found here [monthly_sales.csv](https://github.com/gkagyen/tstidyway/blob/main/data/monthly_sales.csv)
+
+```{r}
+#| message: false
+library(readr)
+library(tsibble)
+library(lubridate)
+library(dplyr)
+
+# step 1: Import
+sales_data <- read_csv('data/monthly_sales.csv', show_col_types = FALSE)
+
+# step2: Inspect and parse Dates
+# initially the date column might be a character type
+sales_data |> select(Month)
+```
+
+The Month column is a character as expected. We will use `lubridate` to parse it into a Date type
+
+```{r}
+#| eval: false
+# Parse into date type
+sales_data <- sales_data |> 
+  mutate(Date = my(Month),  # create a date column from the Month column
+         .after = Month)  |> 
+  select(-Month)            # remove Month column
+```
+
+```{r}
+#| eval: false
+# step 3: convert to tsibble
+sales_ts <- sales_data |> 
+  as_tsibble(index = Date)
+```
+
+This pipeline – *`Import → Parse → Convert to Tsibble`* – is the foundation of almost every tidy time series analysis.
+
+The next chapter will dive deeply into the `lubridate` package where we will learn how to handle dates and times in a tsibble gracefully.

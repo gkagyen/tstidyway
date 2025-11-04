@@ -1,0 +1,18 @@
+# Setting Up {#sec-setting-up}
+
+Before diving into analysis, We will make sure we have all the **tools** we need to get ready. We need to set up our R environment with the right tools. The **`tidyverts`** ecosystem — built around the **`tidyverse`** — makes time series analysis intuitive, consistent and visual.
+
+[![Tidyverts Package Collection](images/clipboard-351646644.png){fig-align="center"}](https://tidyverts.org/)
+
+[![Tidyverse Package Collection](images/clipboard-419927233.png)](https://www.tidyverse.org/)
+
+This section will cover installing and loading the packages we will use and checking that your R environment is prepared for a smooth time series work
+
+We will address the following:
+
+-   @sec-required-packages: This part will cover all the packages we will need, how to install and load them for use in our R environment.
+-   @sec-setting-up-your-rstudio-environment: Here you will see how to keep things organised in a more seamless and orderly manner on your system.
+
+After going through this section your R environment will be a **fully-equipped** time series analysis workshop. You will understand the role of each major package (`tsibble`, `fable`, `feasts`) and how they interoperate.
+
+More importantly you will get the practical knowledge to install and load them correctly, setting a stable foundation for every analysis you perform in the following chapters.

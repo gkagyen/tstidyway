@@ -1,0 +1,292 @@
+# Using `lubridate` for Date Manipulation {#sec-using-lubridate-for-date-manipulation}
+
+Now that we know how to create a tidy time series data (`tsibble`) we will dive deeper into manipulating dates and times using the powerful `lubridate` package (part of the tidyverse package collection). In R this package makes working with dates and times very intuitive. In this chapter you will learn how to:
+
+-   Parse dates from various formats
+
+-   Extract components from dates (year, month, day etc.)
+
+-   Perform date arithmetic
+
+-   Handle time zones and durations
+
+We will explore these features using some in-built datasets from the `tsibble` package. Make sure all required packages are loaded
+
+```{r}
+#| echo: false
+
+source("_common.R")
+```
+
+## Understanding Date Formats
+
+Dates come in many formats: "2025-01-22", "22/01/2025", "January 22, 2025", 22-Jan-2025". Without `lubridate` parsing these can be frustrating.
+
+`lubridate` provides intuitive functions that match the order of your date components
+
+```{r}
+#| eval: false
+
+# Different date formats parsed easily
+date1 <- ymd("2023-03-15")        # Year-Month-Day
+date2 <- dmy("15/03/2023")        # Day-Month-Year  
+date3 <- mdy("March 15, 2023")    # Month-Day-Year
+date4 <- dmy("15-Mar-2023")       # Day-Month-Year with text month
+
+```
+
+date1, date2, date3 and date4 all produces the same results thanks to `lubridate`'s intuitive functions `ymd`, `dmy`, and `mdy`.
+
+## Working with Real Data
+
+We will use the `pedestrian` dataset from the `tsibble` package which contains hourly pedestrian counts from sensors around Melbourne in Australia. We will practice our `lubridate` skills on this data.
+
+```{r}
+head(pedestrian)
+```
+
+We see that this data is already a tsibble with a proper Datetime (stored as a **POSIXct** object) column `Date_Time` (**index**). The `Sensor` column is the **key** and it contains the various sensor names. The `Date` represents the date the counts were recorded, the `Time` is the hour associated with the Date_Time and the `Count` is the hourly pedestrian count.
+
+Our main variable of interest is the `Date_Time`, we will isolate this column and see how to extract various components from these time stamps
+
+::: callout-tip
+In R `POSIXct` is a class used to represent dates and times. It stores date-time information as the number of seconds that have elapsed since January 1, 1970 at 00:00:00 UTC
+:::
+
+```{r}
+#| eval: false
+# Isolate Date_Time column from the rest of the data
+pedestrain_date_times <- pedestrian |> 
+  select(Date_Time)
+```
+
+This is an hourly timestamp which contains lots of temporal information. We will go ahead and extract components using functions from the `lubridate` package.
+
+```{r}
+#| eval: false
+# extract a single timestamp
+single_timestamp <- pedestrain_date_times$Date_Time[4]
+
+# extract temporal components
+year(single_timestamp)               # extract year
+month(single_timestamp, 
+      label = TRUE, abbr = FALSE)    # extract month
+day(single_timestamp)                # extract day of month
+wday(single_timestamp, label = TRUE) # extract day of week (Mon - Sun)
+hour(single_timestamp)               # extract hour
+minute(single_timestamp)             # extract minute
+second(single_timestamp)             # extract second
+quarter(single_timestamp)                  # extract quarter of year
+semester(single_timestamp, with_year = T)  # extract semester of year 
+```
+
+The `year` function extracts a four digit year from the `single-timestamp` variable. The month function extracts the month from the date, by default it extracts a numeric month but specifying `label=TRUE` changes the numeric month to a named month (e.g. from 2 to February). Again the `abbr` argument control whether the name of the month should be abbreviated or not. the `day` and `wday` functions extracts the day of the month and the day of the week respectively. specifying `label=TRUE` in `wday` behaves the same way as in the `month` function. The `hour`, `minute` and `second` functions extracts the hour of the day (0-23), the minute (0-59) and second (0-59) respectively. The `quarter` function returns the fiscal quarter of the year (1-4) and the `semester` function returns either 1 or 2 for each semester of the year. A quarter divides the year into 4 (3 months in each quarter) and the semester divides the year into 2 (6-months in each semester).
+
+## Date Arithmetic
+
+`lubridate` also contains functions to perform simple arithmetic on dates. This type of manipulation can be vital when preparing your data for time series modelling. we will use the same `single timestamp` variable to demonstrate this.
+
+```{r}
+#| eval: false
+# rename to start date
+start_date <- single_timestamp
+
+# perform various date calculations
+start_date + days(7)
+start_date + months(2)
+start_date + years(1)
+days_in_month(start_date) - day(start_date)
+wday(start_date)  %in% c(1,7)   # check is day is a weekend (Sat or Sun)
+```
+
+The first line of code for the arithmetic calculations adds exactly 7 days to the original date. The new date now becomes **"2015-01-08 03:00:00 AEDT".** The second line of code adds exactly 2 calendar months. `lubridate` correctly handles complexities like moving from January 31st to February 28th/29th. The third line adds exactly one calendar year (correctly handling leap years). `days_in_month(start_date) - day(start_date)` calculates how many days remain in the current month. It subtracts the current day of the month from the total number of days in that month. The last line of code creates a logical flag (TRUE/FALSE) indicating if the `start_date` is a Saturday `(7)` or a Sunday `(1)`, based on R's default week-starting convention.
+
+## Handling Time Zones
+
+Here we learn the critical concept of time zone handling using `lubridate`. We will use the `pedestrian` data which contains dates in the `"AEDT"` (Australian Eastern Daylight Time) \[The time zone in Melbourne\] time zone and convert them into various global time zones. This demonstrates how the same moment in time is represented differently around the world.
+
+We will first sample a few timelines from the pedestrian data and the use the `with_tz()` function to convert these times to several international time zones
+
+```{r}
+#| include: false
+pedestrain_date_times <- pedestrian |> 
+  select(Date_Time)
+```
+
+```{r}
+# sample time stamps (first 5) from data
+time_examples <- pedestrain_date_times |> 
+  distinct() |> 
+  head(5)
+print(time_examples)
+```
+
+We then go ahead to create new time zones (time zone conversion) from the original time zone as new columns in the data
+
+```{r}
+more_time_examples <- time_examples |> 
+  mutate(
+    utc_time = with_tz(Date_Time, tzone = 'UTC'),
+    london_time = with_tz(Date_Time, tzone = 'Europe/London'),
+    ny_time = with_tz(Date_Time, tzone = 'America/New_York'),
+    ghana_time = with_tz(Date_Time, tzone = 'Africa/Accra'),
+    timezone_offset = tz(Date_Time)
+  )
+more_time_examples
+```
+
+The `with_tz()` function facilitates the display of a date-time object (POSIXct) in a different time zone. It is crucial to understand that `with_tz()` does not alter the actual moment in time but rather changes the representation of that moment in a new time zone. It requires the date-time and the new time zone to do its magic for instance this code `ghana_time = with_tz(Date_Time, tzone = 'Africa/Accra'` converts the `Date_Time` object from its original time zone of `"AEDT"` into a new time zone `"Africa/Accra"` ("GMT").
+
+It recalculates the local clock time based on the new time zone while preserving the absolute point in time. This can result in changes to the displayed hour, day, or even date, depending on the time difference between the original and the target time zones as seen above.
+
+::: callout-tip
+You can use the `OlsonNames()` function to see the various time zone names in R
+:::
+
+## Common Date Challenges and Solutions
+
+Working with dates and times in real-world frequently presents two major challenges: **Inconsistent formatting** (messy strings) and the need to **create continuous, regular sequences** (to fill gaps). The `lubridate` package together with `dplyr` offer elegant solutions to both problems
+
+### Handling Multiple Date Formats
+
+When raw data comes from different sources, it may lead to dates stored as string/characters in unpredictable non-standard formats (`YYYY-MM-DD`). We demonstrate how to use an all purpose function `parse_date_time()` to handle such irregularities
+
+```{r}
+# simulate messy dates data
+messy_dates <- tibble(
+  date_string = c(
+  "2016-01-01 08:00:00",
+  "01/01/2016 09:00",
+  "January 1, 2016 10:00",
+  "01-Jan-2016 11:00"
+   )
+)
+
+# parse all formats using lubridates flexibility
+clean_dates <- messy_dates |> 
+  mutate(
+    final_date = parse_date_time(
+      date_string,
+      c("%Y-%m-%d %H:%M:%S",
+        "%d/%m/%Y %H:%M",
+        "%B %d, %Y %H:%M", 
+        "%d-%b-%Y %H:%M"),
+      exact = TRUE
+    )
+  )
+clean_dates
+```
+
+This function is designed to specifically handle the scenarios where you have multiple possible date-time formats in a single vector. The `parse_date_time)` function requires the desired formats to be parsed via the `orders` argument using either R or C format codes (which begin with a percent sign `%`) or the more simplified intuitive `lubridate` non percent format like ( `ymd HMS`). The percent format date codes have meanings for the various letters;
+
+-   `%Y`: 4-digit year (e.g 2016)
+-   `%m`, `%b` and `%B`: for months in numeric, abbreviated name and full name respectively
+-   `%d`: Day of month
+-   `%H`: Hour
+-   `%M`: Minute
+-   `%S`: Second
+
+You can find more information about these formats in the help documentation on the `parse_date_time()` function.
+
+::: callout-important
+Be careful when using the simplified intuitive `lubridate` format since it might not always parse the date correctly as expected
+:::
+
+### Working with Partial Dates and Creating Sequences
+
+Time series analysis often requires a complete, ordered sequence of time points, even if the raw data is sparse or irregular. We have already seen how to check and repair implicit missing time stamps in our data but what we want to learn here is to generate a series of dates/times between two specified endpoints. To achieve this, we can use `seq.Date` and `seq.POSIXt()` to generate these continuous sequences. These two functions are all base R functions that can be very handy sometimes
+
+```{r}
+#| eval: false
+
+# create date sequences for analysis
+start_date <-  ymd('2016-01-01')
+end_date <-  ymd('2016-01-31')
+
+# generate daily sequences
+daily_dates <- seq.Date(
+  from = start_date,
+  to = end_date,
+  by = "day"
+)
+
+# generate hourly sequence for a specific day
+hourly_sequence <- seq.POSIXt(
+  from = ymd_hms("2016-01-15 00:00:00"),
+  to = ymd_hms("2016-01-15 23:00:00"),
+  by = "hour"
+)
+```
+
+`seq.Date` is used for creating sequences of Date objects (without time components). It requires a `from` (start date), a `to` (end date), and a `by` (interval e.g. "day", "month", "year"). The output is a sequence of simple dates. `seq.POSIXT()` on the other hand is used to for Date-time (`POSIXt`) sequences. It requires a full start and end time and a time based interval (e.g. "hour", "5 min", "sec"). This is essential for high-frequency data.
+
+These temporal sequence functions are the backbone of may time series operations, allowing you to create a **time index** that can be used to join sparse data, visualise gaps, or ensure a continuous flow of data points for modelling.
+
+## Periods vs Durations
+
+This sections deals with a sophisticated yet crucial concept in time series and date handling: the difference between a **Period** and a **Duration** in the `lubridate` package. This distinction is vital because adding a set amount of time (like "one month) does not always equal the same number of seconds or days, due to factors like month length, leap years, and Daylight Saving Time (DST).
+
+### The Core Difference
+
+| Concept | Function type | Definition | Impact on Time |
+|------------------|------------------|------------------|------------------|
+| Period | `years(), months(), days(), hours()` | Represents a human-defined **calendar-aware** unit of time | The length in seconds is **variable.** Adding one month from January !st means landing exactly on February 1st |
+| Duration | `dmonths(), dyears(), ddays(), dseconds(), dminutes()` | Represents an **exact, absolute** span of time, measured in seconds | The length in seconds is fixed. Adding 1 month duration is always **2,629,800** seconds (the average month length) |
+
+The code below demonstrates this sophistication
+
+```{r}
+# understanding the difference between periods and duration
+time_concepts <- tibble(
+  description = 'start of analysis period',
+  start_time = ymd_hms("2016-01-01 00:00:00"),
+) |> 
+  mutate(
+    # periods respect calendar time 
+    add_1_month_period = start_time + months(1),
+    
+    # duration respect exact time intervals (1month is always 30 days)
+    add_1_month_duration = start_time + dmonths(1),
+    
+    # difference between the two
+    difference = add_1_month_period - add_1_month_duration
+  )
+
+time_concepts |> select(
+  start_time,
+  add_1_month_period,
+  add_1_month_duration,
+  difference)
+```
+
+The period function `months()` respects the calendar and it moves the date one calendar month forward regardless of whether January has 31 days. The duration function `dmonths()` uses a fixed conversion; `dmonths(1)` is the equivalent of 30.4375 days in duration logic. It is the average length of a month in a 12year calender $(\frac{365.25days}{12months})$. The difference between the duration month and the period month is recorded as **13.5hrs.** (under the `difference` column) not **24hrs.** (1day), this is because the two calculations used fundamentally different values for 1 month and that `dmonth(1)` ≠ `30days`.
+
+This is how the difference is calculated
+
+$$
+Difference = \frac{(31days - 30.4375days)\times24hours}{1day}=13.5hours
+$$
+
+Using the wrong concept can lead to significant errors in analysis and forecast. For instance if you want to forecast the sales of the next calendar months you should use **Periods** (e.g. `start_date + months(1)`) to ensure the forecast window aligns with calendar cycles. If you want to compare today's temperature to the temperature exactly 72hours ago, you must use **Durations** (e.g. `now() - ddays(3)`) to get a fixed time difference independent of DST changes. A period of `hours(72)` might skip an hour of DST changes leading to an incorrect comparison.
+
+**Periods** handle the complexities of DST and leap years transparently, preserving the clock time. **Durations** simply add or subtract the exact number of seconds.
+
+::: callout-note
+The dataset `time_concepts` is created as a tibble intentionally just for demonstration purposes
+:::
+
+## Best Practices and Next Steps
+
+When dealing with dates and times in a times series you must always;
+
+-   Parse dates early in your analysis workflow
+
+-   Use consistent date formats throughout the project
+
+-   Be mindful of time zones when working with international dates
+
+-   Validate your dates by checking for impossible dates and time gaps
+
+-   Use the appropriate data types - `Date` for dates and `POSIXct` for date-times
+
+Now that you are comfortable with `lubridate`, you are ready to create powerful time-based features for your forecasting models. In the next section, we will learn how to transform these date components into meaningful predictors that can dramatically improve your time series forecasts.

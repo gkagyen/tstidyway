@@ -1,0 +1,37 @@
+# Forecasting with the fable Framework {#sec-forecasting-with-the-fable-framework}
+
+After everything we have gone through – from preparing our data through to careful exploration, data transformations and rigorous train-test splitting – we now arrive at the most exciting and interesting phase of our time series journey; building forecasting models that can predict the future. This is where all our preparations pay the dividends and where the true power of the **`tidyverts`** ecosystem shine through
+
+The `fable` package provides our forecasting toolkit offering a unified framework for time series modelling that seamlessly integrates with the tidyverse philosophy we have embraced throughout this book. What make `fable` particularly powerful is its consistent syntax across different model types, its automated model selection capabilities and its native integration with the tsibble data structure we have been carefully building.
+
+## Why the `fable` Framework
+
+Traditional Time series forecasting in R often involved jumping between different packages with inconsistent interfaces, manual model specification, and cumbersome results extraction. The `fable` framework revolutionises this by providing:
+
+-   **Unified Modelling syntax:** Learn once apply to many model types
+
+-   **Automated Model Selection:** Leverage algorithms to find optimal parameters
+
+-   **Tidy Results Output:** Forecast outputs that work seamlessly with tidyverse verbs
+
+-   **Reproducible Workflows:** Complete, documented forecasting pipelines
+
+-   **Professional-Grade Outputs:** Production-ready forecast and intervals
+
+## The Forecasting Journey Ahead
+
+This comprehensive section we will progress from foundational concepts to sophisticated modelling techniques.
+
+-   @sec-simple-forecasting: We begin in this chapter with simple benchmark models that provide surprising insight and crucial performance baselines. These models may be elementary, but they serve as essential reference points–if your sophisticated model cannot outperform a simple naive forecast, you may be overcomplicating your approach.
+
+-   @sec-advanced-forecasting: Here we will explore the workhorses of time series forecasting. Exponential Smoothing (ETS) models that automatically capture trend and seasonality patterns and ARIMA models that leverage the autocorrelation structures we diagnosed in our exploratory phase. We will also touch on regression approaches and modern combinations
+
+-   @sec-model-evaluation: This is where we bring everything together–fitting multiple models, generating future predictions and evaluating performance using the testing framework we established. We will compare models using multiple accuracy metrics, create compelling visuals and select the most reliable approach for our specific context.
+
+## What Makes This Approach Different
+
+Unlike the traditional time series forecasting that often feels like a black box, the `fable` approach gives us complete transparency and control. You will understand not just what your modes are predicting but ***why*** they are making those predictions. More importantly, you will be building forecasting workflows that are reproducible, scalable, and maintainable.
+
+Whether you are forecasting sales for the next quarter, predicting resource needs for the coming year, or anticipating market movements, the skills you will learn in this section will transform you from a passive analyst of past data to an active predictor of future trends.
+
+**Ready to peer into the future 🚀?** let us begin with the simplest models.
