@@ -6,8 +6,6 @@
 .quarto
 
 /.quarto/
-<<<<<<< HEAD
-=======
 
 **/*.quarto_ipynb
->>>>>>> 23f0be6c15cccb513947fd43e0e191a9772a4bb6
+
