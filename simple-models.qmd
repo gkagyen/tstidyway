@@ -105,7 +105,7 @@ simple_forecasts <- simple_models |>
 simple_forecasts
 
 # pivot wider for easy comparison
-prediction_intervals <- simple_forecasts |> 
+simple_forecasts |> 
   as_tibble() |> 
   select(.model, Month, .mean) |> 
   pivot_wider(names_from = .model, values_from = .mean)
@@ -183,11 +183,6 @@ snaive_plot
 
 This final plot provides powerful insight: the **SNAIVE** model forecast by simply projecting the last observed seasonal cycle into the future.
 
-```{r}
-simple_forecasts |> as_tibble() |> select(.model, Month, .mean) |> 
-  pivot_wider(names_from = .model, values_from = .mean)
-```
-
 ## Initial Accuracy Assessment
 
 Even before formal testing, we can assess how well these models accurately produce the patterns observed in the historical training data. This initial check helps identify obvious flaws and provides a baseline for evaluating complexity.
@@ -205,7 +200,7 @@ print(training_accuracy)
 The fitted models are passed to the `accuracy()` function, which calculates metrics based on the residuals generated from the training data used to fit the models. The output is a tibble displaying several common error metrics.
 
 | Metric | Full Name | Interpretation |
-|------------|-------------------------|--------------------------------------|
+|----------------|----------------------|----------------------------------|
 | MAE | Mean Absolute Error | The average magnitude of the forecast errors |
 | RMSE | Root Mean Square Error | Penalises larger errors more heavily than MAE Always $RMSE\ge MAE$. |
 | MASE | Mean Absolute Scaled Error | ***Key Scaled Metric.*** Measures accuracy relative to the NAIVE model. |
@@ -219,7 +214,7 @@ For a time series with seasonality (like Monthly Sales Data), the appropriate re
 
 ## Understanding Simple Models For Strategic Decision Making
 
-Forecasting models, even simpe benchmarks, provide essential information for business planning, inventory management, budgeting and others. By summarising the 12-month forecast horizon, we can extract three key data points; the overall expected demand, the most pessimistic forecast, and the stability of the prediction.
+Forecasting models, even simple benchmarks, provide essential information for business planning, inventory management, budgeting and others. By summarising the 12-month forecast horizon, we can extract three key data points; the overall expected demand, the most pessimistic forecast, and the stability of the prediction.
 
 The following code aggregates the month-by-month forecast for each model to provide these high-level strategic summaries.
 
@@ -253,3 +248,5 @@ The **Seasonal Naive** excels at capturing stable seasonal patterns. It has the 
 The difference between these forecasts reveal fundamental characteristics of our data. Large discrepancies between models indicate strong trend or seasonality that more sophisticated models should capture. If complex models cannot outperform these simple benchmarks, it may indicate over-fitting or that our data lacks predictable patterns beyond basic persistence.
 
 These simple models are not just academic exercises – they are practical tools that establish the minimum performance threshold any advanced model must clear. They teach us humility in forecasting and provide interpretable baselines that stakeholders can easily understand.
+
+In our next section we will build upon these these foundations with more sophisticated models, but we will continually refer back to these benchmarks to ensure our added complexity is actually adding value
