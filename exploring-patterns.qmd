@@ -30,7 +30,7 @@ A fundamental concept in time series analysis is decomposition. The idea is to s
 -   **Remainder (**$R_{t}$**):** The "leftover" part after trend and seasonality are removed; this is often considered the random noisy component.
 
 $$
-y_{t}=Trend_{t}+Seasona_{t}+Remainder_{t}
+y_{t}=Trend_{t}+Seasonal_{t}+Remainder_{t}
 $$
 
 ### Basic and Advanced Decomposition with Special Arguments
@@ -75,6 +75,8 @@ This returns a `fabletools` object dataset "`dable`" (decomposition table) which
 This allows for direct analysis and visualisation of how much of the variations in the `Sales` series is attributed to long-term movements, seasonal factors, and irregular noise. The `autoplot()` function when applied on this `dable` output will automatically generate a multi-panel plot displaying the decomposition of the `Sales` series into its components as calculated by the STL method.
 
 ```{r}
+#| warning: false
+# visualise components
 components(dcmp) |> 
   autoplot(linewidth = 0.7)
 ```

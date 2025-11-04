@@ -45,7 +45,7 @@ head(example_data)
 ```
 
 | Model | Core Principle | Prediction Rule | Example |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | Mean Model | simple constant | Always predicts the **historical average** of the series | for our `example_data` the mean = **137.5** for all future periods. |
 | Naïve Model | random walk | Predicts the last observed value $\hat{Y}_{t+h}=Y_t$ | for our `example_data` this will be the last `Ependiture` for the `Period`, **170.** |
 | Seasonal Naïve | seasonal repetition | Predicts the value from the same season in the last period. $\hat{Y}_{t+h}=Y_{t+h-m}$, where $m$ is the seasonal period | for our example_data, assuming the seasonal period is 4, then the predictions for the next season will be; **145, 155, 160 and 170.** |
@@ -103,13 +103,19 @@ simple_forecasts <- simple_models |>
 
 # display the forecasts
 simple_forecasts
+
+# pivot wider for easy comparison
+prediction_intervals <- simple_forecasts |> 
+  as_tibble() |> 
+  select(.model, Month, .mean) |> 
+  pivot_wider(names_from = .model, values_from = .mean)
 ```
 
 `forecast(h = 8)` generates 12 periods (months) into the future (from July 2018 to June 2019), starting from where the data ended in June 2018. The output includes point forecasts and the distribution forecasts (uncertainty). The output `simple_forecasts` is a **fable** (forecast table), which is a special `tsibble` data structure for representing forecasts. Each row in the **fable** represents a forecast for a specific time point.
 
 The `.mean` column is the point forecast (expected future value) which is **28,745** for all periods in the **mean model** because the mean model predicts the same value for every future point, **15,383** for all periods in the **naive model** because it just repeats the last observed value for every future period (random walk) and the **last 12 Sales values** (seasonal period) repeated from the original series data for the **seasonal naive mode**l.
 
-The `Sales` column is the distribution object representing the forecasts and its uncertainty $N(Mean, \sigma^2)$. For instance the distribution for the first prediction by the mean model is **N(28745, 1e+08)**, this means a normal distribution with a point forecast of 28745 and variance of 100000000 (sd = 10000). The uncertainty in the distribution is the same for all the mean and seasonal naive models but increases with increasing forecast horizon for the naive model.
+The `Sales` column is the distribution object representing the forecasts and its uncertainty $N(Mean, \sigma^2)$. For instance the distribution for the first prediction by the mean model is **N(28745, 1e+08)**, this means a normal distribution with a point forecast of 28745 and variance of 100000000 (`SD = 10000`). The uncertainty in the distribution is the same for all the mean and seasonal naive models but increases with increasing forecast horizon for the naive model.
 
 ### Prediction Intervals with `hilo()`
 
@@ -138,7 +144,7 @@ simple_forecasts |>
   theme(legend.position = "bottom")
 ```
 
-When the `autoplot()` function is fed a forecast table (**fable object**) together with the time series tsibble, it automatically plots the forecasts with the historical data \[`simple_forecast |> autoplot(training_data)`\]. Specifying the level (`level = 95`) adds 95% confidence bands around the forecast values. If no level is specified, it uses the default which is 80% and 95% together. To exclude the confidence bands, set `level=NULL`. The plot is faceted on the models to get each models's forecast in a separate panel. The `guides(colour = "none", fill = "none")` line supresses the redundant legends for th model name.
+When the `autoplot()` function is fed a forecast table (**fable object**) together with the time series tsibble, it automatically plots the forecasts with the historical data \[`simple_forecast |> autoplot(training_data)`\]. Specifying the level (`level = 95`) adds 95% confidence bands around the forecast values. If no level is specified, it uses the default which is 80% and 95% together. To exclude the confidence bands, set `level=NULL`. The plot is faceted on the models to get each model's forecast in a separate panel. The `guides(colour = "none", fill = "none")` line suppresses the redundant legends for th model name.
 
 From the above visualisations we can clearly see each model's forecast behaviour. A flat forecast line predicting the average value (mean model), a flat forecast line extending the last observed value with rapidly widening intervals (naive model) and a cyclical forecast line that repeats the last 12-month seasonal pattern (seasonal naive model).
 
@@ -177,3 +183,59 @@ snaive_plot
 
 This final plot provides powerful insight: the **SNAIVE** model forecast by simply projecting the last observed seasonal cycle into the future.
 
+```{r}
+simple_forecasts |> as_tibble() |> select(.model, Month, .mean) |> 
+  pivot_wider(names_from = .model, values_from = .mean)
+```
+
+## Initial Accuracy Assessment
+
+Even before formal testing, we can assess how well these models accurately produce the patterns observed in the historical training data. This initial check helps identify obvious flaws and provides a baseline for evaluating complexity.
+
+The fable framework simplifies this process with the `accuracy` function, which automatically calculates a comprehensive set of error metrics for all fitted models in the **mable object (`simple_models`).**
+
+```{r}
+# Calculate training accuracy metrics
+training_accuracy <- simple_models |> 
+  accuracy()
+
+print(training_accuracy)
+```
+
+The fitted models are passed to the `accuracy()` function, which calculates metrics based on the residuals generated from the training data used to fit the models. The output is a tibble displaying several common error metrics.
+
+| Metric | Full Name | Interpretation |
+|------------|-------------------------|--------------------------------------|
+| MAE | Mean Absolute Error | The average magnitude of the forecast errors |
+| RMSE | Root Mean Square Error | Penalises larger errors more heavily than MAE Always $RMSE\ge MAE$. |
+| MASE | Mean Absolute Scaled Error | ***Key Scaled Metric.*** Measures accuracy relative to the NAIVE model. |
+| ACF1 | Autocorrelation of Residuals | Measures the correlation between the error at time $t$ and the error at time $t-1$. Should be close to zero for a good model |
+
+: Key Metrics in Accuracy Output
+
+The low $MASE$ score for the `mean` model (0.892) indicates that even the simplest forecast (the historical average) performs better on the training data than the `naive` model. The `snaive` model has a value of 1 under $MASE$, indicating a benchmark for the seasonality in the data.
+
+For a time series with seasonality (like Monthly Sales Data), the appropriate reference point for evaluating forecast accuracy is in the **Seasonal Naive model (`snaive`**). By standard convention in time series analysis, the $MASE$ is typically scaled against the `snaive` error when the data is seasonal.
+
+## Understanding Simple Models For Strategic Decision Making
+
+Let us try to make sense of our technical forecasts in a practical context.
+
+```{r}
+insightful_summary <- simple_forecasts |> 
+  as_tibble() |> 
+  group_by(.model) |> 
+  summarise(
+    average_forecast = mean(.mean),
+    confidence = sd(.mean) / mean(.mean),   # coefficient of variation
+    .groups = 'drop'
+  ) |> 
+  mutate(growth_trend = case_when(
+      .model == "naive" ~ "flat",
+      .model == "mean" ~ "flat",
+      .default = "seasonal"
+    )
+  )
+
+print(insightful_summary)
+```
