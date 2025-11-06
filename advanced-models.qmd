@@ -1,16 +1,364 @@
-# Advanced Forecasting Models {#sec-advanced-forecasting}
+# Advanced Forecasting Models: Exponential Smoothing (ETS) {#sec-advanced-forecasting}
 
-by checking the patterns of the bars and their significance. Generally you can read the plots patterns and suggest a model type as follows:
+Now that we have established our performance baselines with simple models, we are ready to explore the sophisticated forecasting workhorses that can capture the complex patterns we identified during our exploratory analysis. These advanced models automatically detect and model the trends, seasonality and other temporal structures that make our time series predictable.
 
-+----------------------------------------------------------------+-------------------------------------------+
-| Pattern                                                        | Suggests Model Type                       |
-+================================================================+===========================================+
-| **ACF:** Dies down slowly / geometrically\                     | AR(p) - Autoregressive model of order *p* |
-| **PACF:** Significant spikes for first *p* lags, then cuts off |                                           |
-+----------------------------------------------------------------+-------------------------------------------+
-| **ACF:** Significant spikes for first *q* lags, then cuts off\ | MA(q) - Moving Average model of order *q* |
-| **PACF:** Dies down slowly / geometrically                     |                                           |
-+----------------------------------------------------------------+-------------------------------------------+
-| **ACF:** Dies down slowly\                                     | ARMA(p,q) or data needs differencing      |
-| **PACF:** Dies down slowly                                     |                                           |
-+----------------------------------------------------------------+-------------------------------------------+
+The true power of the `fable` framework shines here - what traditionally required extensive statistical expertise and manual parameter tuning is now accessible through intuitive, automated functions that maintain the tidy workflow we have built throughout this tutorial.
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+```{r}
+#| include: false
+gh_ts <- read_csv('data/gh_ts.csv', show_col_types = FALSE) |>
+  janitor::clean_names() |> 
+  as_tsibble(index = year, key = indicator_name)
+
+sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |> 
+  janitor::clean_names(case = "none") |> 
+  mutate(Month = yearmonth(Month)) |> 
+  as_tsibble(index  = Month)
+
+split <- initial_time_split(sales_ts, prop = 0.7)
+
+training_data <- training(split)
+testing_data <- testing(split)
+```
+
+ETS models are remarkably powerful yet intuitive. They work by assigning exponentially decreasing weights to historical observations, with more recent data receiving higher importance. Imagine you are trying to predict tomorrow's temperature. You would probably give more weight to today's temperature than to last week's, and even more weight to this morning's reading.This intuitive approach is the beautiful simplicity behind Exponential Smoothing.
+
+The magic of ETS lies in its elegant balance: It is sophisticated enough to capture complex patterns yet transparent enough that you can understand exactly what it is doing.
+
+## The Core Intuition: Why "Exponential" Smoothing?
+
+The "exponential" part comes from how these models weight historical data. Unlike a simple moving average where all observations in the window have equal importance, exponential smoothing applies decreasing weights that follow an exponential pattern. Recent points get the highest weight, and the importance decays exponentially as we fo further back in time. We demonstrate this in the plot below.
+
+```{r}
+#| echo: false
+#| label: fig-weight-compare
+#| fig-cap: "Bar Chart Demonstrating How Exponential Smoothing Gives More Importance to Recent Obsservations"
+# visualise exponential weights vs equal weights
+weights_comparison <- tibble(
+  days_ago = 10:1,
+  exponential_weight = 0.8^(days_ago-1), # 80% decay factor
+  equal_weight = 0.2     # simple average over 10 days
+)
+
+weights_comparison |> 
+  pivot_longer(cols = -days_ago, 
+               names_to = "method",
+               values_to = "weight") |> 
+  ggplot(aes(x=factor(days_ago), y=weight, fill=method)) +
+  geom_col(position = "dodge") +
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    title = "Exponential vs Equal Weighting",
+    x = "Days Ago"
+  )
+```
+
+This plot compares how exponential smoothing (80% decay) weights recent data more heavily. It demonstrates how simple averages treat all history equally while exponential smoothing adapts to recent changes. This Makes ETS models particularly responsive to changes in patterns.
+
+## The ETS Framework: Error, Trend and Seasonality
+
+The ETS acronym - which stands for Error, Trend, Season - used for exponential smoothing reveals the three components these models can incorporate. Each component has different options, resulting in a rich family of models that can adapt to various patterns.
+
+-   **Error**: This tells how randomness affects our predictions. The error could be **A**dditive, which is constant over time or **M**ultiplicative, which is proportional to the level of the series
+
+-   **Trend**: The long-term direction, This can be **N**one = no trend, **A**dditive = Linear trend or Damped = A trend that levels off over time.
+
+-   **Seasonality**: Regular repeating patterns of over a fixed period. This can also be **N**one-for no seasonality, **A**dditive-for constant seasonal effect, or **M**ultiplicative-if seasonal effect scales with the level of the series.
+
+A powerful feature of the `fable` package is its ability to automatically search the space of possible ETS models and select the configuration that best fits the data based on model selection criteria like AIC. We can demonstrate this using our sales training data.
+
+```{r}
+# let fable automatically select the best ETS model
+auto_ets <- training_data |> 
+  model(auto = ETS(Sales))
+
+# examine what model was chosen
+report(auto_ets)
+```
+
+The `ETS()` function fits an exponential model to the data. When no specific component configuration is provided, the function automatically searches for the optimal ETS model for our series. The best model is stores in the `auto` column of the **mable** output (`auto_ets`).We use the `report` function to display detailed summary of the chosen model, including its final configuration, estimated parameters, and information criteria.
+
+The automatic selection process chose the model ETS(A,N,N). The error is assumed to be Additive, suggesting a constant residual variation over time. No trend and seasonal component were found, the no trend aligns with the visual inspection we have seen in previous chapters however, the no seasonality is a surprising result given the data's apparent monthly pattern. This means that a SNAIVE benchmark model might still outperform this specific ETS model.
+
+The smoothing parameter $\alpha$ (alpha) is extremely small (0.0001). This shows that the model almost gives no weight to the most recent observation, relying heavily on the initial level ($l_0$) to generate its forecast. Essentially the model defaulted to a **MEAN** model. Initial states represent the initial level and the value (28748.26) is almost the same as our MEAN models estimate from @sec-simple-forecasting, which is approximately the historical average of the sales data, confirming its mean-based nature.
+
+## Simple Exponential Smoothing
+
+Simple exponential Smoothing (SES) is the most basic form of the ETS framework. It is specifically designed for time series data that exhibits no discernible trend and seasonality. The `ETS` function requires specifying the components for error (E), trend (T) and seasonality (S) for a particular type of exponential smoothing model. For SES, the trend and seasonality components must be set to None (N).
+
+Smoothing Equation: $l_t=\alpha\times y_t+(1-\alpha)\times l_{t-1}$
+
+where: $l_t$ = the smoothed level at time t, $y_t$ = the actual observation at time t and $\alpha$ = the smoothing parameter $(0\le\alpha\le 1)$.
+
+The forecast from this model follows the equation: $\hat{y}_{t+h}=l_t$, where \$\\hat{y}\_{t+h} is the forecast for h steps ahead, made at time t and $l_t$ is the last calculated smoothed level. In essence, the forecast for all future periods is equal to the most recently smoothed level of the series.
+
+```{r}
+#| label: fig-ses
+#| fig-cap: "Forecasting with Simple Exponential Smoothing Model"
+# simple exponential smoothing (level only)
+simple_ets <- training_data |> 
+  model(ses = ETS(Sales ~ error("A") + trend("N") + season("N")))
+
+# Generate forecast
+simple_forecast <- simple_ets |> 
+  forecast(h = 12)
+
+# visualise
+simple_forecast |> 
+  autoplot(training_data) +
+  labs(title = "Simple Exponential Smoothing",
+       subtitle = "captures only the level - no trend or seasonality",
+       y = "Sales", x = "Month")
+```
+
+The core function of SES is to track and forecast only the **level** (or average) of the series, effectively smoothing out random noise while adapting to gradual changes in that average level. `ETS(Sales ~ error("A") + trend("N") + season("N"))` explicitly defines the components rather than relying on the automatic selection when nothing is specified inside the `ETS()` function. `error("A")` specifies an additive error component, trend("N") and `season("N")` forces the trend and seasonal components to be ignored.
+
+The overall configuration is **ETS(A,N,N)**. Note that this is the same model structure that the automatic selection chose previously. When the forecasts from the model are plotted, they visually confirm its basic function: extending the last calculated average level into the future as seen in @fig-ses.
+
+Although the SES model only tracks the **level** of the series, it is essentially a more advanced version of the **MEAN** model, as it adapts its average based on the most recent data (via the smoothing parameter $\alpha$), rather than relying on a fixed historical average. This model would be useful for data like the **Ghana Annual GDP Growth Rate**, which fluctuates around a constant level (no clear trend or seasonality).
+
+## Holt's Linear Trend Method
+
+The Holt's linear trend (or Double Exponential Smoothing) model adds trend to capture upward or downward movements. It enhances the simple exponential smooting model with the addition of a trend component. This makes it ideal to capture information from data showing consistent growth or decline patterns but without seasonality.
+
+We will demonstrate this with the Annual Cereal Yield series from the `gh_ts` data, which clearly shows an upward trend over time. We first prepare the data by isolating the cereal yield indicator from the rest of the data an performing a train-test split before fitting the model
+
+```{r}
+
+# filter gh_ts for the cereal yield
+cereal_yield <- gh_ts |> 
+  filter(indicator_name == "Cereal yield _kg per hectare")
+
+# split data into training and testing
+split <- initial_time_split(cereal_yield, prop = 0.75)
+training_yield <- training(split)
+testing_yield <- testing(split)
+
+# apply Holt's linear trend model
+holts_linear <- training_yield |> 
+  filter(!is.na(value)) |>      # remove missing values to enable ETS fitting
+  model(holt = ETS(value ~ error("A") + trend("A") + season("N")))
+```
+
+A 75/30% train-split is performed on the cereal yield series, the model is then fitted on the training series. `ETS(value ~ error("A") + trend("A") + season("N"))` explicitly forces the model to the additive trend configuration: **ETS(A,A,N)**, with an Additive trend and error and no seasonality. The *additive trend* is the key component added by Holt's method. In a double exponential smoothing model, the trend can either be **A**dditive (linear) or **M**ultiplicative (exponential).
+
+### Examining the Fitted Model
+
+The Holt's linear trend method is also called a double exponential smoothing model because it uses two smoothing equations.
+
+1.  Level Equation: $l_1=\alpha\times y_t+(1-\alpha)\times(l_{t-1}+b_{t-1})$
+2.  Trend Equation: $b_t=\beta\times(l_t-l_{t-1})+(1-\beta)\times b_{t-1}$
+
+where: $l_t$ = estimated level at time t, $b_t$ = estimated trend at time t, $\alpha$ = level smoothing parameter, $\beta$ = trend smoothing parameter.
+
+```{r}
+# examine the fitted model
+report(holts_linear)
+```
+
+The `report()` function's output provides insights into the model's learning process:
+
+-   **Smoothing Parameter** $\alpha$ **(alpha=0.518):** This parameter smooths the Level component. A value close to 0.5 means the model gives moderate weight to recent observations, allowing the level to adapt quickly to changes.
+-   **Smoothing Parameter** $\beta$ **(beta = 0.0001):** This parameter smooths the trend (slope) component. The extremely low value suggest the model found the long term trend (**the** **b\[0\] initial state**) to be very stable and is very slow to adjust the trend based on new data.
+-   **Initial States:** The model estimates the starting cereal yield (**l\[0\]**) around 819 kg per hectare and the initial growth trend (**b\[0\]**) to be approximately 9.55 kg per hectare improvement per year.
+
+### Generating and Visualising Forecast
+
+The forecast generation is straightforward using the `forecast()` function as we have done previously for other models. The Holt's method follows this equation to calculate the forecast:
+
+Forecast Equation: $\hat{y}_{t+h}=l_t+h+b_t$, where $h$ is the forecast horizon.
+
+```{r}
+#| warning: false
+#| label: fig-holt
+#| fig-cap: "Forecasting with Holt's Linear Trend Method"
+# generate forecast
+holts_forecast <- holts_linear |> 
+  forecast(h = 12)
+
+# visualise forecast with fitted (predicted) values
+holts_forecast |> 
+  autoplot(training_yield) +
+  autolayer(holts_linear |> augment(), .fitted, colour = 'red') +
+  labs(title = "Holt's Linear Trend",
+       subtitle = "Holt's method captures the upward trend in cereal yield")
+```
+
+The resulting plot confirms how the models predicted (`.fitted`) values, the fitted red line, closely tracks the overall upward movement of the cereal yield. This demonstrates that the Holt's method successfully captures historical trend. The blue forecast line extends linearly into the future, following the rate established by the last smoothed trend. the prediction intervals (shaded area) also widen due to the compounding uncertainty of the trend projection.
+
+This model tracks both the level and linear trend. The trend could be additive (linear) or multiplicative (exponential). This type of model is perfect for series with consistent growth or decline.
+
+### Extracting and Visualising Model Components
+
+Another key advantage of the **ETS framework** is the ability to extract and visualise the underlying components that drive the forecast using the `component()` function which we have previously seen in action in @sec-exploring-patterns-with-feasts-and-fabletools.
+
+```{r}
+#| warning: false
+#| label: fig-holt-decompose
+#| fig-cap: "A Decomposed Plot of The Holt's Linear Trend Model"
+# extract and visualise models components
+holt_components <- holts_linear |> 
+  components() 
+
+holt_components |> autoplot() +
+  labs(title = "Holt's Linear Trend Components",
+       subtitle = "Decomposition into level and trend(slope) components",
+       y = "Cereal Yield") 
+```
+
+This component plot shows the decomposition of the series in parts that the Holt's method track. The **level** shows the smoothed overall level of the series, mirroring the original data's long-term path but removing noise. The **slope** shows the smoothed change in the level per year. The plot confirms the slope has been positive for most part of the series though it dips in the early 1980s before rising again. The last part, the remainder, is the residual component. it represents the noise or unpredictable variation left after the level and trend have been accounted for.
+
+Holt's Linear Trend Method gives us a principled way to forecast series with consistent directional movement, providing a solid middle ground between a simple average and more complex seasonal models.
+
+## Holt-Winters Seasonal Method: The Complete Model
+
+The **Holt-Winters Seasonal Method** (often referred to as the Holt-Winters method or Seasonal ETS) is the most comprehensive model in the exponential smoothing family. It extends Holt's linear trend method by adding a dedicated Seasonal component, allowing the model to capture three patterns simultaneously: **Level**, **Trend** and **Seasonality.**
+
+This method is essential for quarterly, monthly, or weekly data that exhibits both long-term growth (or decline) and predictable, recurring fluctuations.
+
+### Additive vs. Multiplicative Seasonality
+
+The choice between an additive (A) and multiplicative (M) seasonal component is critical. For an additive seasonality, the seasonal swings are of a constant size regardless of the series' overall level. This works well when the data is roughly horizontal or the trend is modest. A multiplicative seasonality has seasonal swings that grow in magnitude as the series' level increases. This is typical for sales or production data that exhibit growth where peaks become higher and troughs become lower over time
+
+We demonstrate the Additive model, ETS(A,A,A), using the quarterly Australian cement production series from the `aus_production` data, which shows clear seasonality overlaying an upward trend.
+
+```{r}
+# prepare aus_production cement data for model fitting
+cement_prod <- aus_production |> 
+  select(Quarter, Cement)
+
+# split data into training and testing
+split <- initial_time_split(cement_prod, prop = 0.75)
+training_cement <- training(split)
+testing_cement <- testing(split) 
+
+# fit a Holt-Winters Seasonal Method (Additive)
+hw_additive <- training_cement |> 
+  model(hw_add = ETS(Cement ~ error("A") + trend("A") + season("A")))
+```
+
+This code above for the Holt-Winters model is explicitly configured to track all three components, Level (A), Trend (A) and Seasonality (A).
+
+### Examining the Fitted Model
+
+The Holt-Winters method requires three separate smoothing equations (one for each component). Let $m$ be the length of the seasonality (e.g., $m=4$ for quarterly data).
+
+1.  Level Equation: $l_t=\alpha\times (y_t-s_{t-m})+(1-\alpha)\times (l_{t-1}+b_{t-1})$
+2.  Trend Equation: $b_t=\beta\times (l_t-l_{t-1})+(1-\beta)\times b_{t-1}$
+3.  Seasonal Equation: $s_t=\gamma\times (y_t-l_{t-1}-b_{t-1})+(1-\gamma)\times s_{t-m}$
+
+Where $l_t$ = level: the average value of the series at time t, $b_t$ = trend: the increasing/decreasing direction of the series at time t and $s_t$ = the repeating short-term cyclical component at time t. The Equations above are for the Additive variant of the Holt-Winters Method
+
+```{r}
+# examine fitted model
+report(hw_additive)
+```
+
+We see the structure of the model with the specified configuration – the smoothing parameters and initial states with some other relevant information – from the `report()` output.
+
+-   **Smoothing Parameters:** These parameters are responsible for how the model adjusts to each component in the model fitting. The *level smoothing parameter* ($\alpha$) has a relatively high value (0.685), indicating the model gives a strong weight to the most recent observation's error when updating the level. The means the level adapts quickly to changes in average production. The *trend smoothing parameter* ($\beta$) is extremely low (0.0006), This means the model is very conservative about updating underlying trend (slope) based on new data. It relies heavily on the initial estimate and assumes the long-term growth rate is quite stable. The last smoothing parameter ($\gamma$) which is for the *seasonality* has a moderate value (0.14). This value means the model updates the seasonal factors gradually. It balances the need to reflect recent seasonal performance with the assumption that the quarterly pattern is generally consistent.
+
+-   **Initial States:** These are the starting values of components, representing the state of the series before the model began its smoothing process. The initial level ($l$\[0\]) is the estimated baseline production level at the start of the series. The initial trend ($b$\[0\]) is the estimated initial quarterly increase in cement production. The values for $s$\[0\] to $s$\[-3\] represents the initial seasonal factors. They are the initial seasonal effects for each of the four quarters. For instance, s\[-1\] = 58.95 suggests that Quarter 2 initially saw production about \~59 units above the average level.
+
+### Generating and Visualising Forecast
+
+The forecasting operation for the Holt-Winters model takes the final components ($l_t$, $b_t$ and $s_t$) and projects them into the future $h$ steps. It is the sum of , following this equation:
+
+Forecast Equation (Additive): $\hat{y}_{t+h|t}=l_t+hb_t+s_{t+h-m(k+1)}$
+
+where $k$ = the integer or whole number part of $(h-1)/m$ (which ensures we use the most recent seasonal index for the forecast horizon). The `forecast()` function automatically calculates the forecasts for us.
+
+```{r}
+#| warning: false
+#| label: fig-holt-winter
+#| fig-cap: "Forecasting with Holt-Winters Seasonal Method"
+# generate forecast
+hw_forecast <- hw_additive |> 
+  forecast(h = 12)
+
+# visualise forecast with fitted (predicted) values
+hw_forecast |> 
+  autoplot(training_cement) +
+  autolayer(hw_additive |> augment(), .fitted, colour = 'red') +
+  labs(title = "Holt-Winters Seasonal Additive Method",
+       subtitle = "Holt-Winters method captures the level, upward trend and seasonality")
+```
+
+The resulting chart from plotting the original series (black line), the fitted values from the model (red line) and the 12 month forecast (blue line) together shows a powerful visual inspection for validating the models goodness of fit. The red line (fitted values) closely follows the original data, confirming that the smoothing parameters ($\alpha ,\beta ,\gamma$) were effectively optimised to track the historical level, trend and seasonality.
+
+The projected blue line in the future (the forecast) exhibits a repeating seasonal pattern overlaid on a linear slightly upward trend, maintaining a constant magnitude for the seasonal peaks and troughs (this is a defining characteristic of the additive model). The prediction intervals (shaded area around forecast) widen as the forecast extends further into the future, reflecting the increasing uncertainty associated with predicting events further ahead in time.
+
+### Extracting and Visualising Model Components
+
+The best way to understand what the Holt-Winters ETS model learned from the historical data is through visualisation of the model's components.
+
+```{r}
+#| warning: false
+#| label: fig-hw-decompose
+#| fig-cap: "A Decomposed Plot of The Holt-Winter's Method"
+# extract and visualise models components
+hw_components <- hw_additive |> 
+  components() 
+
+hw_components |> autoplot() +
+  labs(title = "Holt-Winters Seasonal Additive Method's Components",
+       subtitle = "Decomposition into level, trend(slope) and seasonal components",
+       y = "Cement Production") 
+```
+
+The above figure provides a clear decomposition of the quarterly cement production series. The decomposition contains a plot the original series, the level, the slope, the season and the remainder (residuals). The level shows a smooth, long term rising curve that tracks the overall average of the series from the late 1950s through to the aerly 2000s, removing the short-term noise. This confirms that the average production volume of cement has consistently increased over the long term.
+
+The slope shows the rate of increase per quarter. This component is generally positive and highly smoothed due to the low $\beta$ value, However the plot reveals the rate of increase was not constant, there are periods where growth accelerated or temporarily slowed. In the early decades (1960s and 1970s) the slope appears positive and rrelatively stable but experiences significant volatility around 1980s and shows a noticeable decline in the growth rate towards the end of the series (late 1990s). This tells us that, while the production volume continued to rise the pace of that increase may have slowed down or become more erratic.
+
+The season component has a clean, fixed amplitude (additive) waveform centred around zero demonstrating regular quarterly pattern, which is extracted and projected into the forecast. This highly predictable and consistent pattern demonstrates strong quarterly seasonality in cement production.
+
+The remainder as explained earlier is the residual noise that is left after all three components have been subtracted from the data (unexplained by the model). They appear mostly random suggesting the model has captured the systematic patterns. However there are a few noticeable spikes particularly around the early 1980s and the late 1990s where the model significantly under or over-predicted the actual value.
+
+## Comparing Multiple ETS Models
+
+We have seen the types of ETS models and how they operate now we will combine most of the possible configuration for fitting models and compare how they perform on the same data. We will use the monthly sales data
+
+```{r}
+# fit multiple ETS configurations
+ets_comparison <- training_data |> 
+  model(
+    auto = ETS(Sales),         # let fable decide
+    simple = ETS(Sales ~ trend("N") + season("N")),
+    holts = ETS(Sales ~ trend("A") + season("N")),
+    hw_add = ETS(Sales ~ trend("A") + season("A")),
+    hw_mult = ETS(Sales ~ trend("A") + season("M")),
+    damped_add = ETS(Sales ~ trend("Ad") + season("A")),  # damped trend (seasonal A)
+    damped_mult = ETS(Sales ~ trend("Ad") + season("M"))  # damped trend (seasonal M)
+  )
+
+# comparing training accuracy
+training_accuracy <- ets_comparison |> accuracy()
+
+training_accuracy |> arrange(MASE)
+```
+
+```{r}
+glance(ets_comparison) |> arrange(AIC)
+
+```
+
+## Generating and Visualising Forecast from Multiple Models
+
+We can generate and visualise the forecast to understand critically the goodness of fit for each model.
+
+```{r}
+ets_forecasts <- ets_comparison |> forecast(h=12)
+ets_forecasts
+
+ets_forecasts |> autoplot(training_data, level = NULL)
+```
+
+```{r}
+
+ets_comparison |> augment()
+```
