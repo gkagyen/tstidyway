@@ -2,7 +2,7 @@
 
 Visual inspection with `ggplot2` and `autoplot()` gives us an intuitive feel for our time series. We might suspect a trend, see hints of seasonality, and notice unusual observations. But how can we move from intuition to a more formal, statistical understanding of these components? This is where the `feasts` and `fabletools` package comes in.
 
-The package `feasts`, which stands for **F**eature **E**xtraction **A**nd **S**tatistics for **T**ime **S**eries, is a core part of the tidyverts framework which we have mentioned earlier (@sec-introduction). Its purpose is to provide a toolkit for analysing the *features* of a time series data (tsibble), while `fabletools` supplies the underlying infrastructure that makes this analysis seamless and efficient. Think of it as a Doctor's diagnostic kit: It does not treat the patients (that is the job of forecasting models in @sec-simple-forecasting and @sec-advanced-forecasting), but it runs the tests needed to understand what is going on.
+The package `feasts`, which stands for **F**eature **E**xtraction **A**nd **S**tatistics for **T**ime **S**eries, is a core part of the tidyverts framework which we have mentioned earlier (@sec-introduction). Its purpose is to provide a toolkit for analysing the *features* of a time series data (tsibble), while `fabletools` supplies the underlying infrastructure that makes this analysis seamless and efficient. Think of it as a Doctor's diagnostic kit: It does not treat the patients (that is the job of forecasting models in @sec-simple-forecasting, @sec-exponential-smoothing and @sec-arima), but it runs the tests needed to understand what is going on.
 
 ```{r}
 #| include: false
@@ -166,7 +166,7 @@ sales_pacf |> autoplot()
 
 The most important aspect of our PACF plot is the behaviour in the first few lags. We notice that the is a significant negative spike at **lag 3**, with the subsequent lags generally becoming smaller and non significant, with no clear pattern. This is a classic signature of a PACF plot where the beginning few vertical bars shows a significant spike and the cuts off.
 
-The PACF and ACF plots are considered diagnostic plots for identifying an ARIMA model's specification (more information in @sec-advanced-forecasting).
+The PACF and ACF plots are considered diagnostic plots for identifying an ARIMA model's specification (more information in @sec-arima).
 
 ## Feature Based Explorations
 
