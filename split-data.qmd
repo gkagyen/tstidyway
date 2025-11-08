@@ -36,7 +36,7 @@ wrong_split <- sales_ts |>
   mutate(Split = if_else(runif(n()) > 0.7, "Testing", "Training"))
 ```
 
-The above code creates a random 70/30 split. We set a seed '`set.seed(523)`' so thst the random numbers generated will remain the same anytime the code runs. This approach is problematic because the testing points are scattered throughout the timeline as displayed in @fig-wrong-split below. Fitting a model using this data could make it appear accurate by "memorising" nearby values, but will fail in real forecasting scenarios.
+The above code creates a random 70/30 split. We set a seed '`set.seed(523)`' so that the random numbers generated will remain the same any time the code runs. This approach is problematic because the testing points are scattered throughout the timeline as displayed in @fig-wrong-split below. Fitting a model using this data could make it appear accurate by "memorising" nearby values, but will fail in real forecasting scenarios.
 
 ```{r}
 #| echo: false

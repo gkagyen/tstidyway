@@ -51,6 +51,7 @@ book:
       chapters: 
         - simple-models.qmd
         - advanced-models.qmd
+        - advanced-models-2.qmd
         - forecast-evaluation.qmd
     
     - references.qmd

@@ -22,12 +22,6 @@ sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
   as_tsibble(index  = Month)
 ```
 
-# Visualising Trends with `ggplot2` and `autoplot()`
-
-This is where we transform the raw data (tabular data) into compelling stories that reveal patterns, trends and insights hidden in your data. Since we now have control over date manipulations and feature engineering from the previous chapters, visualisation is the next crucial step.
-
-A well crafted plot can instantly reveal what might take hours to discover through numerical analysis alone. In this chapter we will learn how to visualise our time series data using the flexible, customisable world of `ggplot2` and the specialised, intelligent `autoplot()` function from the `feasts` package.
-
 ## Basic Time Series Plots with `ggplot2`
 
 ### Line Plots for Time Series
@@ -296,7 +290,7 @@ In the next chapter we will delve into a more detailed visualisation of seasonal
 The `gg_season()` function is part of the `feasts` package but has been **deprecated** and moved to the new `ggtime` package which was basically designed for visualising time series patterns. It contains functions for exploring time series patterns like trends, seasonality, cycles and holidays
 :::
 
-## Summary 
+## Summary
 
 So far you have mastered how to visualise our time series data using basic line plots with `ggplot2` and `autoplot()`. You have seen how `ggplot2` grants **absolute control** over every detail of your time series visualisations and how `autoplot()` delivers smart **time series-specific** defaults which drastically accelerates initial data exploration.
 

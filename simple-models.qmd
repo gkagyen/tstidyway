@@ -45,7 +45,7 @@ head(example_data)
 ```
 
 | Model | Core Principle | Prediction Rule | Example |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | Mean Model | simple constant | Always predicts the **historical average** of the series | for our `example_data` the mean = **137.5** for all future periods. |
 | Naïve Model | random walk | Predicts the last observed value $\hat{Y}_{t+h}=Y_t$ | for our `example_data` this will be the last `Ependiture` for the `Period`, **170.** |
 | Seasonal Naïve | seasonal repetition | Predicts the value from the same season in the last period. $\hat{Y}_{t+h}=Y_{t+h-m}$, where $m$ is the seasonal period | for our example_data, assuming the seasonal period is 4, then the predictions for the next season will be; **145, 155, 160 and 170.** |
@@ -90,7 +90,7 @@ All these components helps us to understand how each model interprets and attemp
 
 ## Generating and Visualising Forecasts from Benchmark Models
 
-After fitting the benchmark models to the training data, the net critical step is to generate future predictions and visualise these forecasts along with their associated uncertainty (prediction intervals).
+After fitting the benchmark models to the training data, the next critical step is to generate future predictions and visualise these forecasts along with their associated uncertainty (prediction intervals).
 
 ### Generating Forecasts
 
@@ -200,7 +200,7 @@ print(training_accuracy)
 The fitted models are passed to the `accuracy()` function, which calculates metrics based on the residuals generated from the training data used to fit the models. The output is a tibble displaying several common error metrics.
 
 | Metric | Full Name | Interpretation |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | MAE | Mean Absolute Error | The average magnitude of the forecast errors |
 | RMSE | Root Mean Square Error | Penalises larger errors more heavily than MAE Always $RMSE\ge MAE$. |
 | MASE | Mean Absolute Scaled Error | ***Key Scaled Metric.*** Measures accuracy relative to the NAIVE model. |

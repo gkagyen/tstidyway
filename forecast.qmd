@@ -24,7 +24,9 @@ This comprehensive section we will progress from foundational concepts to sophis
 
 -   @sec-simple-forecasting: We begin in this chapter with simple benchmark models that provide surprising insight and crucial performance baselines. These models may be elementary, but they serve as essential reference points–if your sophisticated model cannot outperform a simple naive forecast, you may be overcomplicating your approach.
 
--   @sec-advanced-forecasting: Here we will explore the workhorses of time series forecasting. Exponential Smoothing (ETS) models that automatically capture trend and seasonality patterns and ARIMA models that leverage the autocorrelation structures we diagnosed in our exploratory phase. We will also touch on regression approaches and modern combinations
+-   @sec-exponential-smoothing: Here we will explore a very interesting model for time series forecasting, Exponential Smoothing (ETS) models and how they are able to automatically capture trend and seasonality patterns.
+
+-   @sec-arima: This sec-exponential-smoothingchapter covers everything you need to know about ARIMA models and how they leverage the autocorrelation structures we diagnosed in our exploratory phase to make future predictions.
 
 -   @sec-model-evaluation: This is where we bring everything together–fitting multiple models, generating future predictions and evaluating performance using the testing framework we established. We will compare models using multiple accuracy metrics, create compelling visuals and select the most reliable approach for our specific context.
 
