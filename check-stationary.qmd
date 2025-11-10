@@ -23,7 +23,7 @@ sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
 
 ## Understanding Stationarity Through visualisation
 
-A stationary series would fluctuate around a horizontal linev (like random noise), while a non stationary series show clear upward or downward trend. The most direct way to assess staionarity is by examining the series plot for a persistent trend. We will start by visually examining some of our time series datasets
+A stationary series would fluctuate around a horizontal line (like random noise), while a non stationary series show clear upward or downward trend. The most direct way to assess stationary is by examining the series plot for a persistent trend. We will start by visually examining some of our time series datasets
 
 ```{r}
 #| warning: false

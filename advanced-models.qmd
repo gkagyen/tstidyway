@@ -129,7 +129,6 @@ The Holt's linear trend (or Double Exponential Smoothing) model adds trend to ca
 We will demonstrate this with the Annual Cereal Yield series from the `gh_ts` data, which clearly shows an upward trend over time. We first prepare the data by isolating the cereal yield indicator from the rest of the data an performing a train-test split before fitting the model
 
 ```{r}
-
 # filter gh_ts for the cereal yield
 cereal_yield <- gh_ts |> 
   filter(indicator_name == "Cereal yield _kg per hectare")
@@ -179,7 +178,7 @@ Forecast Equation: $\hat{y}_{t+h}=l_t+h+b_t$, where $h$ is the forecast horizon.
 #| fig-cap: "Forecasting with Holt's Linear Trend Method"
 # generate forecast
 holts_forecast <- holts_linear |> 
-  forecast(h = 12)
+  forecast(h = 5) # 5 year forecast
 
 # visualise forecast with fitted (predicted) values
 holts_forecast |> 
