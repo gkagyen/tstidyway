@@ -64,11 +64,11 @@ report(auto_arima)
 
 The `ARIMA()` function is used to fit an ARIMA model in the `fable` framework, `ARIMA(value)` allows the algorithm to automatically select the best ARIMA model. The function tests multiple combinations of *p, d, q* parameters. It uses a stepwise algorithm to efficiently search the model space.
 
-The output from the `report()` function shows the selected ARIMA order and estimated parameters. The automatic selection process chose the configuration **ARIMA(0,1,1)** for the cereal yield training data. This chosen configuration tells us exactly how the model accounts for the data's past and trend
+The output from the `report()` function shows the selected ARIMA order and estimated parameters. The automatic selection process chose the configuration **ARIMA(0,1,1)** for the cereal yield training data. This chosen configuration tells us exactly how the model accounts for the data's past and trend.
 
--   $p=0$ **(AutoRegressive)**: The model determined that, after applying a first order difference, there is no significant correlation between the current value and the previous lagged values of the differenced series
+-   $p=0$ **(AutoRegressive)**: The model determined that, after applying a first order difference, there is no significant correlation between the current value and the previous lagged values of the differenced series.
 -   $d=1$ **(Integrated)**: The model required a first-order difference (d=1) to achieve stationarity. This confirms the cereal yield series has a linear trend that must be removed before modelling the residual fluctuations.
--   $q-1$ **(Moving Average)**: The model includes a first-order Moving Average term \[MA(1)\]. This means the current prediction depends on the forecast error from the immediate previous period.
+-   $q=1$ **(Moving Average)**: The model includes a first-order Moving Average term \[MA(1)\]. This means the current prediction depends on the forecast error from the immediate previous period.
 
 The above model can be formally written as
 
@@ -127,16 +127,16 @@ Think of it like learning from mistakes - if you over-predicted yesterday, the m
 
 ## The ARIMA Modelling Workflow in `fable`
 
-The ARIMA modelling process is systematic, beginning with diagnosis and preparation of the data before the fitting the final model. The standard workflow involves six steps. **Step 1: Visualize** → **Step 2: Check Stationarity** → **Step 3: Identify Model** → **Step 4: Fit** → **Step 5: Diagnose** → **Step 6: Forecast.** We already know how to visualise our time series data and how to ) difference our data from @sec-visualising-trends-with-ggplot2-and-autoplot and @sec-checking-stationarity respectively.
+The ARIMA modelling process is systematic, beginning with diagnosis and preparation of the data before the fitting the final model. The standard workflow involves six steps. **Step 1: Visualize** → **Step 2: Check Stationarity** → **Step 3: Identify Model** → **Step 4: Fit** → **Step 5: Diagnose** → **Step 6: Forecast**.
 
 ### Visualise Time Series
 
-We begin by first visualising our time series data, the training set of the cereal yield data (`training_yield`).
+We begin by first visualising our time series data, the training set of the cereal yield data (`training_yield`). More information on visualising time series `tsibbles` can be found in @sec-visualising-trends-with-ggplot2-and-autoplot 
 
 ```{r}
 #| warning: false
 #| label: fig-view-ts
-#| fig-cap: "Visual Representation Of Annual Cereal Yield in Ghan from 1960 to 2007"
+#| fig-cap: "Visual Representation Of Annual Cereal Yield in Ghana from 1960 to 2007"
 training_yield |> 
   autoplot(value)
 ```
@@ -149,8 +149,8 @@ The autocorrelation function (ACF) plot is the first diagnostic tool for checkin
 
 ```{r}
 #| label: fig-acf-cyeild
-#| fig-cap: "Autocorrelation Function Plot Annual Cereal Yield from 1960 to 2017"
-# check staionarity visually with ACF plot
+#| fig-cap: "Autocorrelation Function Plot of Annual Cereal Yield from 1960 to 2007"
+# check stationarity visually with ACF plot
 training_yield |> 
   ACF(value, lag_max = 18) |> 
   autoplot()
@@ -188,7 +188,7 @@ The differenced series plot (right) shows a stable series fluctuating around zer
 
 While automatic fitting is possible, understanding how to manually determine the ARIMA order using ACF and PACF plots is crucial for advanced diagnostics.
 
-The `fable` package can perform a thorough search of the model space and automatically choose the best components for the ARIMA model we fit.
+The `fable` package provides room to manually specify the order in the `ARIMA()` function. Before we manually determine and fit the manual ARIMA model, It is important to note that `fable` can also perform a thorough search of the model space for the automatic model selection by specifying `stepwise = FALSE` in the `ARIMA()` function.
 
 ```{r}
 # fit ARIMA for auto order selection
@@ -202,9 +202,9 @@ glance(arima_model_auto) |>
   select(.model, AICc, ar_roots, ma_roots)
 ```
 
-`stepwise = FALSE` performs a more exhaustive search (slower but more thorough). The best model is chosen based on the lowest AIC. The `glance()` provides a summary of the model's structure and fit statistics.
+`stepwise = FALSE` performs a more exhaustive search (slower but more thorough). The best model is chosen based on the lowest AICc. The `glance()` provides a summary of the model's structure and fit statistics.
 
-We can also specify the order of ARIMA to be used for the fitting. By observing the PACF and ACF plot, we can be guided on what the order for the ARIMA would be.
+We intend to manually specify the order of ARIMA to be used for the fitting. By observing the PACF and ACF plot, we can be guided on what the order for the ARIMA would be.
 
 ```{r}
 #| warning: false
@@ -216,7 +216,7 @@ training_yield |>
 
 ```
 
-The ACF plot (bottom left) shows a gradual decay, confirming the series is non-stationary (deeds differencing). The PACF shows a single large spike at lag 1, which then cuts off (falls immediately inside the confidence bounds). This behaviour strongly suggests a starting point of an AR(1).
+The ACF plot (bottom left) shows a gradual decay, confirming the series is non-stationary (requires differencing). The PACF shows a single large spike at lag 1, which then cuts off (falls immediately inside the confidence bounds). This behaviour strongly suggests a starting point of an AR(1).
 
 Since the series is non-stationary we will first difference it ($d=1$) and then re-examine the PACF and ACF plots to identify **p** and **q**.
 
@@ -229,7 +229,7 @@ training_yield |>
   gg_tsdisplay(difference(value), plot_type = "partial")
 ```
 
-The differenced series now shows stationarity (top plot), fluctuating around a constant mean (zero). The PACF and ACF plots both show a spike at lag 1 and then cuts off (fall within the significance bands). The behaviour of the two plots suggests a mixed ARIMA model with both **AR** and **MA** terms, specifically and **ARIMA(1,1,1)** or a related structure, as the behaviour suggests both an **AR(1)** and **MA(1)** model may be needed.
+The differenced series now shows stationarity (top plot), fluctuating around a constant mean (zero). The PACF and ACF plots both show a spike at lag 1 and then cuts off (fall within the significance bands). The behaviour of the two plots suggests a mixed ARIMA model with both **AR** and **MA** terms, specifically an **ARIMA(1,1,1)** or a related structure, as the behaviour suggests both an **AR(1)** and **MA(1)** model may be needed.
 
 The ACF and PACF plots are the primary tools used to manually identify the appropriate orders for the AR(p) and MA(q) components of an ARIMA. The general guiding rule relies on observing how the correlations "cut off" (drop sharply to zero) in each plot after the series has been differenced to achieve stationarity.
 
@@ -244,7 +244,7 @@ The final model chosen by the automatic function, **ARIMA(0,1,1),** is often the
 
 ### Fitting the Model: Manual ARIMA Specification
 
-Once the components are manually determined we can now fit the model using these identified components
+Once the components are determined through the ACF and PACF plots, we can now fit the model by manually specifying the order inside `pdq()` within the `ARIMA()`function.
 
 ```{r}
 # specify ARIMA model manually
@@ -276,7 +276,7 @@ manual_arima |>
 The resulting plot from the `gg_tsresiduals()` function provides the following checks
 
 -   A plot of the residuals over time (top). A good model will show the residuals fluctuating randomly around zero, with no noticeable patterns or trends. The plot confirms the residuals are centred near zero and appear randomly scattered between -300 and 300
--   ACF plot (bottom left) that checks for autocorrelation in the residuals. If the residuals are white noise, all correlation bars should fall within the blue dashed confidence bounds (or be very close to zero). The plot shows no significant spikes remaining, suggesting the ARIMA model successfully captured the dependence structure (AR and MA)
+-   An ACF plot (bottom left) that checks for autocorrelation in the residuals. If the residuals are white noise, all correlation bars should fall within the blue dashed confidence bounds (or be very close to zero). The plot shows no significant spikes remaining, suggesting the ARIMA model successfully captured the dependence structure (AR and MA)
 -   A histogram (bottom left) that shows the distribution of the residuals. Ideally, residuals should be normally distributed (bell-shaped) with a mean near zero. The histogram shows a distribution that is roughly centred near zero but may not be perfectly symmetrical.
 
 **Statistical Residual Check**
@@ -298,7 +298,7 @@ We can further confirm if the residuals follow a normal distribution with a Q-Q 
 
 ```{r}
 #| label: fig-qq-arima
-#| fig-cap: "QUantile Quantile Plot of ARIMA Model Residuals"
+#| fig-cap: "QUantile Quantile Plot of ARIMA Model's Residuals"
 augment(manual_arima) |> 
   ggplot(aes(sample = .innov)) +
   stat_qq() +
@@ -326,9 +326,9 @@ forecast_details |>
   select(year, .mean, `95%`)
 ```
 
-The `forecast()` function is used to project the series forward by $h=8$ years. The resulting forecasts show the projected mean value and a 95% confidence intervals. The model suggests the current yield value depends on $d=1$ (Integrated; the previous year's yield (to model the trend), $p=1$ (AR); the previous year's differenced value and $q=1$ (MA); the previous year's forecast error.
+The `forecast()` function is used to project the series forward by $h=8$ (8 years). The resulting forecasts show the projected mean value and a 95% confidence intervals. The model suggests the current yield value depends on $d=1$ (Integrated; the previous year's yield (to model the trend), $p=1$ (AR); the previous year's differenced value and $q=1$ (MA); the previous year's forecast error.
 
-The point forecasts (`.mean`) quickly stabilise to a constant value of 1333. The AR and MA components only influence the forecast horizon for a short period (typically 1-2 steps ahead), after which the forecast relies solely on the Integrated component. Since $d=1$ (first difference), the long term forecast for undifferenced series becomes a flat line (i.e, the rate of change is projected to settle at zero). The 95% confidence interval demonstrates increasing uncertainty, widening significantly from \~427 units in 2008 to \~804 units by 2015.
+The point forecasts (`.mean`) quickly stabilise to a constant value of 1333. The AR and MA components only influence the forecast horizon for a short period (typically 1-2 steps ahead), after which the forecast relies solely on the Integrated component. Since $d=1$ (first difference), the long term forecast for undifferenced series becomes a flat line (i.e, the rate of change is projected to settle at zero). The 95% confidence interval demonstrates increasing uncertainty, widening significantly from ~427 units in 2008 to ~804 units by 2015.
 
 ### Visualising ARIMA Forecasts
 
@@ -348,7 +348,7 @@ arima_forecast |>
 
 The historical fit (red line) from the resulting visuals tracks the general upward movement and fluctuations of the training data (black line), demonstrating that the ARIMA(1,1,1) model successfully captured the overall trend and short-term correlations.
 
-The forecast line (blue line) stabilises and flattens out to a horizontal trajectory. This flattening is characteristic of ARIMA models with $d=1$ (first differencing) when projecting far into the future, as the underlying MA and AR influence eventually dies out. The blue shaded region visually confirms the increasing uncertainty, tapering outward.
+The forecast line (blue line) stabilises and flattens out to a horizontal trajectory. This flattening is characteristic of ARIMA models with $d=1$ (first differencing) when projecting far into the future, as the underlying MA and AR influence eventually dies out. The blue shaded region visually confirms the increasing uncertainty, tapering outward as the forecast moves into later years.
 
 ## Seasonal ARIMA Models
 
@@ -356,7 +356,7 @@ For data with seasonal patterns, the standard ARIMA model must be extended to ac
 
 ### Understanding the $SARIMA$ Notation
 
-A seasonal ARIMA model icludes both non-seasonal and seasonal components, represented by the notation $\text{ARIMA(p,d,q)(P,D,Q)[m]}$.
+A seasonal ARIMA model includes both non-seasonal and seasonal components, represented by the notation $\text{ARIMA(p,d,q)(P,D,Q)[m]}$.
 
 -   $(p,d,q)$ is the non-seasonal order that captures short term dependencies and trend removal as in standard ARIMA
 
@@ -381,13 +381,14 @@ We start with a visual identification of seasonal patterns. Quarterly data means
 library(patchwork)
 p1 <- training_cement |> 
   gg_season(Cement, period = "2y", show.legend = FALSE) +
-  labs(title = "Bi-Annual Seasonal Pattern")
+  labs(title = "Bi-Annual Seasonal Pattern") + scale_x_yearquarter(breaks = "6 months")
 
-# subseries plot
+# sub-series plot
 p2 <- training_cement |> 
   gg_subseries(Cement) +
   labs(title = "Seasonal Subseries")
 
+# STL decomposed plots
 p3 <- training_cement |> 
   model(STL(Cement)) |> 
   components() |> autoplot() +
@@ -402,11 +403,11 @@ p1 + p2 + p3 +
 )
 ```
 
-We produce three key plots to visualise and decompose the seasonality. The seasonal plot (top left) shows the data broken down by seasonal cycles, which helps to identify the nature of the seasonality. The lines representing different years run parallel to each other, but the level of the entire series is clearly increasing over time. The lines a grouped by a two-year period.
+We produce three key plots to visualise and decompose the seasonality. The seasonal plot (top left) shows the data broken down by seasonal cycles, which helps to identify the nature of the seasonality. The lines representing different years run parallel to each other, but the level of the entire series is clearly increasing over time. The lines are grouped by a two-year period.
 
-The seasonal subseries plot (top right) displays the time series for each individual quarter over the entire time period. Each panel shows the trend within that specific quarter. Every quarter shows a strong upward trend over the years. The blue horizontal line in each panel represents the average production for that quarter. The plot confirms that quarter 3 (Q3) and quarter 4 (Q4) consistently have the highest production levels.
+The seasonal sub-series plot (top right) displays the time series for each individual quarter over the entire time period. Each panel shows the trend within that specific quarter. Every quarter shows a strong upward trend over the years. The blue horizontal line in each panel represents the average production for that quarter. The plot confirms that quarter 3 (Q3) and quarter 4 (Q4) consistently have the highest production levels.
 
-The third plot at the bottom is an STL decomposed visuals of the time series, breaking it into its core components - a trend, a seasonal and remainder components. The overall visuals confirm the quarterly cement series requires a model that handles both non-seasonal trend removal ($likely \d=1$) and seasonal differences ($D=1$) to remove the strong seasonal pattern.
+The third plot at the bottom is an STL decomposed visualisation of the time series, breaking it into its core components - a trend, a seasonal and remainder component. The overall visualisation confirm the quarterly cement series requires a model that handles both non-seasonal trend removal ($likely \d=1$) and seasonal differences ($D=1$) to remove the strong seasonal pattern.
 
 **Check Stationarity**
 
@@ -422,7 +423,7 @@ We use the KPSS unit root test to statistically confirm the presence of a determ
 
 ```{r}
 #| warning: false
-# apply seaonal and first differencing 
+# apply seasonal and first differencing 
 training_cement |> 
   gg_tsdisplay(
     difference(Cement) |> difference(lag=4), 
@@ -430,4 +431,53 @@ training_cement |>
     )
 ```
 
-The initial visualisation showed two types of non-stationarity; a strong upward trend and a fixed seasonal pattern. To remove both we apply two types of differencing; a first order differencing $(d=1)$ `difference(Cement)` to remove the linear trend and a seasonal differencing $(D=1)$ `... differencing(lag = 4)` to remove the seasonality (\$m=4\$ for quarterly data)
+The initial visualisation showed two types of non-stationarity; a strong upward trend and a fixed seasonal pattern. To remove both we apply two types of differencing;
+
+-   a first order differencing $(d=1)$ `difference(Cement)` to remove the linear trend. This calculates the difference between consecutive periods.
+-   seasonal differencing $(D=1)$ `... differencing(lag = 4)` to remove the seasonality ($m=4$ for quarterly data). This calculates the difference between the current and the same quarter last year.
+
+We use `gg_tsdisplay()` function to plot the double-differenced series. This is essential for identifying the final $\text{p,q,P,Q}$ orders. After differencing the time series plot now fluctuates around zero with no clear trend or seasonal cycle, confirming stationarity. The ACF and PACF plots shows the remaining correlations structure in the stationary series. There are 2 key concepts to look out for in determining the $(p,q,P,Q)$ orders:
+
+-   **Early lags** (1,2,3...): These are the non seasonal lags and are used to determine the orders p and q
+-   **Seasonal lags** (e.g 4,8,16..for quarters, 12,24,36...for months): This is the seasonal component and they help to determine the P and Q orders.
+
+To determine the seasonal order, we check the ACF and PACF plot at the seasonal lags (4,8,12,16...). There is a significant spike at lag 4 and 8 with subsequent seasonal lags falling within the significant bounds in the ACF plot. The lag cuts off after the 2nd seasonal lag suggesting seasonal MA(2) $Q=2$. The PACF decays for regular lags after the first lag but still prominent for seasonal lags till after seasonal lag 12. This still proves a seasonal MA model where the ACF cuts off and the PACF decays, pointing to a seasonal ARIMA(0,1,2).
+
+With the non seasonal order, we look at the first few lags of the ACF and PACF plots. There is a significant spike at lag 1 and 2 (excluding seasonal spikes) of the ACF plot while the rest remain within bounds. This suggests an MA(2) $q=2$. The PACF also shows a significant spike at lag 1 and lag 3 (excluding seasonal spikes). This suggests an AR(3), $p=3$. The presence of significant spikes at lag 2 and lag 3 in both plots followed by cut-offs , suggest a simultaneous need for both AR and MA components. This leads to a non-seasonal ARIMA(3,1,2) structure.
+
+Combining both the non-seasonal and seasonal components, the ACF and PACF plots suggests $\text{ARIMA}(3,1,2)(0,1,2)[4]$.
+
+Honestly, ACF/PACF interpretation is more of an art than science, especially for seasonal data. Always start small and focus on obvious patterns. Always remember that when the ACF and PACF patterns are not clear you can always use the automatic `ARIMA()` function and let the algorithm decide.
+
+**Fitting the Model**
+
+After identifying the order, we can now fit the model and prepare for forecasting. Here we will fit three models; an automatic model, another automatic model with a more thorough search and our identified model order from the ACF and PACF analysis.
+
+```{r}
+# fit sarima models
+sarima_models <- training_cement |> 
+  model(
+    auto_sarima = ARIMA(Cement),
+    thorough_sarima = ARIMA(Cement, stepwise = FALSE),
+    sarima = ARIMA(Cement ~ 0 + pdq(3,1,2) + PDQ(0,1,2))
+  )
+
+# compare models
+glance(sarima_models) |> arrange(AICc)
+```
+
+We fit multiple candidate models and evaluate their performance using statistical measures like AICc.The `glance()` function provides these statistical fit metrics. Lower $AIcc$ indicates a better model, balancing goodness of fit with model complexity. Both automatic methods selected the same best model($ARIMA(2,0,2)(0,1,1)$) with drift. They share the lowest AICc value suggesting the simpler stepwise search was effective and the more exhaustive search did not yield any better structure.
+
+The manually specified model had a significantly higher AICc and a higher residual variance. This shows that the structure derived form the ACF and PACF plots was either overly complex or missed a key correlation structure, resulting in a worse fit compared to the automatic selection.
+
+We can further check the significance of the estimated values using the `coef()` or `tidy()` function which presents all the models a tabular structure with their corresponding coefficient estimates, standard errors and p-values.
+ 
+```{r}
+#| eval: false
+coef(sarima_models)
+```
+
+The best model (`auto_sarima`) has all seasonal and non-seasonal estimates being statistically significant. The drift term (constant) which represents the average non zero change or the long run average slope in the series after differencing also shows a high statistical significance, implying a persistent slope in the differenced series.
+
+These validate that the model is a comprehensive representation of the cement production series, successfully accounting for the level, trend, seasonality and the residual autocorrelations
+
