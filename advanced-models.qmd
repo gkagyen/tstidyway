@@ -460,7 +460,7 @@ The process of fitting and analysing ETS models within frameworks like fable pro
 
 **Smoothing Parameters Tell a Story**: The $\alpha, \beta, \gamma$ values reveal how stable or volatile your series is. High values suggest rapid changes, while low values indicate stable patterns.
 
-**Start Simple, Embrace Parcimony**: The automatic selection often picks simpler models when they perform nearly as well as complex ones—embracing the principle of parsimony. This reminds us that the best model is the one that captures essential patterns without unnecessary complexity
+**Start Simple, Embrace Parsimony**: The automatic selection often picks simpler models when they perform nearly as well as complex ones—embracing the principle of parsimony. This reminds us that the best model is the one that captures essential patterns without unnecessary complexity
 
 ## Summary
 

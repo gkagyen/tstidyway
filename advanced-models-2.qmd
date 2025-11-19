@@ -131,7 +131,7 @@ The ARIMA modelling process is systematic, beginning with diagnosis and preparat
 
 ### Visualise Time Series
 
-We begin by first visualising our time series data, the training set of the cereal yield data (`training_yield`). More information on visualising time series `tsibbles` can be found in @sec-visualising-trends-with-ggplot2-and-autoplot 
+We begin by first visualising our time series data, the training set of the cereal yield data (`training_yield`). More information on visualising time series `tsibbles` can be found in @sec-visualising-trends-with-ggplot2-and-autoplot
 
 ```{r}
 #| warning: false
@@ -284,6 +284,7 @@ The resulting plot from the `gg_tsresiduals()` function provides the following c
 The Ljung-Box test is a formal statistical method to confirm that the residuals, as a group, are not distinguishable from white noise.
 
 ```{r}
+# statictical residual check
 augment(manual_arima) |> 
   features(.innov, features = ljung_box, lag = 16)
 ```
@@ -328,7 +329,7 @@ forecast_details |>
 
 The `forecast()` function is used to project the series forward by $h=8$ (8 years). The resulting forecasts show the projected mean value and a 95% confidence intervals. The model suggests the current yield value depends on $d=1$ (Integrated; the previous year's yield (to model the trend), $p=1$ (AR); the previous year's differenced value and $q=1$ (MA); the previous year's forecast error.
 
-The point forecasts (`.mean`) quickly stabilise to a constant value of 1333. The AR and MA components only influence the forecast horizon for a short period (typically 1-2 steps ahead), after which the forecast relies solely on the Integrated component. Since $d=1$ (first difference), the long term forecast for undifferenced series becomes a flat line (i.e, the rate of change is projected to settle at zero). The 95% confidence interval demonstrates increasing uncertainty, widening significantly from ~427 units in 2008 to ~804 units by 2015.
+The point forecasts (`.mean`) quickly stabilise to a constant value of 1333. The AR and MA components only influence the forecast horizon for a short period (typically 1-2 steps ahead), after which the forecast relies solely on the Integrated component. Since $d=1$ (first difference), the long term forecast for undifferenced series becomes a flat line (i.e, the rate of change is projected to settle at zero). The 95% confidence interval demonstrates increasing uncertainty, widening significantly from \~427 units in 2008 to \~804 units by 2015.
 
 ### Visualising ARIMA Forecasts
 
@@ -407,7 +408,7 @@ We produce three key plots to visualise and decompose the seasonality. The seaso
 
 The seasonal sub-series plot (top right) displays the time series for each individual quarter over the entire time period. Each panel shows the trend within that specific quarter. Every quarter shows a strong upward trend over the years. The blue horizontal line in each panel represents the average production for that quarter. The plot confirms that quarter 3 (Q3) and quarter 4 (Q4) consistently have the highest production levels.
 
-The third plot at the bottom is an STL decomposed visualisation of the time series, breaking it into its core components - a trend, a seasonal and remainder component. The overall visualisation confirm the quarterly cement series requires a model that handles both non-seasonal trend removal ($likely \d=1$) and seasonal differences ($D=1$) to remove the strong seasonal pattern.
+The third plot at the bottom is an STL decomposed visualisation of the time series, breaking it into its core components - a trend, a seasonal and remainder component. The overall visualisation confirm the quarterly cement series requires a model that handles both non-seasonal trend removal ($\text{likely }d=1$) and seasonal differences ($D=1$) to remove the strong seasonal pattern.
 
 **Check Stationarity**
 
@@ -466,12 +467,14 @@ sarima_models <- training_cement |>
 glance(sarima_models) |> arrange(AICc)
 ```
 
-We fit multiple candidate models and evaluate their performance using statistical measures like AICc.The `glance()` function provides these statistical fit metrics. Lower $AIcc$ indicates a better model, balancing goodness of fit with model complexity. Both automatic methods selected the same best model($ARIMA(2,0,2)(0,1,1)$) with drift. They share the lowest AICc value suggesting the simpler stepwise search was effective and the more exhaustive search did not yield any better structure.
+We fit multiple candidate models, our manual specification and two automatic models, and evaluate their performance using statistical measures like AICc. In fable, you add the seasonal specification via `PDQ()` and combine it with a constant control using `0` or `1` in the formula. This is because fable uses a constant form parameterisation and the constant term $c$ relates to the mean $\mu$ via $c=\mu(1-\varphi_1-\cdots-\varphi_p)$. By default fable will automatically include a constant term if it improves AICc (This only happens when you allow fable to automatically select the orders).
+
+The `glance()` function provides these statistical fit metrics. Lower $AIcc$ indicates a better model, balancing goodness of fit with model complexity. Both automatic methods selected the same best model($ARIMA(2,0,2)(0,1,1)[4]$) with drift. They share the lowest AICc value suggesting the simpler stepwise search was effective and the more exhaustive search did not yield any better structure.
 
 The manually specified model had a significantly higher AICc and a higher residual variance. This shows that the structure derived form the ACF and PACF plots was either overly complex or missed a key correlation structure, resulting in a worse fit compared to the automatic selection.
 
-We can further check the significance of the estimated values using the `coef()` or `tidy()` function which presents all the models a tabular structure with their corresponding coefficient estimates, standard errors and p-values.
- 
+We can further check the significance of the estimated values using the `coef()` or `tidy()` function which presents all the models in a tabular structure with their corresponding coefficient estimates, standard errors and p-values.
+
 ```{r}
 #| eval: false
 coef(sarima_models)
@@ -479,5 +482,63 @@ coef(sarima_models)
 
 The best model (`auto_sarima`) has all seasonal and non-seasonal estimates being statistically significant. The drift term (constant) which represents the average non zero change or the long run average slope in the series after differencing also shows a high statistical significance, implying a persistent slope in the differenced series.
 
-These validate that the model is a comprehensive representation of the cement production series, successfully accounting for the level, trend, seasonality and the residual autocorrelations
+These outputs validate that the model is a comprehensive representation of the cement production series, successfully accounting for the level, trend, seasonality and the residual autocorrelations
 
+**Residual Check & Forecasting**
+
+The final stage of the SARIMA workflow involves confirming the model's validity through residual analysis and then generating forecasts as we did for the non seasonal ARIMA.
+
+A well specified SARIMA model should leave behind residuals that are indistinguishable from **white noise**. We use both visual and statistical tests to confirm this for the optimal $ARIMA(2,0,2)(0,1,1)[4]$ model.
+
+```{r}
+# check residuals visually 
+gg_tsresiduals(sarima_models |> select(auto_sarima))
+```
+
+We see the innovation residuals (`.innov`) (top plot) fluctuating randomly around zero with no obvious patterns or trends, suggesting the model has captured all systematic structure. Almost all spikes at both seasonal and non seasonal lags in the ACF plot are within the blue dashed confidence bounds with lag 16 and 18 slightly overlapping the confidence bound (negligible). This confirms no significant correlation remains in the residuals. The Histogram is also roughly bell-shaped and centred near zero, consistent with the normality assumption.
+
+We further confirm these visual check with a formal statistical check using the Ljung-Box test.
+
+```{r}
+# check residuals statistically
+augment(sarima_models) |> 
+  features(.innov, features = ljung_box)
+```
+
+The large p-values for all three models suggest all models pass the residual check. Since `auto_sarima` had the lowest AICc (a measure of predictive power), it is selected for forecasting.
+
+```{r}
+# generate a 2year (8quarters) forecast for all models 
+sarima_forecast <- sarima_models |> 
+  forecast(h = 8)
+```
+
+The chosen $ARIMA(2,0,2)(0,1,1)[4]$ model is used to generate an 8-quarter (2-year) forecast. The forecast table generated from the above shows the point forecast (`.mean`) for all models and their associated variance ($N(\mu,\varsigma^2)$) increasing with the horizon.
+
+We create a forecast plot with the `auto_sarima` model to visually summarise the model's projection.
+
+```{r}
+# visualise auto_sarima forecasts
+sarima_forecast |> filter(.model == "auto_sarima") |> 
+  autoplot(training_cement)
+```
+
+The forecast successfully maintains the seasonal pattern (peaks and troughs matching the seasonal cycle) and the upward trend established by the historic data. This is due to the significant **seasonal MA(1)** term and the **drift term** which ensures the trend component continues to project growth rather than flattening out. The blue shaded region widens as the forecast extends further into the future, reflecting the inherent increase in forecast uncertainty over longer horizons.
+
+## Insights from ARIMA Modelling
+
+ARIMA models remain a cornerstone of time series analysis, offering a balance between interpretability and predictive power. Here are some key insights drawn from our modelling process.
+
+The automatic ARIMA selection in the fable package consistently identifies models that strike a balance between complexity and performance, often outperforming manual specified alternatives. This automation ensures that the chosen model is well suited to the data without unnecessary trial and error. In our cereal yield model, the inclusion of MA(1) component demonstrates how the model learns from past forecast errors. By adapting its predictions based on previous inaccuracies, ARIMA improves its ability to forecast future values effectively.
+
+ARIMA models also account for uncertainty through their error structure, producing realistic prediction intervals that widen appropriately as the forecast horizon extends. This feature provides a more honest representation of future variability compared to point forecasts alone. Residual diagnostics also play a crucial role in validating the model. By confirming that residuals resemble white noise, we can be confident that the model has captured all predictable patterns in the data.
+
+For seasonal data, SARIMA models extend this capability by capturing both short-term and seasonal patterns through their dual structure of (p,d,q)(P,D,Q). This ensures that cyclical behaviours are properly modelled alongside regular fluctuations.
+
+Finally, ARIMA models often outperforms alternative methods like ETS when dealing with complex autocorrelation structures, particularly in financial datasets. This comparative advantage makes ARIMA a powerful tool for time series forecasting in domains where relationships between observations are intricate.
+
+## Summary
+
+ARIMA models represent a sophisticated yet accessible approach to time series forecasting that leverages the inherent autocorrelation in your data. The `fable` implementation makes this powerful technique available to analysts at all levels, automating the complex parts while maintaining transparency and control.
+
+In our next and final chapter, we will bring everything together and rigorously evaluate model performance using the testing framework we established earlier.
