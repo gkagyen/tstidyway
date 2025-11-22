@@ -491,6 +491,8 @@ The final stage of the SARIMA workflow involves confirming the model's validity 
 A well specified SARIMA model should leave behind residuals that are indistinguishable from **white noise**. We use both visual and statistical tests to confirm this for the optimal $ARIMA(2,0,2)(0,1,1)[4]$ model.
 
 ```{r}
+#| label: fig-sarima-resid
+#| fig-cap: "Visual Residual Check For Auto SARIMA Model"
 # check residuals visually 
 gg_tsresiduals(sarima_models |> select(auto_sarima))
 ```
@@ -518,6 +520,8 @@ The chosen $ARIMA(2,0,2)(0,1,1)[4]$ model is used to generate an 8-quarter (2-ye
 We create a forecast plot with the `auto_sarima` model to visually summarise the model's projection.
 
 ```{r}
+#| label: fig-sarima-forecast
+#| fig-cap: "8-Quarter Forecast of Cement Production Using Seasonal ARIMA Model"
 # visualise auto_sarima forecasts
 sarima_forecast |> filter(.model == "auto_sarima") |> 
   autoplot(training_cement)

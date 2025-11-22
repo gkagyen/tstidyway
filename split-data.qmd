@@ -127,9 +127,9 @@ kableExtra::kable(partition_table)
 
 `training(split)` / `testing(split)` are accessor functions that extract the actual data frames (tibble) for the respective partitions. To confirm we have the right train-test split create a table to verify the chronological order. As expected we see in the table that the test data is immediately after the end date of the training data, confirming that the split is purely temporal and not random.
 
-## Time Series Cross Validation
+## Time Series Cross-Validation
 
-For more robust model evaluation, we can use time series cross-validation (TS-CV). This creates multiple training and testing folds while preserving temporal order. We us the `stretch _tsibble()` function from the `tsibble` package to create cross-validation folds in a time series data.
+For more robust model evaluation, we can use time series cross-validation (TS-CV). This creates multiple training and testing folds while preserving temporal order. We us the `stretch _tsibble()` function from the `tsibble` package to create cross-validation (cv) folds in a time series data.
 
 ```{r}
 # create time series cross-validation folds
@@ -154,13 +154,13 @@ kableExtra::kable(cv_summary)
 
 ```
 
-`stretch_tsibble(.init = 25, .step = 1)` creates expanding window folds. `.init` sets the initial training window size and `.step` specifies how many months to move forward for each fold. Our code creates multiple folds where each fold starts with at least 25 observations (months) and expands by 1 observation each time. Here the first fold uses months 1to 25 for training and month 26 for testing. The next fold uses months 1 to 37 for training and month 38 for testing and so on till the end of the series.
+`stretch_tsibble(.init = 25, .step = 1)` creates expanding window folds. `.init` sets the initial training window size and `.step` specifies how many months to move forward for each fold. Our code creates multiple folds where each fold starts with at least 25 observations (months) and expands by 1 observation each time. Here the first fold uses months 1 to 25 for training and month 26 for testing. The next fold uses months 1 to 37 for training and month 38 for testing and so on till the end of the series.
 
 Each fold is marked by an `.id` column allowing us to track different train-test combinations. This approach provides multiple evaluations across different time periods.
 
 ### Visualise Cross-Validation Folds
 
-Let us visualise how our cross validation works
+Let us visualise how our cross-validation works
 
 ```{r}
 #| label: fig-tscv
@@ -179,14 +179,14 @@ tscv_folds |>
 
 ```
 
-The above plot displays the expanding nature of the cross validation folds produced from `stretch_tsibble`. We clearly see how each fold contains all the data from the previous fold plus the additional (`step`) month.
+The above plot displays the expanding nature of the cross-validation folds produced from `stretch_tsibble`. We clearly see how each fold contains all the data from the previous fold plus the additional (`step`) month.
 
-### Walk-Forward Validation
+### Rolling Window Analysis
 
-For forecasting, walk-forward validation (also known as rolling-origin evaluation) provides the most realistic assessment. The `slide_tsibble()` function from the `tsibble` package is designed for walk-forward validation. It creates overlapping windows of data that move step by step.
+Another way to create cv-folds is by using the `slide_tisbble()` function. This function differs slightly from  `stretch_tsibble()` in the way they generate folds. This function creates overlapping windows of data that move step by step.
 
 ```{r}
-# implement walk forward vaidation
+# implement walk forward validation
 walkf_cv_folds <- training_data |> 
   slide_tsibble(.size = 28, .step = 1) 
 

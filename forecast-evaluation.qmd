@@ -1,1 +1,441 @@
 # Model Evaluation and Forecasting {#sec-model-evaluation}
+
+We have now reached the final and important stage of our time series journey where we bring everything together. After cleaning and preparing our data, exploring patterns and building both simple and advanced forecasting models, we now face the ultimate test; determining which models actually work in practice and deploying them responsibly. Think of this chapter as your forecasting graduation ceremony.
+
+This chapter is not just about technical metrics – it is developing judgement to separate reliable forecast from wishful thinking. We will learn how to compare models objectively, understand their uncertainties, and create production-ready forecasting systems that deliver real value whether you are predicting sales, weather, crop yields or website traffic.
+
+```{r}
+#| include: false
+source("_common.R")
+```
+
+```{r}
+#| include: false
+gh_cocoa <- read_csv("data/gh_cocoa.csv", show_col_types = F)
+
+```
+
+## Fitting Multiple models and Generating Forecasts
+
+In the real world, relying on a single forecasting model is like bringing only one tool to a construction site. Imaging you are investing in stocks. Would you put all your money in a single company? Ofcourse not! You would diversify. No single model is perfect for all situations so smart forecasters create a model portfolio. Building different models help to capture different aspects of your data, and by creating a diverse model portfolio, you gain both robustness and insights.
+
+### Data Preparation: Cocoa Prices
+
+We introduce a new dataset ([`gh_cocoa.csv`](https://github.com/gkagyen/tstidyway/blob/1043865dd84ba98047394fc6957fdf46f1f4b1b6/data/gh_cocoa.csv)) for this work. This data was obtained from the Bank of Ghana website (<https://www.bog.gov.gh/economic-data/commodity-prices/>), and it contains the average monthly Cocoa Prices in USD per Tonne from from January 2000 to April 1 2023. Cocoa prices are notoriously volatile, influenced by weather, global demand, and economic policies, making them an ideal candidate for a multi-model approach.
+
+```{r}
+# load and prepare cocoa price data
+cocoa_ts <- gh_cocoa |> 
+  mutate(Date = yearmonth(Month)
+         ) |> 
+  as_tsibble(index = Date) |> 
+  select(Date, Price)
+
+# split into training and testing set (use 75% for training and 25% for testing)
+split <- initial_time_split(cocoa_ts, prop = 0.75)
+training_cocoa <- training(split)
+testing_cocoa <- testing(split)
+```
+
+First we load and prepare the raw data into a `tsibble` format suitable for time series analysis and then create a temporal split with `initial_time_split()` function. We use 75% of the data (Jan 2020 - roughly mid 2017) for training and the remaining 25% (roughly mid 2017 - April 2023).
+
+### Building a Comprehensive Model Portfolio
+
+We use the fable workflow to simultaneously fit a wide range of models to the training data. Each model represents a different hypothesis about how the cocoa prices evolve.
+
+```{r}
+# build comprehensive model portfolio
+cocoa_model_portfolio <- training_cocoa |> 
+  model(
+    # Benchmark models
+    naive = NAIVE(Price),
+    seasonal_naive = SNAIVE(Price),
+    mean = MEAN(Price),
+    
+    # Exponential Smoothing Family
+    ets_auto = ETS(Price),
+    ets_hw_mult = ETS(Price ~ trend("A") + season("M")),
+    ets_damped = ETS(Price ~ trend("Ad")),
+    
+    # ARIMA family
+    arima_auto = ARIMA(Price),
+    arima_log = ARIMA(log(Price)),
+    arima_seasonal = ARIMA(log(Price) ~ pdq(0,1,1) + PDQ(0,0,1)),
+    
+    # Other simple linear models
+    linear = TSLM(Price ~ trend()),
+    linear_season = TSLM(Price ~ trend() + season())
+  )
+```
+
+Eleven different models are created for our portfolio of models spanning simple benchmark models to sophisticated approaches.
+
+**Benchmark Models**
+
+-   `naive` assumes the future price will be exactly the same as the last observed price (random walk).
+-   `seasonal_naive` assumes the price next January will be on the same last January.
+-   `mean` predicts the historical average price.
+
+**Exponential Smoothing (ETS) Family**
+
+-   `ets_auto` lets the algorithm automatically select the best combination of **error**, **trend** and **seasonality** based on AICc.
+-   `ets_hw_mult` (Holt-Winters Multiplicative), explicitly models a linear trend and seasonality that grows in magnitude as prices rise.
+-   `ets_damped` models a trend that eventually flattens out (damped), assuming price rallies or crashes will not last forever.
+
+**ARIMA Family**
+
+-   `arima_auto` automatically selects the best orders $(p,d,q)(P,D,Q)$ to handle correlations and stationarity
+-   `arima_log` fits an ARIMA model to the the log transformed prices; this stabilises variance.
+-   `arima_seasonal`: explicitly forces the model to use the specified non-seasonal and seasonal autoregressive and moving average orders.
+
+**Linear Models**
+
+-   `linear` fits a simple straight line (regression) through the data; assuming a constant rate of price increase/decrease over time.
+-   `linear_season` fits a straight line but adds a fixed "dummy" effect for each month assuming a constant additive seasonality.
+
+This ensemble of models creates a powerful "tournament" where we can rigorously test which mathematical description best matches the reality of the cocoa market.
+
+### Generating a 2-Year forecast
+
+With our diverse portfolio of models fitted to the historical data, we can now project the behaviour of cocoa prices into the future. This is the moment where each model applies its learned patterns – trend, seasonality, and level – to predict what comes next.
+
+We will generate a 24-month (2-year) forecast for all models in our portfolio.
+
+```{r}
+# generate 24 month forecast from all models
+cocoa_forecasts <- cocoa_model_portfolio |> 
+  forecast(h = 24)
+
+# view forecasts
+cocoa_forecasts |> hilo()
+```
+
+The forecast produces a probabilistic prediction for each model for every future month including 80% and 95% confidence intervals. By comparing the forecasts from each model, we can gauge the consensus or divergence in the market outlook.
+
+## Visualising and Comparing Forecasts
+
+A well crafted visualisation can reveal more than a table of metrics. Let's see all our forecasts with the historical data. This helps to reveal consensus, divergence and model uncertainties far more effectively than reading a table of numbers. Since the models in the portfolio operate under different mathematical assumptions, their projections for the future will vary significantly.
+
+### Portfolio Forecast Plot (Consensus & Divergence)
+
+```{r}
+#| label: fig-portfolio-forecast
+#| fig-cap: "Forecasts from Models in Portfolio"
+# plot all forecasts against historical data
+cocoa_forecasts |> 
+  autoplot(training_cocoa, level = 95) + 
+  labs(title = "Ghana Cocoa Prices: 24-Month Forecasts from 11 Models",
+       subtitle = "shaded areas show 95% prediction intervals")+
+  scale_y_continuous(labels = scales::dollar_format()) +
+  theme(legend.position = "none")
+```
+
+The plot in @fig-portfolio-forecast above overlays all 11 forecasts onto the historical price series, highlighting the end of the training data (mid-2017) and the 24-month forecast period. The 11 models show high divergence. The forecast lines cluster tightly near the start of the forecast horizon but diverge dramatically over the 24 months. The red, orange, and pink shaded areas cover a huge vertical span, indicating extremely high uncertainty about the cocoa prices
+
+Many models (the $\text{ETS}$ and $\text{ARIMA}$ models) predict that the price will remain relatively flat or slightly trend upward from the starting point of approximately $\$2,000$ to $\$2,500$. The seasonal naive (SNAIVE) model (optimistic model) predicts a strong cyclical rebound, taking prices over $\$3,000$ by the end of the horizon.
+
+In summary, clustered lines suggest models agree, while diverging or large separated lines suggest high prediction uncertainty between models. Analysts must treat this forecast with caution as the 95% interval spans thousands of dollars.
+
+### Individual Model Forecasts
+
+For a cleaner presentation you would want a clear visualisation of each model's forecast in a different panel.
+
+```{r}
+#| label: fig-facet-forecast-mods
+#| fig-cap: "Cleaner Presentation of Forecasts from Models in Separate Panels"
+# create separate panels for each model
+cocoa_forecasts |> 
+  autoplot(training_cocoa, level = 95) +
+  facet_wrap(~.model, nrow = 4) +
+  theme(legend.position = "none") +
+  scale_y_continuous(labels = scales::label_currency()) +
+  scale_x_yearmonth(date_breaks = "5 years") +
+  labs(title = "Individual Model Forecasts for Ghana Cocoa Prices",
+       subtitle = "Training period: 2000-2017 | Forecast horizon: 24 months")
+```
+
+@fig-facet-forecast-mods presents each model's forecast in a separate panel for easy identification. The `mean`, `naive` and `ets_auto` models projects flat lines into the future.The `arima_seasonal` and `ets_hw_mult` captures some seasonality with a mild upward drift. The linear models show a consistent upward trend with the `linear_season` accounting for some seasonality using seasonal dummy variables. The `seasonal_naive` shows a strong highly volatile seasonal cycle, projecting massive price swings based on the last years pattern.
+
+The overall comparison emphasizes the need for Model Evaluation on unseen data, as the choice between conservative stability and aggressive volatility in some models is still unresolved.
+
+## Model Accuracy Assessment Framework
+
+A good forecast is not just about low errors , it is about getting close to the actual values. Accuracy metrics tell us how wrong our models are, but different metrics emphasise different errors. Understanding these nuances is crucial for selecting the right model for your specific use case.
+
+### Initial Evaluation on Training Data
+
+We begin by assessing the models' performance on the training data – the historical period used to fit the model parameters. This shows how well each model captures the known historical patterns.
+
+```{r}
+# calculate model accuracy on training data
+training_accuracy <- cocoa_model_portfolio |> 
+  accuracy() |> select(.model, MASE, RMSE, MAPE, MAE) 
+
+training_accuracy |> arrange(MASE)
+```
+
+The ARIMA/ETS models form the top 5 best performing models with $MASE \approx 0.26$. The `seasonal_naive` model is the baseline error for the seasonal cycle ($MASE = 1$). The non-seasonal naive (`naive`) model has an $MASE$ of $0.27$. The fact that it is much better than the seasonal naive model suggests that the cocoa prices lack a stable repeating monthly seasonal pattern.
+
+The linear models perform poorly ($MASE \approx 0.88$), indicating that simple regression fails to capture the high volatility and non-linear trend of the cocoa prices.
+
+**Interpreting Key Accuracy Metrics**
+
+| Metric | What It Measures | Example Interpretation | Good for Cocoa Prices? |
+|------------------|------------------|--------------------|------------------|
+| MAE | Average dollar error | *"We are usually off by \$100/tonne"* | Yes – easy to understand |
+| RMSE | Square root average squared error | *"Big mistakes hurt us badly"* | Yes – penalises large errors |
+| MAPE | Percentage error | *"We are usually off by 12%"* | Yes – comparable across time |
+| MASE | Error vs naive forecast | 0.8 = 20% better than naive (baseline) | Yes – best overall metric |
+
+A common pitfall is relying solely on point forecast metrics like RMSE or MAE. A model with great RMSE but terrible interval coverage is unreliable for risk management. After selecting the best model based on MASE, it is crucial to check the accuracy on the held out test data and verify the interval coverage. But before selecting the best model and validating on the test data we will perform a time series cross validation.
+
+## Time Series Cross Validation and Model Selection
+
+Traditional train-test splits can be misleading for time series because they only evaluate performance at one specific historical cut-off. . Time series cross-validation (TSCV) provides a more robust and realistic assessment by testing models on multiple historical periods. This simulates many "what if?" scenarios over the series' lifetime, leading to a more reliable error estimate.
+
+### Implementing Time Series Cross-Validation
+
+We use the expanding window approach (`stretch_tsibble`) to create sequential training folds from the training data. @sec-splitting-data explains in detail how to create time series cross-validation folds.
+
+```{r}
+# create time series cross validation
+cocoa_cv <- training_cocoa |> 
+  stretch_tsibble(.init = 120, # 10-year initial fold
+                  .step = 6    # roll forward 6 months
+                )
+```
+
+The core of the TSCV process is fitting the model portfolio to every single fold and then calculating two things; the **fit quality** (using $AICc$) and the **out-of-sample accuracy** ($MASE$).
+
+```{r}
+# perform rolling origin evaluation 
+cv_models <- cocoa_cv |> 
+  model(
+    naive = NAIVE(Price),
+    seasonal_naive = SNAIVE(Price),
+    mean = MEAN(Price),
+    ets_auto = ETS(Price),
+    ets_hw_mult = ETS(Price ~ trend("A") + season("M")),
+    ets_damped = ETS(Price ~ trend("Ad")),
+    arima_auto = ARIMA(Price),
+    arima_log = ARIMA(log(Price)),
+    arima_seasonal = ARIMA(log(Price) ~ pdq(0,1,1) + PDQ(0,0,1)),
+    linear = TSLM(Price ~ trend()),
+    linear_season = TSLM(Price ~ trend() + season())
+  )
+
+# check model fit quality from cross validation
+cv_modfit <- glance(cv_models) |> 
+  group_by(.model) |> 
+  summarise(
+    AVG_AICc = mean(AICc),
+    .groups = "drop"
+  ) |> arrange(AVG_AICc)
+cv_modfit
+```
+
+After fitting the models to each fold, we use the average AIC across all folds to measure the model's complexity and goodness of fit to the training data. The ARIMA models applied to the log-transformed data shows the lowest average AIC (`AVG_AICc`) indicating they provide the most parsimonious fit for the training history.
+
+We can now use the `forecast()` and `accuracy()` functions to evaluate the true predictive power on the "future" data of each fold.
+
+```{r}
+cv_results <- cv_models |>  
+  forecast( h = 12) |>  # 1-year ahead forecast
+  accuracy(cocoa_ts |> 
+             filter(Date <= yearmonth("2018 Jun"))
+           )            # compare with actual data till forecst period
+
+cv_results |> select(.model, .type, MASE, RMSE, MAPE, MAE) |> arrange(MASE)
+```
+
+The lowest $MASE$ value belongs to the `naive` model for the out of sample accuracy. Since $\text{MASE} \lt 1$, every model arranged above the `seasonal_naive` model (from row 1 to 7) is considered statistically better than the seasonal baseline. The `naive` model often performs well on commodity prices because the price is essentially a random walk (today's best guess for tomorrow is today's price).
+
+### Final Model Selection
+
+For robust model selection, a combination of both internal fit ($AICc$) and out of sample performance ($MASE$) is used. This method penalises models that fit the training data perfectly but fails to generalise.
+
+```{r}
+# select best model based on AICc and MASE
+cv_results |> 
+  left_join(cv_modfit, by = ".model") |> 
+  select(.model, AVG_AICc, MASE) |> 
+  mutate(
+    AIC_rank = rank(AVG_AICc),
+    MASE_rank = rank(MASE),
+    Combined_rank = (AIC_rank+MASE_rank)/2
+  ) |> 
+  arrange(Combined_rank)
+```
+
+The `arima_seasonal` and `arima_log` models secure the top combined ranks, primarily due to their excellent AICc scores. This suggests that the correct mathematical specification ($ARIMA$ on log-transformed data) provides the most stable and parsimonious foundation for forecasting the volatile cocoa prices
+
+## Production Forecasting Workflow
+
+The production workflow represents the culmination of al preceeding steps; data preparation to evaluation. This workflow is the operational blueprint for generating and ditributing the final, best-estimate forecast used for business planning and risk management.
+
+### Selecting the Final Model
+
+Our workflow begins by formally selecting the single best model determined by the robust Time Series Cross-Validation (TSCV) process – the model with the lowest combined rank.
+
+```{r}
+# select the final model 
+final_model <- training_cocoa |> 
+  model(
+    arima_seasonal = ARIMA(log(Price) ~ pdq(0,1,1) + PDQ(0,0,1)) # based on our evaluation
+    )
+```
+
+Based on the time series cross validation performed earlier $ARIMA(log(Price)~pdq(0,1,1)+PDQ(0,0,1))$ model was chosen as the most reliable, stable and parsimonious forecast. The model is fitted one last time to the entire available training data to ensure it uses the maximum possible history before generating the production forecast.
+
+### Generating the Production Forecast
+
+The chosen model is used to project future values, and prediction intervals are calculated to quantify uncertainty
+
+```{r}
+# generate production forecasts for next 12 months
+production_forecast <- final_model |> 
+  forecast(h = 12) |> 
+  hilo()
+```
+
+We use the `forecast()` function to generate point forecasts for the immediate next 12 periods (months), which is a common horizon for annual budgeting. The `hilo()` function calculates the 80% and 95% prediction intervals. These intervals are essential for management to assess risk; the 95% PI defines the expected worst and best-case scenarios for the cocoa prices.
+
+### Creating Production-Ready Output
+
+The raw forecast object is cleaned and enriched with metadata for easy storage and reporting.
+
+```{r}
+# create production ready output
+production_output <- production_forecast |> 
+  as_tibble() |> 
+  select(Date, .mean, `80%`, `95%`) |> 
+  mutate(
+    Forecast_date = Sys.Date(),
+    Model_type = "SARIMA",
+    Model_version = "1.0"
+  )
+```
+
+Here, we select only the essential columns from the forecast object; the date, the point estimates (`.mean`) and the two prediction intervals. We then add vital metadata required for tracking and auditing;
+
+-   `Forecast_date`: To record when the forecast was run
+-   `Model_type`: To specify the type of model used
+-   `Model_version`: Important for version control, ensuring consistency in reporting over time
+
+### Creating Visualisations for Stakeholders
+
+The final forecast must be communicated clearly, often requiring the visual overlay of the forecast onto the training data and, optionally, the held-out test data.
+
+```{r}
+#| label: fig-prodflow
+#| fig-cap: "Forecast Production Workflow Visualisation"
+# visualise for audience/stakeholders
+final_model |> forecast(h = "3 years") |> 
+  autoplot(training_cocoa, level = 80) + 
+  autolayer(testing_cocoa, Price, colour='red') +
+  labs(
+    title = "Production Forecast: Monthy Cocoa Prices",
+    subtitle = "With 80% prediction intervals",
+    y = "Cocoa Price"
+  ) +
+  scale_y_continuous(labels = scales::label_currency())
+```
+
+For visualisation purposes, we generate a 3-year forecast (extending beyond the 12-month target). The training history (black line), the forecast (blue line) and the held out test data (red line) are overlayed together on the same plot with an 80% PI (less conservative interval for visual communication). This allows stakeholders to immediately see how well the model would have performed on the most recent history.
+
+### Building a Validated Forecasting System
+
+The ultimate goal
+
+```{r}
+# complete forecasting pipeline
+forecasting_pipeline <- function(data, horizon = 24){
+  
+  # Model training (simplified with less models)
+  models <- data |> 
+    drop_na() |> 
+    model(
+      ets = ETS(Price),
+      arima = ARIMA(log(Price) ~ pdq(0,1,1) + PDQ(0,0,1)),
+      s_naive = SNAIVE(Price)
+    )
+  
+  # Model evaluation
+  accuracy_metrics <- models |> 
+    accuracy()
+  
+  # Model selection (simplified)
+  best_model_name <- accuracy_metrics |> 
+    arrange(MASE) |> 
+    slice(1) |> 
+    pull(.model)
+  
+  best_model <- models |> 
+    select(!!best_model_name)
+  
+  # Generate forecast
+  forecasts <- best_model |> 
+    forecast(h = horizon) |> 
+    hilo()
+  
+  # Extract key forecast details
+  next_period <- forecasts$.mean[1]
+  mid_term <- mean(forecasts$.mean[1:(horizon/2)])
+  long_term <- mean(forecasts$.mean[1:horizon])
+  
+  lower_80 <- forecasts$`80%`$lower
+  upper_80 <- forecasts$`80%`$upper
+  
+  # collapse report output into a single formatted string
+  model_report <- paste(
+    capture.output(report(best_model)),
+    collapse = "\n"
+  )
+  
+  # Print descriptive summary
+  cat("
+    📈 FORECAST SUMMARY
+    ================================
+    Selected Model: ", best_model_name, "
+    
+    NEXT PERIOD FORECAST: ", round(next_period, 2), "
+    ", horizon/2, "-PERIOD AVERAGE: ", round(mid_term, 2), "
+    ", horizon, "-PERIOD AVERAGE: ", round(long_term, 2), "
+    
+    80% CONFIDENCE INTERVAL:
+    Lower: ", round(lower_80, 2), "
+    Upper: ", round(upper_80, 2), "
+    
+    MODEL DETAILS:
+    ", model_report,"\n")
+  
+  # Save forecast for record-keeping
+  write_csv(
+    forecasts |> as_tibble() |> 
+      select(Date, .mean, `95%`, `80%`),
+    paste0("forecast_", Sys.Date(), ".csv")
+  )
+  
+  # return silently to avoid repeated printing
+  invisible(forecasts)
+}
+```
+
+## Final Validation Against Test Period
+
+The ultimate test; how do our model(s) perform on the most recent completely unseen data
+
+```{r}
+# test set evaluation
+test_predictions <-  cocoa_model_portfolio |> 
+  select(arima_seasonal, arima_log) |> 
+  forecast(new_data = testing_cocoa)
+
+# Visualise test predictions
+test_predictions |> 
+  autoplot(testing_cocoa, level = NULL)
+
+# check accuracy metrics
+test_predictions |> 
+  accuracy(testing_cocoa)
+```
