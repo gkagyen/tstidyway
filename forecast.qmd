@@ -1,6 +1,6 @@
 # Forecasting with the fable Framework {#sec-forecasting-with-the-fable-framework}
 
-After everything we have gone through – from preparing our data through to careful exploration, data transformations and rigorous train-test splitting – we now arrive at the most exciting and interesting phase of our time series journey; building forecasting models that can predict the future. This is where all our preparations pay the dividends and where the true power of the **`tidyverts`** ecosystem shine through
+After everything we have gone through – from preparing our data through to careful exploration, data transformations and rigorous train-test splitting – we now arrive at the most exciting and interesting phase of our time series journey; building forecasting models that can predict the future. This is where all our preparations pay the dividends and where the true power of the **`tidyverts`** ecosystem shine through.
 
 The `fable` package provides our forecasting toolkit offering a unified framework for time series modelling that seamlessly integrates with the tidyverse philosophy we have embraced throughout this book. What make `fable` particularly powerful is its consistent syntax across different model types, its automated model selection capabilities and its native integration with the tsibble data structure we have been carefully building.
 
@@ -8,15 +8,15 @@ The `fable` package provides our forecasting toolkit offering a unified framewor
 
 Traditional Time series forecasting in R often involved jumping between different packages with inconsistent interfaces, manual model specification, and cumbersome results extraction. The `fable` framework revolutionises this by providing:
 
--   **Unified Modelling syntax:** Learn once apply to many model types
+-   **Unified Modelling syntax:** Learn once apply to many model types.
 
--   **Automated Model Selection:** Leverage algorithms to find optimal parameters
+-   **Automated Model Selection:** Leverage algorithms to find optimal parameters.
 
--   **Tidy Results Output:** Forecast outputs that work seamlessly with tidyverse verbs
+-   **Tidy Results Output:** Forecast outputs that work seamlessly with tidyverse verbs.
 
--   **Reproducible Workflows:** Complete, documented forecasting pipelines
+-   **Reproducible Workflows:** Complete, documented forecasting pipelines.
 
--   **Professional-Grade Outputs:** Production-ready forecast and intervals
+-   **Professional-Grade Outputs:** Production-ready forecast and intervals.
 
 ## The Forecasting Journey Ahead
 
@@ -32,8 +32,8 @@ This comprehensive section we will progress from foundational concepts to sophis
 
 ## What Makes This Approach Different
 
-Unlike the traditional time series forecasting that often feels like a black box, the `fable` approach gives us complete transparency and control. You will understand not just what your modes are predicting but ***why*** they are making those predictions. More importantly, you will be building forecasting workflows that are reproducible, scalable, and maintainable.
+Unlike the traditional time series forecasting that often feels like a black box, the `fable` approach gives us complete transparency and control. You will understand not just what your models are predicting but ***why*** they are making those predictions. More importantly, you will be building forecasting workflows that are reproducible, scalable, and maintainable.
 
 Whether you are forecasting sales for the next quarter, predicting resource needs for the coming year, or anticipating market movements, the skills you will learn in this section will transform you from a passive analyst of past data to an active predictor of future trends.
 
-**Ready to peer into the future 🚀?** let us begin with the simplest models.
+**Ready to peer into the future 🚀?** let's begin with the simplest models.

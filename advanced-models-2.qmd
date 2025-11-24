@@ -1,8 +1,8 @@
 # Advanced Forecasting Models: ARIMA {#sec-arima}
 
-While ETS models excel at capturing smooth trends and seasonal patterns through exponential smoothing, ARIMA models take a fundamentally different approach. ARIMA (AutoRegressive Integrated Moving Average) models leverage the autocorrelation structure of your data–the relationship between observations at different time lags. Think of it as a model that learns how today's value relates to yesterday's, last week's and last month's values, then uses those relations to predict tomorrow.
+While ETS models excel at capturing trends and seasonal patterns through exponential smoothing, ARIMA models take a fundamentally different approach. ARIMA (AutoRegressive Integrated Moving Average) models leverage the autocorrelation structure of your data – the relationship between observations at different time lags. Think of it as a model that learns how today's value relates to yesterday's, last week's and last month's values, then uses those relations to predict tomorrow.
 
-The beauty of ARIMA in the `fable` framework is that it automates what was traditionally a complex, manual process of model identification, estimation, and diagnostic checking. What once required advanced statistical expertise now becomes accessible through intuitive functions that maintain the tidy workflow we have built throughout this book.
+The beauty of ARIMA in the `fable` framework is that it automates what was traditionally a complex, manual process of model identification, estimation, and diagnostic checking. What once required advanced statistical expertise now becomes accessible through intuitive functions that maintain the tidy workflow.
 
 ```{r}
 #| include: false
@@ -46,11 +46,11 @@ testing_cement <- testing(split)
 
 ARIMA models have three key components represented by the notation ARIMA(p,d,q):
 
--   **AR(p) - AutoRegressive**: The autoregressive component is the *p-th* order dependence of the current observation on previous observations. It is simply how much each value depends on its immediate predecessors. This models the memory in the series.
--   **I(d) - Integrated**: This component represents the number of times (d) the raw observation have been differenced to make the time series stationary. A stationary series as explained in @sec-checking-stationarity, is one whose statistical properties do not change.
+-   **AR(p) - AutoRegressive**: The autoregressive component is the *p-th* order dependence of the current observation on previous observations. It is simply how much each value depends on its immediate predecessors. This component models the memory in the series.
+-   **I(d) - Integrated**: This represents the number of times (d) the raw observation have been differenced to make the time series stationary. A stationary series as explained in @sec-checking-stationarity, is one whose statistical properties do not change.
 -   **MA(q) - Moving Average**: The moving average component is the *q-th* order dependence of the current observation on previous forecast errors (or residuals).
 
-For practical application, the fable package can automatically select the best ARIMA configuration by minimising information criteria like AICc. We apply this to the cereal yield data (`training_yield`)
+For practical application, the fable package can automatically select the best ARIMA configuration by minimising information criteria like AICc. We apply this to the cereal yield training data (`training_yield`)
 
 ```{r}
 # fit automatic ARIMA to cereal yield data
@@ -62,12 +62,12 @@ auto_arima <- training_yield |>
 report(auto_arima)
 ```
 
-The `ARIMA()` function is used to fit an ARIMA model in the `fable` framework, `ARIMA(value)` allows the algorithm to automatically select the best ARIMA model. The function tests multiple combinations of *p, d, q* parameters. It uses a stepwise algorithm to efficiently search the model space.
+The `ARIMA()` function is used to fit an ARIMA model in the `fable` framework, `ARIMA(value)` allows the algorithm to automatically select the best ARIMA model components. The function tests multiple combinations of *p, d, q* parameters. It uses a stepwise algorithm to efficiently search the model space.
 
 The output from the `report()` function shows the selected ARIMA order and estimated parameters. The automatic selection process chose the configuration **ARIMA(0,1,1)** for the cereal yield training data. This chosen configuration tells us exactly how the model accounts for the data's past and trend.
 
--   $p=0$ **(AutoRegressive)**: The model determined that, after applying a first order difference, there is no significant correlation between the current value and the previous lagged values of the differenced series.
--   $d=1$ **(Integrated)**: The model required a first-order difference (d=1) to achieve stationarity. This confirms the cereal yield series has a linear trend that must be removed before modelling the residual fluctuations.
+-   $p=0$ **(AutoRegressive)**: The model determined that, after applying a first order differencing, there is no significant correlation between the current value and the previous lagged values of the differenced series.
+-   $d=1$ **(Integrated)**: The model required a first-order differencing (d=1) to achieve stationarity. This confirms the cereal yield series has a linear trend that must be removed before modelling the residual fluctuations.
 -   $q=1$ **(Moving Average)**: The model includes a first-order Moving Average term \[MA(1)\]. This means the current prediction depends on the forecast error from the immediate previous period.
 
 The above model can be formally written as
@@ -96,14 +96,14 @@ If $\varphi_1$ is positive and high (e.g., 0.8), a high value yesterday strongly
 
 ### Integrated (I) Component (d)
 
-The Integrated (I) component handles the process of differencing the data to make the series stationary. Stationary is a requirement for **AR** and **MA** process to be statistically valid. The order $d$ specifies the number of times differencing must be applied:
+The Integrated (I) component handles the process of differencing the data to make the series stationary. Stationarity is a requirement for **AR** and **MA** process to be statistically valid. The order $d$ specifies the number of times differencing must be applied:
 
-First Difference $(d=1)$: This removes a linear trend. It calculates the change from one period to the next:
+First Differencing $(d=1)$: This removes a linear trend. It calculates the change from one period to the next:
 
 $$
 \nabla y_t=y_t-y_{t-1}
 $$\
-Second Difference $(d=2)$: This removes an accelerating or non-linear trend. It calculates the change in the change (i.e. the acceleration) over time
+Second Differencing $(d=2)$: This removes an accelerating or non-linear trend. It calculates the change in the change (i.e. the acceleration) over time
 
 $$
 \nabla^2 y_t=\nabla y_t-\nabla y_{t-1}
@@ -113,7 +113,7 @@ We have already seen how differencing our data is done in @sec-checking-stationa
 
 ### Moving Average (MA) Component (q)
 
-The Moving Average (MA) part models the relationship between an the current observation and previous forecast errors (or residuals). This component models the short-term shock or correction mechanisms in the series.
+The Moving Average (MA) part models the relationship between the current observation and previous forecast errors (or residuals). This component models the short-term shock or correction mechanisms in the series.
 
 The current value, $y_t$, is expressed as a weighted sum of $q$ past error terms ($varepsilon_{t-1},\cdots,\varepsilon_{t-q}$) plus the current error ($\varepsilon_t$)
 
@@ -127,7 +127,7 @@ Think of it like learning from mistakes - if you over-predicted yesterday, the m
 
 ## The ARIMA Modelling Workflow in `fable`
 
-The ARIMA modelling process is systematic, beginning with diagnosis and preparation of the data before the fitting the final model. The standard workflow involves six steps. **Step 1: Visualize** → **Step 2: Check Stationarity** → **Step 3: Identify Model** → **Step 4: Fit** → **Step 5: Diagnose** → **Step 6: Forecast**.
+The ARIMA modelling process is systematic, beginning with diagnosis and preparation of the data before fitting the final model. The standard workflow involves six steps. **Step 1: Visualize** → **Step 2: Check Stationarity** → **Step 3: Identify Model** → **Step 4: Fit** → **Step 5: Diagnose** → **Step 6: Forecast**.
 
 ### Visualise Time Series
 
@@ -166,9 +166,9 @@ training_yield |>
   features(value, features = unitroot_kpss)
 ```
 
-The small p-value (0.01) from the test suggests that we must reject the null hypothesis of stationarity. This statistically confirms the visual inspection; that the data is non-stationary and requires differencing (the I(d) component).
+The output from the test confirms our conclusion from the ACF plot. The small p-value (0.01) suggests that we must reject the null hypothesis of stationarity. This statistically confirms the visual inspection; that the data is non-stationary and requires differencing (the I(d) component).
 
-We can go ahead now to check how the differenced series and original series compare visually
+We can go ahead now to check how the differenced series and original series compare visually.
 
 ```{r}
 #| warning: false
@@ -188,7 +188,7 @@ The differenced series plot (right) shows a stable series fluctuating around zer
 
 While automatic fitting is possible, understanding how to manually determine the ARIMA order using ACF and PACF plots is crucial for advanced diagnostics.
 
-The `fable` package provides room to manually specify the order in the `ARIMA()` function. Before we manually determine and fit the manual ARIMA model, It is important to note that `fable` can also perform a thorough search of the model space for the automatic model selection by specifying `stepwise = FALSE` in the `ARIMA()` function.
+The `fable` package provides room to manually specify the order in the `ARIMA()` function. Before we manually determine and fit the ARIMA model, It is important to note that `fable` can also perform a thorough search of the model space for the automatic model selection by specifying `stepwise = FALSE` in the `ARIMA()` function.
 
 ```{r}
 # fit ARIMA for auto order selection
@@ -218,7 +218,7 @@ training_yield |>
 
 The ACF plot (bottom left) shows a gradual decay, confirming the series is non-stationary (requires differencing). The PACF shows a single large spike at lag 1, which then cuts off (falls immediately inside the confidence bounds). This behaviour strongly suggests a starting point of an AR(1).
 
-Since the series is non-stationary we will first difference it ($d=1$) and then re-examine the PACF and ACF plots to identify **p** and **q**.
+Since the series is non-stationary we will perform a first order differencing on it ($d=1$) and then re-examine the PACF and ACF plots to identify **p** and **q**.
 
 ```{r}
 #| label: fig-pacf-acf-2
@@ -259,11 +259,11 @@ report(manual_arima)
 
 ### Model Diagnostic and Residual Analysis
 
-After an ARIMA model is fitted, the final and most crucial step before forecasting is diagnostic checking of the residuals (the forecast errors). A well-specified ARIMA model should capture all the underlying structure (AR, I, MA) in the data, leaving only white noise as the residual error. White noise has three key properties: the errors are uncorrelated, have zero mean and a constant variance.
+After an ARIMA model is fitted, the final and most crucial step before forecasting is a diagnostic check of the residuals (the forecast errors). A well-specified ARIMA model should capture all the underlying structure (AR, I, MA) in the data, leaving only white noise as the residual error. White noise has three key properties: the errors are uncorrelated, have zero mean and a constant variance.
 
 **Visual Residual Check**
 
-The `gg_tsresiduals()` function from the `ggtime` package is able to generate a three-part diagnostic plot for the residuals (labelled as `.innov` or "innovation residual" in the plot)
+The `gg_tsresiduals()` function is able to generate a three-part diagnostic plot for the residuals (labelled as `.innov` or "innovation residual" in the plot).
 
 ```{r}
 #| label: fig-diag-arima
@@ -284,7 +284,7 @@ The resulting plot from the `gg_tsresiduals()` function provides the following c
 The Ljung-Box test is a formal statistical method to confirm that the residuals, as a group, are not distinguishable from white noise.
 
 ```{r}
-# statictical residual check
+# statistical residual check
 augment(manual_arima) |> 
   features(.innov, features = ljung_box, lag = 16)
 ```
@@ -329,7 +329,7 @@ forecast_details |>
 
 The `forecast()` function is used to project the series forward by $h=8$ (8 years). The resulting forecasts show the projected mean value and a 95% confidence intervals. The model suggests the current yield value depends on $d=1$ (Integrated; the previous year's yield (to model the trend), $p=1$ (AR); the previous year's differenced value and $q=1$ (MA); the previous year's forecast error.
 
-The point forecasts (`.mean`) quickly stabilise to a constant value of 1333. The AR and MA components only influence the forecast horizon for a short period (typically 1-2 steps ahead), after which the forecast relies solely on the Integrated component. Since $d=1$ (first difference), the long term forecast for undifferenced series becomes a flat line (i.e, the rate of change is projected to settle at zero). The 95% confidence interval demonstrates increasing uncertainty, widening significantly from \~427 units in 2008 to \~804 units by 2015.
+The point forecasts (`.mean`) quickly stabilise to a constant value of 1333. The AR and MA components only influence the forecast horizon for a short period (typically 1-2 steps ahead), after which the forecast relies solely on the Integrated component. Since $d=1$, the long term forecast for undifferenced series becomes a flat line (i.e, the rate of change is projected to settle at zero). The 95% confidence interval demonstrates increasing uncertainty, widening significantly from \~427 units in 2008 to \~804 units by 2015 (almost twice).
 
 ### Visualising ARIMA Forecasts
 
@@ -347,13 +347,13 @@ arima_forecast |>
 
 ```
 
-The historical fit (red line) from the resulting visuals tracks the general upward movement and fluctuations of the training data (black line), demonstrating that the ARIMA(1,1,1) model successfully captured the overall trend and short-term correlations.
+The historical fit (red) from the resulting visuals tracks the general upward movement and fluctuations of the training data (black), demonstrating that the ARIMA(1,1,1) model successfully captured the overall trend and short-term correlations.
 
-The forecast line (blue line) stabilises and flattens out to a horizontal trajectory. This flattening is characteristic of ARIMA models with $d=1$ (first differencing) when projecting far into the future, as the underlying MA and AR influence eventually dies out. The blue shaded region visually confirms the increasing uncertainty, tapering outward as the forecast moves into later years.
+The forecast line (blue) stabilises and flattens out to a horizontal trajectory. This flattening is characteristic of ARIMA models with $d=1$ (first differencing) when projecting far into the future, as the underlying MA and AR influence eventually dies out. The blue shaded region visually confirms the increasing uncertainty, tapering outward as the forecast moves into later years.
 
 ## Seasonal ARIMA Models
 
-For data with seasonal patterns, the standard ARIMA model must be extended to account for correlation the seasonal lags. This is achieved through the Seasonal ARIMA (SARIMA) model.
+For data with seasonal patterns, the standard ARIMA model must be extended to account for correlation in the seasonal lags. This is achieved through the Seasonal ARIMA (SARIMA) model.
 
 ### Understanding the $SARIMA$ Notation
 
@@ -437,7 +437,7 @@ The initial visualisation showed two types of non-stationarity; a strong upward 
 -   a first order differencing $(d=1)$ `difference(Cement)` to remove the linear trend. This calculates the difference between consecutive periods.
 -   seasonal differencing $(D=1)$ `... differencing(lag = 4)` to remove the seasonality ($m=4$ for quarterly data). This calculates the difference between the current and the same quarter last year.
 
-We use `gg_tsdisplay()` function to plot the double-differenced series. This is essential for identifying the final $\text{p,q,P,Q}$ orders. After differencing the time series plot now fluctuates around zero with no clear trend or seasonal cycle, confirming stationarity. The ACF and PACF plots shows the remaining correlations structure in the stationary series. There are 2 key concepts to look out for in determining the $(p,q,P,Q)$ orders:
+We use `gg_tsdisplay()` function to plot the double-differenced series. This is essential for identifying the final $\text{p,q,P,Q}$ orders. After differencing, the time series plot now fluctuates around zero with no clear trend or seasonal cycle, confirming stationarity. The ACF and PACF plots show the remaining correlations structure in the stationary series. There are 2 key concepts to look out for in determining the $(p,q,P,Q)$ orders:
 
 -   **Early lags** (1,2,3...): These are the non seasonal lags and are used to determine the orders p and q
 -   **Seasonal lags** (e.g 4,8,16..for quarters, 12,24,36...for months): This is the seasonal component and they help to determine the P and Q orders.
@@ -448,14 +448,14 @@ With the non seasonal order, we look at the first few lags of the ACF and PACF p
 
 Combining both the non-seasonal and seasonal components, the ACF and PACF plots suggests $\text{ARIMA}(3,1,2)(0,1,2)[4]$.
 
-Honestly, ACF/PACF interpretation is more of an art than science, especially for seasonal data. Always start small and focus on obvious patterns. Always remember that when the ACF and PACF patterns are not clear you can always use the automatic `ARIMA()` function and let the algorithm decide.
+Honestly, ACF/PACF interpretation is more of an art than science, especially for seasonal data. Always start small and focus on obvious patterns. Also remember that when the ACF and PACF patterns are not clear you can always use the automatic `ARIMA()` function and let the algorithm decide.
 
 **Fitting the Model**
 
 After identifying the order, we can now fit the model and prepare for forecasting. Here we will fit three models; an automatic model, another automatic model with a more thorough search and our identified model order from the ACF and PACF analysis.
 
 ```{r}
-# fit sarima models
+# fit seasonal arima models
 sarima_models <- training_cement |> 
   model(
     auto_sarima = ARIMA(Cement),
@@ -467,9 +467,13 @@ sarima_models <- training_cement |>
 glance(sarima_models) |> arrange(AICc)
 ```
 
-We fit multiple candidate models, our manual specification and two automatic models, and evaluate their performance using statistical measures like AICc. In fable, you add the seasonal specification via `PDQ()` and combine it with a constant control using `0` or `1` in the formula. This is because fable uses a constant form parameterisation and the constant term $c$ relates to the mean $\mu$ via $c=\mu(1-\varphi_1-\cdots-\varphi_p)$. By default fable will automatically include a constant term if it improves AICc (This only happens when you allow fable to automatically select the orders).
+We fit multiple candidate models, our manual specification and two automatic models, and evaluate their performance using statistical measures like AICc. In fable, you add the seasonal specification via `PDQ()`. For higher order models (where $p\ge3$ or $q\ge3$) you have to combine the manual order specifications with a constant control using `0` or `1` in the formula. This is because fable uses a constant form parameterisation and the constant term $c$ relates to the mean $\mu$ via $c=\mu(1-\varphi_1-\cdots-\varphi_p)$. By default fable will automatically include a constant term if it improves AICc (This only happens when you allow fable to automatically select the orders or when p and q orders are less than 3).
 
-The `glance()` function provides these statistical fit metrics. Lower $AIcc$ indicates a better model, balancing goodness of fit with model complexity. Both automatic methods selected the same best model($ARIMA(2,0,2)(0,1,1)[4]$) with drift. They share the lowest AICc value suggesting the simpler stepwise search was effective and the more exhaustive search did not yield any better structure.
+::: callout-important
+The explicit constant requirement for higher order ARIMA models prevent accidental model misspecification, makes your modelling choices transparent, and ensures you consciously decide whether your data needs a constant term.
+:::
+
+The `glance()` function provides statistical fit metrics for each model. Lower $AIcc$ indicates a better model, balancing goodness of fit with model complexity. Both automatic methods selected the same best model($ARIMA(2,0,2)(0,1,1)[4]$) with drift. They share the lowest AICc value suggesting the simpler stepwise search was effective and the more exhaustive search did not yield any better structure.
 
 The manually specified model had a significantly higher AICc and a higher residual variance. This shows that the structure derived form the ACF and PACF plots was either overly complex or missed a key correlation structure, resulting in a worse fit compared to the automatic selection.
 
@@ -497,9 +501,9 @@ A well specified SARIMA model should leave behind residuals that are indistingui
 gg_tsresiduals(sarima_models |> select(auto_sarima))
 ```
 
-We see the innovation residuals (`.innov`) (top plot) fluctuating randomly around zero with no obvious patterns or trends, suggesting the model has captured all systematic structure. Almost all spikes at both seasonal and non seasonal lags in the ACF plot are within the blue dashed confidence bounds with lag 16 and 18 slightly overlapping the confidence bound (negligible). This confirms no significant correlation remains in the residuals. The Histogram is also roughly bell-shaped and centred near zero, consistent with the normality assumption.
+We see the innovation residuals (`.innov`) (top plot) fluctuating randomly around zero with no obvious patterns or trends, suggesting the model has captured all systematic structure. Almost all spikes at both seasonal and non seasonal lags in the ACF plot are within the blue dashed confidence bounds with lag 17 and 18 slightly overlapping the confidence bound (negligible). This confirms no significant correlation remains in the residuals. The Histogram is also roughly bell-shaped and centred near zero, consistent with the normality assumption.
 
-We further confirm these visual check with a formal statistical check using the Ljung-Box test.
+We further confirm these visual checks with a formal statistical check using the Ljung-Box test.
 
 ```{r}
 # check residuals statistically

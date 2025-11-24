@@ -23,7 +23,7 @@ sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
 
 ## Understanding Stationarity Through visualisation
 
-A stationary series would fluctuate around a horizontal line (like random noise), while a non stationary series show clear upward or downward trend. The most direct way to assess stationary is by examining the series plot for a persistent trend. We will start by visually examining some of our time series datasets
+A stationary series would fluctuate around a horizontal line (like random noise), while a non stationary series would show a clear upward or downward trend. The most direct way to assess stationary is by examining the series plot for a persistent trend. We will start by visually examining some of our time series datasets.
 
 ```{r}
 #| warning: false
@@ -56,11 +56,11 @@ p1 + p2 + p3 +
 )
 ```
 
-Visually the monthly sales plot and the GDP growth plot are the closest to meeting the visual criteria for stationarity. The monthly sales series fluctuates roughly around a constant level $~30,000$ throughout the time period, the magnitude of the fluctuations remains relatively stable and there is nor apparent trend. With the GDP growth rate, although the series fluctuates around a mean close to zero, the magnitude appears to be changing with early periods (1960-1980) having higher volatility and then stabilising with lower volatility later on.
+Visually, the monthly sales plot and the GDP growth plot are the closest to meeting the visual criteria for stationarity. The monthly sales series fluctuates roughly around a constant level $~30,000$ throughout the time period, the magnitude of the fluctuations remains relatively stable and there is no apparent trend. With the GDP growth rate, although the series fluctuates around a mean close to zero, the magnitude appears to be changing with early periods (1960-1980) having higher volatility and then stabilising with lower volatility later on.
 
 The Cement production plot has a clear sustained upward trend with the magnitude of fluctuations visibly increasing as the level increases, particularly after 1980. This violates the stationarity assumption.
 
-An ACF plot can also provide strong visual clues about whether a time series is stationary or non-stationary, although it is not a formal statistical test. If the autocorrelations decrease very slowly towards zero, its suggests the series has a trend and is likely non-stationary.
+Apart from visually inspecting the line plot for stationarity, an ACF plot can also provide strong visual clues about whether a time series is stationary or non-stationary, although it is not a formal statistical test. If the autocorrelations in the ACF decrease very slowly towards zero, it suggests the series has a trend and is likely non-stationary.
 
 ```{r}
 #| echo: false
@@ -80,10 +80,10 @@ While visual inspection is valuable, statistical unit root tests provide objecti
 ```{r}
 # check stationarity with kpss test
 aus_production |> 
-  features(Cement, feature = unitroot_kpss)
+  features(Cement, features = unitroot_kpss)
 
 sales_ts |> 
-  features(Sales, feature = unitroot_kpss)
+  features(Sales, features = unitroot_kpss)
 
 gh_ts |> 
   filter(indicator_name == "Annual GDP growth rate") |> 
@@ -93,14 +93,14 @@ gh_ts |>
 
 The KPSS test has the following hypothesis:
 
--   **Null Hypothesis** $(H_{0})$**:** The series is stationary
--   **Alternative Hypothesis** $(H_{a})$**:** The series is non-stationary (a unit root exists)
+-   **Null Hypothesis** $(H_{0})$: The series is stationary.
+-   **Alternative Hypothesis** $(H_{a})$: The series is non-stationary (a unit root exists).
 
-Therefore a low p-value (\<0.05) from the KPSS test leads you to reject the **Null Hypothesis** and conclude the series is non-stationary.
+Therefore a low p-value ($\lt0.05$) from the KPSS test leads you to reject the **Null Hypothesis** and conclude the series is non-stationary.
 
 The code applies the `unitroot_kpss` feature to the three previously examined series. The p-value for the cement production series (0.01) and GDP growth rate series (0.019) are less than 0.05 which confirms non-stationarity. The monthly sale series has a large p-value (0.1) and so the Null Hypothesis cannot be rejected for that series (Series is stationary).
 
-Once the statistical test has proven non-stationarity, we must find out how many times the series needs to be differenced to become stationary. The `unitroot_ndiffs` feature automatically determines the minimum number of regular (non-seasonal) differences required.
+Once the statistical test has proven non-stationarity, we must find out how many times the series needs to be differenced to become stationary. The `unitroot_ndiffs` feature automatically determines the minimum number of regular (non-seasonal) differences required to make the series stationary.
 
 ```{r}
 # determine ndiffs for cement production and GDP growth rate
@@ -120,7 +120,7 @@ cat("Number of differencing for cement production:", ndiff_cement)
 cat("Number of differencing for GDP growth rate:", ndiff_gdp)
 ```
 
-Both the GDP growth rate and cement production series returned an **ndiffs** value of 1, implying that a single first differencing should be enough to remove the non-seasonal trend
+Both the GDP growth rate and cement production series returned an **ndiffs** value of 1, implying that a single first differencing should be enough to remove the non-seasonal trend.
 
 ## Applying Differencing to Achieve Stationarity
 
@@ -135,7 +135,7 @@ The GDP growth rate series requires one non-seasonal difference to address its m
 #| message: false
 #| label: fig-compare-diff1
 #| fig-cap: "Originial Series vs First Differencing of The Annual GDP Growth Rate Series"
-# Apply first differencing to gdp growth rate and compare with original
+# Apply first differencing to GDP growth rate and compare with original
 first_diff_gdp <- gh_ts |> 
   filter(indicator_name == "Annual GDP growth rate") |> 
   select(indicator_name, year, value) |> 
@@ -153,15 +153,15 @@ p_diff <- first_diff_gdp |>
 p_orig + p_diff
 ```
 
-The plot of the First Differencing shows a series that fluctuates around zero with an even more stable mean than the original series. The differencing successfully removed any remaining low-frequency correlation, making the series more suitable for modelling
+The plot of the First Differencing shows a series that fluctuates around zero with an even more stable mean than the original series. The differencing successfully removed any remaining low-frequency correlation, making the series more suitable for modelling.
 
 ::: callout-tip
-You can verify if the differenced series is now stationary by performing the `unitroot_kpss` test on the differenced series and noting the **p-value**
+You can verify if the differenced series is now stationary by performing the `unitroot_kpss` test on the differenced series and noting the **p-value**.
 :::
 
 ### Seasonal Differencing
 
-For series that exhibit strong seasonality (like the quarterly cement production that shows non-stationarity, we may need seasonal differencing. We first determine the number of seasonal differences needed.
+For series that exhibit strong seasonality (like the quarterly cement production that shows non-stationarity, we may need seasonal differencing. To do that, we first have to determine the number of seasonal differencing needed using the `unitroot_nsdiffs()` function.
 
 ```{r}
 # confirm unit root differencing 
@@ -169,13 +169,13 @@ aus_production |>
    features(Cement, feature = unitroot_nsdiffs)
 ```
 
-The `unitroot_nsdiffs` feature confirms that one seasonal difference is needed. We now proceed to perform seasonal differencing. We use the `difference()` function with the `lag` parameter set to the seasonal period (4 for quarterly data). $$
+The `unitroot_nsdiffs` feature confirms that one seasonal differencing is needed. We use the `difference()` function with the `lag` parameter set to the seasonal period (4 for quarterly data) to achieve the seasonal differencing. 
+$$
 \Delta Y_t=Y_t-Y_{t-4}
 $$
 
 ```{r}
 #| warning: false
-#| message: false
 #| label: fig-compare-diff2
 #| fig-cap: "Originial Series vs First Seasonal Differencing of The Quarterly Cement Production Series"
 # Apply seasonal differencing (lag = 4 for quarterly data)
@@ -207,7 +207,7 @@ The high p-value (which is $\gt0.05$) confirms that the series is now stationary
 
 ## Interpreting Differenced Series
 
-Understanding what differenced values represent is crucial for interpretation. When a series is differenced, the new value is no longer the raw measurements but the change between the current observation and the previous one. Understanding this change is critical for correctly interpreting model results and forecasts
+Understanding what differenced values represent is crucial for interpretation. When a series is differenced, the new value is no longer the raw measurements but the change between the current observation and the previous one. Understanding this change is critical for correctly interpreting model results and forecasts.
 
 ```{r}
 # demonstrate interpretation of differencing
@@ -231,7 +231,7 @@ interpretation_example <- gh_ts |>
 kableExtra::kable(interpretation_example)
 ```
 
-The table we have created shows the relationship between the original GDP growth values and their first differencing values. The `difference` column measures the change in the rate of growth in percentage points from one year to the next. Example in row 6, the growth rate decreased by **5.63 percentage points** leading to a sharp recession from 1.37% in 1965 to -4.2% in 1966.
+The table we have created shows the relationship between the original GDP growth values and their first differenced values. The `difference` column measures the change in the rate of growth in percentage points from one year to the next. Example in row 6, the growth rate decreased by **5.63 percentage points** leading to a sharp recession from 1.37% in 1965 to -4.2% in 1966.
 
 Forecasting a differenced series means forecasting the change in the original value, not the original value itself. The final forecasted change must be added back to the last known raw value $(Y_t)$ to get the final forecast $(\hat{Y}_{T+1})$.
 
@@ -239,8 +239,8 @@ While differencing removes trends it is important to know that too much differen
 
 ## Summary
 
-This chapter has taught how and what differencing can achieve in your time series data - that a successfully differenced series should fluctuate around a stable mean with consistent variance. You have also discovered that first differences represent period-to-period changes, making them interpretable as growth rates or absolute changes and second differencing is more harder to interpret but may be necessary for more complex trends. For a data with strong seasonality, both regular and seasonal differencing might be needed. Once stationarity is achieved your series is ready for models that assume constant statistical properties over time.
+This chapter has taught you how and what differencing can achieve in your time series data - that a successfully differenced series should fluctuate around a stable mean with consistent variance. You have also discovered that first differences represent period-to-period changes, making them interpretable as growth rates or absolute changes and second differencing is more harder to interpret but may be necessary for more complex trends. For a data with strong seasonality, both regular and seasonal differencing might be needed. Once stationarity is achieved your series is ready for models that assume constant statistical properties over time.
 
 You have also seen in this chapter how to diagnose a non-stationarity series through both visual inspections and statistical testing, and how to verify stationarity by conducting statistical confirmations.
 
-In the next chapter, we will explore data splitting of time series; how it temporal splitting differs from random sampling and best practices in determining optimal split points and also learn how techniques in time series cross-validation.
+In the next chapter, we will explore data splitting of time series; how temporal splitting differs from random sampling and best practices in determining optimal split points and also learn techniques in performing time series cross-validation.

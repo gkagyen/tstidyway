@@ -14,7 +14,7 @@ As stated earlier we will be using a combination of `tidyverse` and time series 
 
 : Essential packages required for this journey
 
-There is another supporting package in the **tidyverts** ecosystem called `fabletools`. This is a supporting package that provides some underlying tools for the `fables` package
+There is another supporting package in the **tidyverts** ecosystem called `fabletools`. This is a supporting package that provides some underlying tools for the `fables` package.
 
 ::: callout-note
 the `readr` and `lubridate` packages are already part of the **tidyverse package collections**. Once you install `tidyverse`, you do not need to install them again separately. `fabletools` is installed together with the `fables` package.
@@ -51,7 +51,7 @@ library(feasts)             # Time series exploration tools
 library(readxl)             # Importing Excel files
 ```
 
-Think of the install command as buying a tool and placing it in your garage **(your computer's library).** The `library()` function is like grabbing the tool from your garage and bringing it to your workbench **(your current R session)** so you can use it
+Think of the install command as buying a tool and placing it in your garage **(your computer's library).** The `library()` function is like grabbing the tool from your garage and bringing it to your workbench **(your current R session)** so you can use it.
 
 ::: callout-tip
 If you see a message like *"there is no package called...",* it means you have not installed it yet. Go back to the installation step.

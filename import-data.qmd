@@ -1,6 +1,6 @@
 # Importing Data and Creating a tsibble (Bonus) {#sec-importing-data-and-creating-a-tsibble}
 
-## Get your Data into R
+## Getting your Data into R
 
 The journey always starts by getting your data into your R environment. The goal is to get a standard tibble/data frame with at least one column representing a date or datetime.
 
@@ -8,7 +8,7 @@ The journey always starts by getting your data into your R environment. The goal
 
 1.  **From CSV/XLSX files:** Use `readr::read_csv()` or `readxl::read_excel()`. Your date column might be a character string initially (e.g. `"2023/01/15"`) which you can convert to an actual date later.
 2.  **From Databases**: Use `dbplyr` to query and pull into a tibble (beyond the scope of this book).
-3.  **From APIs:** Use `httr2` or `jasonlite` to pull JSON data, then parse it into a tibble (also beyond the scope of this book)
+3.  **From APIs:** Use `httr2` or `jasonlite` to pull JSON data, then parse it into a tibble (also beyond the scope of this book).
 
 ## The Crucial Step: Parse Date
 
@@ -53,4 +53,4 @@ sales_ts <- sales_data |>
 
 This pipeline – *`Import → Parse → Convert to Tsibble`* – is the foundation of almost every tidy time series analysis.
 
-The next chapter will dive deeply into the `lubridate` package where we will learn how to handle dates and times in a tsibble gracefully.
+The next chapter will take us through the `lubridate` package where we will learn how to handle dates and times in a tsibble gracefully.

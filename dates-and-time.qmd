@@ -8,7 +8,7 @@ This chapter is where we transition from data wranglers to time travellers. We w
 
 ## The Journey Ahead
 
-In this section, we will delve into two powerful skill sets
+In this section, we will delve into two powerful skill sets;
 
 -   @sec-using-lubridate-for-date-manipulation : Your `tsibble` *knows that your data is a time series,* but `lubridate` will give you the power to control *how* it understands time. In this chapter we go beyond basic date parsing and learn to:
 
@@ -45,8 +45,8 @@ A Rich Feature Set:
 
 ## What This Means for You
 
-Mastering dates and times is what separates basic time series plot from a truly diagnostic analysis. It is the difference between knowing that "*electricity consumption is high*" and knowing it specifically peaks on **dry season weekdays between 7-9pm when air conditioning use is highest.** It is the difference between seeing "*increased sales*" and understanding they spike during **Easter celebrations, Christmas festivities, or a sales discount period within the month.**
+Mastering dates and time is what separates basic time series plot from a truly diagnostic analysis. It is the difference between knowing that "*electricity consumption is high*" and knowing it specifically peaks on **dry season weekdays between 7-9pm when air conditioning use is highest.** It is the difference between seeing "*increased sales*" and understanding they spike during **Easter celebrations, Christmas festivities, or a sales discount period within the month.**
 
 By the end of this section, your date columns will no longer be simple indexes. They will become fertile ground for feature engineering, providing the contextual richness that allows your models to capture real-world behaviour and generate remarkably accurate forecasts.
 
-Let us begin our journey into the fourth dimension 🕰️.
+Let's begin our journey into the fourth dimension️.

@@ -43,7 +43,7 @@ gh_key <- gh_ts |>
     )
 ```
 
-After filtering our data into a manageable subset (`gh_key`), we can now go ahead and create individual line plots for each of the four indicators filtered on. We will use the same basic `ggplot2` syntax to produce these plots where we define aesthetics (`aes`), specify the geometry (`geom_line` for a line plot) and add labels (`labs`).
+After filtering our data into a manageable subset (`gh_key`), we can now create individual line plots for each of the four indicators we filtered on. We will use the same basic `ggplot2` syntax to produce these plots where we define aesthetics (`aes()`), specify the geometry (`geom_line()` for a line plot) and add labels (`labs()`).
 
 ```{r}
 #| warning: false 
@@ -135,11 +135,11 @@ cyield_autoplot <- gh_key |>
 cyield_autoplot
 ```
 
-The `autoplot()` function is quick and saves time with aesthetic mappings and geometry specifications when using traditional `ggplot2` layers. Although it actually is a specialised `ggplot2` function, it automatically respects the **index** (time) and **key** (series) of the time series data (`tsibble`). It chooses appropriate geometry, formats date axes appropriately and applies sensible styling. All other `ggplot2` graphical layers can be added to the `autoplot()` like we do in traditional `ggplot2` graphs.
+The `autoplot()` function is quick and saves time with aesthetic mappings and geometry specifications when using traditional `ggplot2` layers. Although it actually is a specialised `ggplot2` function, it automatically respects the **index** (time) and **key** (series) of the time series data (`tsibble`). It chooses appropriate geometry, formats date axes appropriately and applies sensible styling. All other `ggplot2` graphical layers can be added to the `autoplot()` like we do in a traditional `ggplot2` structure.
 
 ### Enhancing Basic Plots
 
-Let us make our `cyield_plot` more informative by adding some additional features and improving the styling.
+Let's make our `cyield_plot` more informative by adding some additional features and improving the styling.
 
 ```{r}
 #| warning: false 
@@ -175,15 +175,15 @@ enhanced_cyield_plot <- gh_key |>
 enhanced_cyield_plot
 ```
 
-The plot above tells a detailed story about the Cereal Yield in Ghana from 1960 to 2024. Here we explicitly combine the time series data (`gh_key` ) with two very interesting **engineered features** – a **threshold flag** (red and green points) and a **policy intervention marker** (dashed vertical line) with a smoothed trend line (blue curved line). we use the `ggplot2` package to build this detailed visualisation layer by layer.
+The plot above tells a detailed story about the Cereal Yield in Ghana from 1960 to 2024. Here we explicitly combine the time series data (`gh_key` ) with two very interesting **engineered features** – a **threshold flag** (red and green points) and a **policy intervention marker** (dashed vertical line) with a smoothed trend line (blue curved line) using the `ggplot2` layered grammar of graphics syntax.
 
-We start the whole process by filtering out the data to only include `cereal yield _kg per hectare` just like we did for @fig-gh-cereal we then initialise our plot, mapping the `date` and `value` columns to the x and y-axis respectively. `geom_line(...)` draws the the raw time series data. Inside the `geom_point()` function we create a threshold flag (High Yield) where we add points to the time series line and the colour is determined by the logical expression `value >= 1000`. If the yield is ≥ 1000, the colour is mapped to `TRUE` and if the yield is ˂ 1000, the colour is mapped to `FALSE.`
+We start the whole process by filtering out the data to only include `cereal yield _kg per hectare` just like we did for @fig-gh-cereal, we then initialise our plot, mapping the `date` and `value` columns to the x and y-axis respectively. `geom_line(...)` draws the the raw time series data. Inside the `geom_point()` function we create a threshold flag (High Yield) where we add points to the time series line and the colour is determined by the logical expression `value >= 1000`. If the yield is ≥ 1000, the colour is mapped to `TRUE` and if the yield is ˂ 1000, the colour is mapped to `FALSE.`
 
-We use `scale_colour_manual(...)` to explicitly assign `TRUE` and `FALSE` logical values to specific colours and label names where `TRUE` (High Yield) is mapped to **dark green** and `FALSE` (Low Yield) is mapped to **red**. `name = "High Yield"` sets the title of the legend to "High Yield". The yield value filtered from the data contains some data so our logical expression will automatically return `NA`'s together with the logical flag of `TRUE` and `FALSE`. By default the `NA`'s a labelled as part of the legend so we need to explicitly omit them with `na.translate = FALSE` and then map its colour to `NULL`.
+We use `scale_colour_manual(...)` to explicitly assign `TRUE` and `FALSE` logical values to specific colours and label names where `TRUE` (High Yield) is mapped to **dark green** and `FALSE` (Low Yield) is mapped to **red**. `name = "High Yield"` sets the title of the legend to "High Yield". The yield value filtered from the data contains some missing data so our logical expression will automatically return `NA`'s together with the logical flag of `TRUE` and `FALSE`. By default the `NA`'s are labelled as part of the legend so we need to explicitly omit them with `na.translate = FALSE` and then map its colour to `NULL`.
 
 The next feature that enhances the plots visual appeal is a vertical line that marks the point of policy change, a crucial contextual feature. `geom_vline()` helps us to achieve this feat. It draws a vertical line fixed at a particular point on the x-axis. This fixed x-intercept is set at the exact date of the intervention corresponding to the adoption of Ghana's Economic Recovery Program (ERP) using `xintercept = ymd("1983-04-20")`.
 
-The final feature is a smoothed trend line which is drawn using the **LOESS** (Locally estimated Scatter-plot Smoothing) method with the help of `geom_smooth()`. This method is an excellent tool for creating flexible non-linear trend lines. `se = FALSE` suppresses the standard error band around the smooth line, keeping the plot clean. `theme(...)` is used to customise all aspects of the plot but for this we only use it to centre the **title** and **subtitle**.
+The final feature is a smoothed trend line which is drawn using the **LOESS** (Locally estimated Scatter-plot Smoothing) method with the help of `geom_smooth()`. This method is an excellent tool for creating flexible non-linear trend lines. `se = FALSE` suppresses the standard error band around the smooth line, keeping the plot clean. `theme(...)` is used to customise all aspects of the plot but for this visualisation, we only use it to centre the **title** and **subtitle**.
 
 ## Multiple Time Series Plots for Comparison
 
@@ -206,7 +206,7 @@ gh_key |> filter(
 
 Notice how the plot in @fig-multi-auto-1 shows all the keys for all the series in the legend but the plot has only two lines representing `population_total` and `life expectancy at birth`. This happens because all the 4 series keys have varying range of values that would not fit perfectly in a single plot with a fixed scale. For example `Population_total` (in tens of millions) alongside `life expectancy at birth` (in hundreds) on the same y-axis renders the smaller series nearly flat and invisible.
 
-The plot in @fig-multi-auto-2 however is able to display all the two series keys in the legend because their value ranges fall within the y-axis scale of values although their appearance do not truly reflect their true characteristic if they were visualised individually as seen in @fig-gh-inf-mort and @fig-gh-lifexp.
+The plot in @fig-multi-auto-2 however is able to display all the two series keys in the legend because their value ranges fall within the y-axis scale of values although their appearance do not truly reflect their real characteristic if they were visualised individually as seen in @fig-gh-inf-mort and @fig-gh-lifexp.
 
 ### Faceted Plots
 
@@ -228,7 +228,7 @@ gh_key |>
   theme(legend.position = 'none')
 ```
 
-The code output displays or four plots – each in its own panel. The core function in the above code is `facet_wrap(vars(indicator_name),...)`. It tells ggplot2 to create a new, separate panel for every unique value found in the `indicator_name` column. The next critical aspect is `scales = 'free_y'`, which instructs the `facet_wrap()` function to allow the y-axis to vary independently in each panel. Without this all panels would share the same scale, defeating the purpose of faceting the series. We finally remove the **legend** using `theme(legend.position = 'none')` since the series labels become redundant because they are given by the facet titles.
+The code output displays all four plots – each in its own panel. The core function in the above code is `facet_wrap(vars(indicator_name),...)`. It tells ggplot2 to create a new, separate panel for every unique value found in the `indicator_name` column. The next critical aspect is `scales = 'free_y'`, which instructs the `facet_wrap()` function to allow the y-axis to vary independently in each panel. Without this all panels would share the same scale, defeating the purpose of faceting the series. We finally remove the **legend** using `theme(legend.position = 'none')` since the series labels become redundant because they are given by the facet titles.
 
 Faceted plots are the standard, most effective way to visualise multiple disparate time series data streams.
 
@@ -265,7 +265,7 @@ sales_ts |>
 
 The two plots show some similar patterns, which is expected since sales is directly related to items sold.
 
-The monthly sales series exhibits repeating seasonal peaks and troughs within each year and the pattern appears to involve some distinct high months (peaks) and low months (valleys) annually. This is the **annual seasonality** that most monthly datasets reveal. We can equally visualise the seasonal plot using the `gg_season()` function from the `ggtime` package. It overcomes the limitations of a simple line plot for monthly data by separating the data by year and laying the seasonal patterns on top of one another
+The monthly sales series exhibits repeating seasonal peaks and troughs within each year and the pattern appears to involve some distinct high months (peaks) and low months (troughs) annually. This is the **annual seasonality** that most monthly datasets reveal. We can equally visualise the seasonal plot using the `gg_season()` function from the `ggtime` package. It overcomes the limitations of a simple line plot for monthly data by separating the data by year and laying the seasonal patterns on top of one another.
 
 ```{r}
 #| label: fig-season
@@ -284,18 +284,18 @@ In terms of trend, there is no clear strong long term trend (upward or downward)
 
 The Sold items plot mirrors the Sales plot, showing the same seasonal pattern with minimal long-term trend. These plots confirm that any forecasting model for this data must account for the seasonal component.
 
-In the next chapter we will delve into a more detailed visualisation of seasonal patterns ans trends.
+In the next chapter we will delve into a more detailed visualisation of seasonal patterns and trends.
 
 ::: callout-important
-The `gg_season()` function is part of the `feasts` package but has been **deprecated** and moved to the new `ggtime` package which was basically designed for visualising time series patterns. It contains functions for exploring time series patterns like trends, seasonality, cycles and holidays
+The `gg_season()` function is part of the `feasts` package but has been **deprecated** and moved to the new `ggtime` package which is basically designed for visualising time series patterns. It contains functions for exploring time series patterns like trends, seasonality, cycles and holidays.
 :::
 
 ## Summary
 
-So far you have mastered how to visualise our time series data using basic line plots with `ggplot2` and `autoplot()`. You have seen how `ggplot2` grants **absolute control** over every detail of your time series visualisations and how `autoplot()` delivers smart **time series-specific** defaults which drastically accelerates initial data exploration.
+So far you have mastered how to visualise your time series data using basic line plots with `ggplot2` and `autoplot()`. You have seen how `ggplot2` grants **absolute control** over every detail of your time series visualisations and how `autoplot()` delivers smart **time series-specific** defaults which drastically accelerates initial data exploration.
 
 You can now make basic time series plots that reveal long term trends and seasonal cycles and also visualise multiple series simultaneously for comparative analysis.
 
-In the next chapter, we are going to dive deeper into the `feasts` package to explore advanced time series decomposition, autocorrelation analysis and statistical pattern detection. The visual foundation we have built here will help us interpret those more advanced analysis.
+In the next chapter, we are going to dive deeper into the `feasts` and `fabletools` package to explore advanced time series decomposition, autocorrelation analysis and statistical pattern detection. The visual foundation we have built here will help us interpret those more advanced analysis.
 
 Remember that visualisation is both an **art** and a **science**. The best plots are those that not only look good but also communicate clear, accurate insights about your time series data. Practice creating different types of visualisations and always consider what story your data is trying to tell!

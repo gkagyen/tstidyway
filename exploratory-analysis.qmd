@@ -1,6 +1,6 @@
 # Exploratory Time Series Analysis {#sec-exploratory-time-series-analysis}
 
-After mastering the date manipulation and feature engineering, you now have a well-structured dataset with rich temporal features. But raw data, no matter how well prepared, rarely tells its story openly.
+This section is to build up on what we learnt in the previous section, where you have mastered date and time manipulations and feature engineering. You can now organise your time series data into a well-structured dataset with rich temporal features. But raw data, no matter how well prepared, rarely tells its story openly.
 
 Exploratory analysis is the process of asking your data the right questions and listening carefully to the answers through visualisations and statistical summaries. Think of yourself as a data detective, where each plot and visualisation is a clue that reveals patterns, trends and anomalies in your time series.
 
@@ -8,33 +8,29 @@ Exploratory analysis is the process of asking your data the right questions and 
 
 Performing exploratory analysis on your time series data is essential and very necessary for the following reasons:
 
--   **Pattern Discovery:** Uncover seasonal patterns, trends, and cycles that drive your time series
-
--   **Anomaly Detection:** Identify outliers and unusual events that might distort your model
-
--   **Model Selection:** Understand the type of forecasting method that might work best for your data
-
--   **Business Insights:** For financial time series data you can transform raw numbers into actionable intelligence
-
--   **Data Quality:** Catch any data issues before they compromise your analysis
+-   **Pattern Discovery:** Uncover seasonal patterns, trends, and cycles that drive your time series.
+-   **Anomaly Detection:** Identify outliers and unusual events that might distort your model.
+-   **Model Selection:** Understand the type of forecasting method that might work best for your data.
+-   **Business Insights:** For financial time series data you can transform raw numbers into actionable intelligence.
+-   **Data Quality:** Catch any data issues before they compromise your analysis.
 
 ## The Journey Ahead
 
 This section will explore two powerful approaches to time series exploration; the flexibility of `ggplot2` for custom visualisations and the specialised tools of the `feasts` package designed specifically for time series analysis.
 
--   @sec-visualising-trends-with-ggplot2-and-autoplot: In this chapter, we will master the art of time series visualisation sing both the versatile `ggplot2` package and the specialised `feasts::autoplot()` function. You will learn how to
+-   @sec-visualising-trends-with-ggplot2-and-autoplot: In this chapter, we will master the art of time series visualisation using both the versatile `ggplot2` package and the specialised `feasts::autoplot()` function. You will learn how to:
 
-    -   create compelling time series plots that reveal trends and patterns
-    -   use `autoplot()` for quick, intelligent visualisations of tsibble objects
-    -   customise plots to highlight specific features and insights
-    -   create publication-quality visualisations that tell clear stories
+    -   create compelling time series plots that reveal trends and patterns.
+    -   use `autoplot()` for quick, intelligent visualisations of tsibble objects.
+    -   customise plots to highlight specific features and insights.
+    -   create publication-quality visualisations that tell clear stories.
 
--   @sec-exploring-patterns-with-feasts-and-fabletools: Here we will dive deep into the `feasts` package, which provides specialised tools for time series exploration together with `fabletool`. You will discover how to
+-   @sec-exploring-patterns-with-feasts-and-fabletools: Here we will dive deep into the `feasts` package, which provides specialised tools for time series exploration together with `fabletools`. You will discover how to
 
-    -   Decompose time series into trend, seasonal and remainder components
-    -   Analyse autocorrelation patterns to understand temporal dependencies
+    -   Decompose time series into trend, seasonal and remainder components.
+    -   Analyse autocorrelation patterns to understand temporal dependencies.
     -   Identify seasonal patterns and their strength.
-    -   Use summary statistics to characterise time series behaviour
+    -   Use summary statistics to characterise time series behaviour.
     -   create comprehensive diagnostic plots for model selection.
 
 Time series data has special characteristics that require special exploration techniques, unlike cross-sectional data, time series observations are connected through time and often contains several layers (trend, cycles, seasonality, noise). For instance yesterday's sales influence today's sales and last year's seasonal pattern likely repeats this year. Again the same time series can look dramatically different depending on whether you view it daily, weekly, monthly or annually.

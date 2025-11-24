@@ -23,17 +23,15 @@ sales_data <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
   janitor::clean_names(case = "none") |> 
   mutate(Month = yearmonth(Month)) |> 
   as_tsibble(index  = Month)
-
-
 ```
 
-Now that you have mastered `lubridate` for date manipulation, it is time to unlock the true power of time series analysis; **`feature engineering`**. Think of your date column as a treasure chest filled with valuable information. Feature engineering is the process of opening that chest and extracting the gems hidden within.
+After learning how to handle dates and time with `lubridate`, it is time to unlock the true power of time series analysis; **`feature engineering`**. Think of your date column as a treasure chest filled with valuable information. Feature engineering is the process of opening that chest and extracting the gems hidden within.
 
-In this chapter, you will learn how to transform simple dates into powerful predictors that can dramatically improve your forecasting models. We will work with our `sales_data` and `gh_ts` data sets we used in @sec-importing-data-and-creating-a-tsibble and @sec-dealing-with-time-gaps-and-irregularities respectively to create features that capture seasonal patterns, economic cycles and long-term trends relevant to the Ghanaian context.
+In this chapter, you will learn how to transform simple dates into powerful predictors that can dramatically improve your forecasting models. We will work with the `sales_data` and `gh_ts` data sets we used in @sec-importing-data-and-creating-a-tsibble and @sec-dealing-with-time-gaps-and-irregularities respectively to create features that capture seasonal patterns, economic cycles and long-term trends relevant to the Ghanaian context.
 
 ## Basic Time Based Features
 
-For this demonstration , we will only the `sales_data` which contains monthly sales from 2015 to 2019.
+For this demonstration, we will use only the `sales_data` which contains monthly sales from 2015 to 2019.
 
 ### Calendar-Based Features
 
@@ -65,13 +63,13 @@ sales_features_basic <- sales_data |>
   )
 ```
 
-The basic date components captures the level of aggregation. Models use these to find **annual trends** or **quarterly seasonality**. The ***Ghana-specific seasonal features***, creates a seasonal flag that may *influence sales (like less travels during heavy rain).* The ***holidays/business cycles**,* and ***economic calender features*** creates a logical (TRUE/FALSE) identifying major holiday periods, periods when schools reopens and end of period effects such as budget finalisation or semi annual targets that influence sales activities.
+The basic date components captures the level of aggregation. Models use these to find **annual trends** or **quarterly seasonality**. The ***Ghana-specific seasonal features***, creates a seasonal flag that may *influence sales (like less travels during heavy rain).* The ***holidays/business cycles***, and ***economic calender features*** creates a logical (TRUE/FALSE) tag identifying major holiday periods, periods when schools reopens and end of period effects such as budget finalisation or semi annual targets that influence sales activities.
 
 This whole process transforms a simple **Date** column into many powerful categorical and numerical features, which a predictive model can easily interpret. This can significantly improve the models ability to forecast.
 
 ### Creating Lag Features
 
-Lag features are arguably the **most important** feature type for time series analysis. A lag feature is the value of the series at a previous time step. They capture temporal dependence (autocorrelation) – the idea that a value today is highly correlated with its value yesterday, last week or last year.
+Lag features are arguably the **most important** feature type for time series analysis. A lag feature is the value of the series at a previous time step. They capture temporal dependencies (autocorrelation) – the idea that a value today is highly correlated with its value yesterday, last week or last year.
 
 For this demonstration we will use the `gh_ts` dataset focusing on some key indicators from the data (Annual GDP growth, Total Population, GDP per-capita in USD and Cereal yield per hectare).
 
@@ -97,7 +95,7 @@ gh_ts_lags <- gh_ts_filtered |>
   )
 ```
 
-The lag features are calculated using the `lag()` function from the `dplyr` package. The function takes a vector of values (usually a column from a dataframe) and the number of positions to lag. In the code above we shift the values for each indicator by 1 year (`value_lag1`), calculate the difference between the original values and the lagged values (`value_diff`) and then further calculate the **relative year-over-year change** (`value_pct_change`). The differencing helps to remove the level (baseline value) and trend (long term direction) which is a key step in achieving stationarity when fitting an ARIMA model.
+The lag features are calculated using the `lag()` function from the `dplyr` package. The function takes a vector of values (usually a column from a dataframe) and the number of positions to lag. In the code above we shift the values for each indicator by 1 year (`value_lag1`), calculate the difference between the original values and the lagged values (`value_diff`), and then further calculate the **relative year-over-year change** (`value_pct_change`). The differencing helps to remove the level (baseline value) and trend (long term direction) which is a key step in achieving stationarity when fitting an ARIMA model.
 
 ::: callout-important
 When fitting an ARIMA model (with the `fable` package) you do not need to manually calculate the lag and differencing. The model handles this automatically.
@@ -113,7 +111,7 @@ After creating numerous features, the next step is to determine which ones are g
 
 Correlation measures the linear relationship between two variables. To check feature importance using correlation, we are essentially looking at how strongly each feature is linearly related to the target variable. We can demonstrate this with the `gh_ts_lags` data we just created.
 
-We will add more features to the data and check how they all relate to the target variable (`value`). The new features will include another lagged value that shifts the `value` 2 time steps back, A binary feature (TRUE/FALSE) for election years since 1960.
+We will add more features to the data and check how they all relate to the target variable (`value`). The new features will include another lagged value that shifts the `value` 2 time steps back and a binary feature (TRUE/FALSE) for election years since 1960.
 
 ```{r}
 # create political and economic cycle features 
@@ -161,11 +159,11 @@ The code above calculates the correlation matrix for the selected variables usin
 | **value_lag2**       | 0.125 |
 | **election_year**    | 0.085 |
 
-: correlation coefficients of features vs actual value (`value`)
+: correlation coefficients of features vs actual value (`value`).
 
 ### Visualising Feature Relationships
 
-Creating visuals of your data is the best way to confirm the relationship derived from the correlation analysis and see how the engineered featured relate to the underlying data.
+Creating visuals of your data is the best way to confirm the relationship derived from the correlation analysis and see how the engineered features relate to the underlying data.
 
 ```{r}
 #| warning: false
@@ -190,6 +188,10 @@ The above plot displays the **actual GDP growth** line and the lagged (1 time st
 
 Your dates are now transformed into a rich set of features that can significantly improve your forecasting model(s). In the next section we will learn how to perform exploratory analysis on our time series data and delve deeper into visualisations to uncover trends and patterns before building our predictive models.
 
+::: callout-note
+The line plot in @fig-gdp-eng-feat does not show how the plotted features are correlated it is just a visual representation of the selected features. A scatter plot is the best plot type to visualise their true correlation.
+::: 
+
 ::: callout-tip
-The `feasts` package makes performing some of these feature engineering very simple and straightforward. We will explore the `feasts` package in the next chapter
+The `feasts` package makes performing some of these feature engineering very simple and straightforward. We will explore the `feasts` package in the next section.
 :::

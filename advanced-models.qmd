@@ -2,7 +2,7 @@
 
 Now that we have established our performance baselines with simple models, we are ready to explore the sophisticated forecasting workhorses that can capture the complex patterns we identified during our exploratory analysis. These advanced models automatically detect and model the trends, seasonality and other temporal structures that make our time series predictable.
 
-The true power of the `fable` framework shines here - what traditionally required extensive statistical expertise and manual parameter tuning is now accessible through intuitive, automated functions that maintain the tidy workflow we have built throughout this tutorial.
+The true power of the `fable` framework shines here - what traditionally required extensive statistical expertise and manual parameter tuning is now accessible through intuitive, automated functions that maintain the tidy workflow we have built throughout this book.
 
 ```{r}
 #| include: false
@@ -32,7 +32,7 @@ The magic of ETS lies in its elegant balance: It is sophisticated enough to capt
 
 ## The Core Intuition: Why "Exponential" Smoothing?
 
-The "exponential" part comes from how these models weight historical data. Unlike a simple moving average where all observations in the window have equal importance, exponential smoothing applies decreasing weights that follow an exponential pattern. Recent points get the highest weight, and the importance decays exponentially as we fo further back in time. We demonstrate this in the plot below.
+The "exponential" part comes from how the ETS models weight historical data. Unlike a simple moving average where all observations in the window have equal importance, exponential smoothing applies decreasing weights that follow an exponential pattern. Recent points get the highest weight, and the importance decays exponentially as we go further back in time. We demonstrate this in the plot below.
 
 ```{r}
 #| echo: false
@@ -62,13 +62,11 @@ This plot compares how exponential smoothing (80% decay) weights recent data mor
 
 ## The ETS Framework: Error, Trend and Seasonality
 
-The ETS acronym - which stands for Error, Trend, Season - used for exponential smoothing reveals the three components these models can incorporate. Each component has different options, resulting in a rich family of models that can adapt to various patterns.
+The ETS acronym - which stands for Error, Trend, Season - used for exponential smoothing, reveals the three components these models can incorporate. Each component has different options, resulting in a rich family of models that can adapt to various patterns.
 
--   **Error**: This tells how randomness affects our predictions. The error could be **A**dditive, which is constant over time or **M**ultiplicative, which is proportional to the level of the series
-
--   **Trend**: The long-term direction, This can be **N**one = no trend, **A**dditive = Linear trend or Damped = A trend that levels off over time.
-
--   **Seasonality**: Regular repeating patterns of over a fixed period. This can also be **N**one-for no seasonality, **A**dditive-for constant seasonal effect, or **M**ultiplicative-if seasonal effect scales with the level of the series.
+-   **Error**: This tells how randomness affects our predictions. The error could be **A**dditive, which is constant over time or **M**ultiplicative, which is proportional to the level of the series.
+-   **Trend**: The long-term direction, This can be **N**one = no trend, **A**dditive = Linear trend or Damped (**Ad**) = A trend that levels off over time.
+-   **Seasonality**: Regular repeating patterns over a fixed period. This can also be **N**one-for no seasonality, **A**dditive - for constant seasonal effect, or **M**ultiplicative - if seasonal effect scales with the level of the series.
 
 A powerful feature of the `fable` package is its ability to automatically search the space of possible ETS models and select the configuration that best fits the data based on model selection criteria like AIC. We can demonstrate this using our sales training data.
 
@@ -81,11 +79,11 @@ auto_ets <- training_data |>
 report(auto_ets)
 ```
 
-The `ETS()` function fits an exponential model to the data. When no specific component configuration is provided, the function automatically searches for the optimal ETS model for our series. The best model is stores in the `auto` column of the **mable** output (`auto_ets`).We use the `report` function to display detailed summary of the chosen model, including its final configuration, estimated parameters, and information criteria.
+The `ETS()` function fits an exponential smoothing model to the data. When no specific component configuration is provided, the function automatically searches for the optimal ETS model for our series. The best model is stored in the `auto` column of the **mable** output (`auto_ets`).We use the `report` function to display detailed summary of the chosen model, including its final configuration, estimated parameters, and information criteria.
 
 The automatic selection process chose the model ETS(A,N,N). The error is assumed to be Additive, suggesting a constant residual variation over time. No trend and seasonal component were found, the no trend aligns with the visual inspection we have seen in previous chapters however, the no seasonality is a surprising result given the data's apparent monthly pattern. This means that a SNAIVE benchmark model might still outperform this specific ETS model.
 
-The smoothing parameter $\alpha$ (alpha) is extremely small (0.0001). This shows that the model almost gives no weight to the most recent observation, relying heavily on the initial level ($l_0$) to generate its forecast. Essentially the model defaulted to a **MEAN** model. Initial states represent the initial level and the value (28748.26) is almost the same as our MEAN models estimate from @sec-simple-forecasting, which is approximately the historical average of the sales data, confirming its mean-based nature.
+The smoothing parameter $\alpha$ (alpha) is extremely small (0.0001). This shows that the model almost gives no weight to the most recent observation, relying heavily on the initial level ($l_0$) to generate its forecast. Essentially the model defaulted to a **MEAN** model. Initial states represent the initial level and the value (28748.26) is almost the same as our MEAN model's estimate from @sec-simple-forecasting, which is approximately the historical average of the sales data, confirming its mean-based nature.
 
 ## Simple Exponential Smoothing
 
@@ -95,7 +93,7 @@ Smoothing Equation: $l_t=\alpha\times y_t+(1-\alpha)\times l_{t-1}$
 
 where: $l_t$ = the smoothed level at time t, $y_t$ = the actual observation at time t and $\alpha$ = the smoothing parameter $(0\le\alpha\le 1)$.
 
-The forecast from this model follows the equation: $\hat{y}_{t+h}=l_t$, where $\hat{y}_{t+h}$ is the forecast for h steps ahead, made at time t and $l_t$ is the last calculated smoothed level. In essence, the forecast for all future periods is equal to the most recently smoothed level of the series.
+The forecast from this model follows the equation: $\hat{y}_{t+h}=l_t$, where $\hat{y}_{t+h}$ is the forecast for $h$ steps ahead, made at time $t$ and $l_t$ is the last calculated smoothed level. In essence, the forecast for all future periods is equal to the most recently smoothed level of the series.
 
 ```{r}
 #| label: fig-ses
@@ -116,17 +114,17 @@ simple_forecast |>
        y = "Sales", x = "Month")
 ```
 
-The core function of SES is to track and forecast only the **level** (or average) of the series, effectively smoothing out random noise while adapting to gradual changes in that average level. `ETS(Sales ~ error("A") + trend("N") + season("N"))` explicitly defines the components rather than relying on the automatic selection when nothing is specified inside the `ETS()` function. `error("A")` specifies an additive error component, trend("N") and `season("N")` forces the trend and seasonal components to be ignored.
+The core function of SES is to track and forecast only the **level** (or average) of the series, effectively smoothing out random noise while adapting to gradual changes in that average level. `ETS(Sales ~ error("A") + trend("N") + season("N"))` explicitly defines the components rather than relying on the automatic selection when nothing is specified inside the `ETS()` function. `error("A")` specifies an additive error component, `trend("N")` and `season("N")` forces the trend and seasonal components to be ignored.
 
 The overall configuration is **ETS(A,N,N)**. Note that this is the same model structure that the automatic selection chose previously. When the forecasts from the model are plotted, they visually confirm its basic function: extending the last calculated average level into the future as seen in @fig-ses.
 
-Although the SES model only tracks the **level** of the series, it is essentially a more advanced version of the **MEAN** model, as it adapts its average based on the most recent data (via the smoothing parameter $\alpha$), rather than relying on a fixed historical average. This model would be useful for data like the **Ghana Annual GDP Growth Rate**, which fluctuates around a constant level (no clear trend or seasonality).
+Although the SES model only tracks the **level** of the series, it is essentially a more advanced version of the **MEAN** model, as it adapts its average based on the most recent data (via the smoothing parameter $\alpha$), rather than relying on a fixed historical average. This model would be useful for data like the **Ghana Annual GDP Growth Rate**, which fluctuates around a constant level ( with no clear trend or seasonality).
 
 ## Holt's Linear Trend Method
 
 The Holt's linear trend (or Double Exponential Smoothing) model adds trend to capture upward or downward movements. It enhances the simple exponential smoothing model with the addition of a trend component. This makes it ideal to capture information from data showing consistent growth or decline patterns but without seasonality.
 
-We will demonstrate this with the Annual Cereal Yield series from the `gh_ts` data, which clearly shows an upward trend over time. We first prepare the data by isolating the cereal yield indicator from the rest of the data an performing a train-test split before fitting the model
+We will demonstrate this with the Annual Cereal Yield series from the `gh_ts` data, which clearly shows an upward trend over time. We first prepare the data by isolating the cereal yield indicator from the rest of the data and performing a train-test split before fitting the model.
 
 ```{r}
 # filter gh_ts for the cereal yield
@@ -163,8 +161,8 @@ report(holts_linear)
 The `report()` function's output provides insights into the model's learning process:
 
 -   **Smoothing Parameter** $\alpha$ **(alpha=0.518):** This parameter smooths the Level component. A value close to 0.5 means the model gives moderate weight to recent observations, allowing the level to adapt quickly to changes.
--   **Smoothing Parameter** $\beta$ **(beta = 0.0001):** This parameter smooths the trend (slope) component. The extremely low value suggest the model found the long term trend (**the** **b\[0\] initial state**) to be very stable and is very slow to adjust the trend based on new data.
--   **Initial States:** The model estimates the starting cereal yield (**l\[0\]**) around 819 kg per hectare and the initial growth trend (**b\[0\]**) to be approximately 9.55 kg per hectare improvement per year.
+-   **Smoothing Parameter** $\beta$ **(beta = 0.0001):** This parameter smooths the trend (slope) component. The extremely low value suggest the model found the long term trend (**the b[0] initial state**) to be very stable and is very slow to adjust the trend based on new data.
+-   **Initial States:** The model estimates the starting cereal yield (**l[0]**) around 819 kg per hectare and the initial growth trend (**b[0]**) to be approximately 9.55 kg per hectare improvement per year.
 
 ### Generating and Visualising Forecast
 
@@ -194,7 +192,7 @@ This model tracks both the level and linear trend. The trend could be additive (
 
 ### Extracting and Visualising Model Components
 
-Another key advantage of the **ETS framework** is the ability to extract and visualise the underlying components that drive the forecast using the `component()` function which we have previously seen in action in @sec-exploring-patterns-with-feasts-and-fabletools.
+Another key advantage of the **ETS framework** is the ability to extract and visualise the underlying components that drive the forecast, using the `component()` function which we saw in @sec-exploring-patterns-with-feasts-and-fabletools with the STL decomposition.
 
 ```{r}
 #| warning: false
@@ -241,7 +239,7 @@ hw_additive <- training_cement |>
   model(hw_add = ETS(Cement ~ error("A") + trend("A") + season("A")))
 ```
 
-This code above for the Holt-Winters model is explicitly configured to track all three components, Level (A), Trend (A) and Seasonality (A).
+This code for the Holt-Winters model is explicitly configured to track all three components, Level (A), Trend (A) and Seasonality (A).
 
 ### Examining the Fitted Model
 
@@ -251,7 +249,7 @@ The Holt-Winters method requires three separate smoothing equations (one for eac
 2.  Trend Equation: $b_t=\beta\times (l_t-l_{t-1})+(1-\beta)\times b_{t-1}$
 3.  Seasonal Equation: $s_t=\gamma\times (y_t-l_{t-1}-b_{t-1})+(1-\gamma)\times s_{t-m}$
 
-Where $l_t$ = level: the average value of the series at time t, $b_t$ = trend: the increasing/decreasing direction of the series at time t and $s_t$ = the repeating short-term cyclical component at time t. The Equations above are for the Additive variant of the Holt-Winters Method
+Where $l_t$ = level: the average value of the series at time t, $b_t$ = trend: the increasing/decreasing direction of the series at time t and $s_t$ = the repeating short-term cyclical component at time t. The Equations above are for the Additive variant of the Holt-Winters Method.
 
 ```{r}
 # examine fitted model
@@ -260,17 +258,17 @@ report(hw_additive)
 
 We see the structure of the model with the specified configuration – the smoothing parameters and initial states with some other relevant information – from the `report()` output.
 
--   **Smoothing Parameters:** These parameters are responsible for how the model adjusts to each component in the model fitting. The *level smoothing parameter* ($\alpha$) has a relatively high value (0.685), indicating the model gives a strong weight to the most recent observation's error when updating the level. The means the level adapts quickly to changes in average production. The *trend smoothing parameter* ($\beta$) is extremely low (0.0006), This means the model is very conservative about updating underlying trend (slope) based on new data. It relies heavily on the initial estimate and assumes the long-term growth rate is quite stable. The last smoothing parameter ($\gamma$) which is for the *seasonality* has a moderate value (0.14). This value means the model updates the seasonal factors gradually. It balances the need to reflect recent seasonal performance with the assumption that the quarterly pattern is generally consistent.
+-   **Smoothing Parameters:** These parameters are responsible for how the model adjusts to each component in the model fitting. The *level smoothing parameter* ($\alpha$) has a relatively high value (0.685), indicating the model gives a strong weight to the most recent observation's error when updating the level. This means the level adapts quickly to changes in average production. The *trend smoothing parameter* ($\beta$) is extremely low (0.0006), This means the model is very conservative about updating underlying trend (slope) based on new data. It relies heavily on the initial estimate and assumes the long-term growth rate is quite stable. The last smoothing parameter ($\gamma$) which is for the *seasonality* has a moderate value (0.14). This value means the model updates the seasonal factors gradually. It balances the need to reflect recent seasonal performance with the assumption that the quarterly pattern is generally consistent.
 
--   **Initial States:** These are the starting values of components, representing the state of the series before the model began its smoothing process. The initial level ($l$\[0\]) is the estimated baseline production level at the start of the series. The initial trend ($b$\[0\]) is the estimated initial quarterly increase in cement production. The values for $s$\[0\] to $s$\[-3\] represents the initial seasonal factors. They are the initial seasonal effects for each of the four quarters. For instance, s\[-1\] = 58.95 suggests that Quarter 2 initially saw production about \~59 units above the average level.
+-   **Initial States:** These are the starting values of components, representing the state of the series before the model began its smoothing process. The initial level ($l[0]$) is the estimated baseline production level at the start of the series. The initial trend ($b[0]$) is the estimated initial quarterly increase in cement production. The values for $s[0]$ to $s[-3]$ represents the initial seasonal factors. They are the initial seasonal effects for each of the four quarters. For instance, s[-1] = 58.95 suggests that Quarter 2 initially saw production about ~59 units above the average level.
 
 ### Generating and Visualising Forecast
 
-The forecasting operation for the Holt-Winters model takes the final components ($l_t$, $b_t$ and $s_t$) and projects them into the future $h$ steps. It is the sum of , following this equation:
+The forecasting operation for the Holt-Winters model takes the final components ($l_t$, $b_t$ and $s_t$) and projects them into the future $h$ steps. It is the sum of the last calculated level, trend and seasonal factor, following this equation:
 
 Forecast Equation (Additive): $\hat{y}_{t+h|t}=l_t+hb_t+s_{t+h-m(k+1)}$
 
-where $k$ = the integer or whole number part of $(h-1)/m$ (which ensures we use the most recent seasonal index for the forecast horizon). The `forecast()` function automatically calculates the forecasts for us.
+where $k$ = the integer or whole number part of $(h-1)/m$ (which ensures we use the most recent seasonal index for the forecast horizon). The `forecast()` function automatically calculates the this for us.
 
 ```{r}
 #| warning: false
@@ -288,9 +286,9 @@ hw_forecast |>
        subtitle = "Holt-Winters method captures the level, upward trend and seasonality")
 ```
 
-The resulting chart from plotting the original series (black line), the fitted values from the model (red line) and the 12 month forecast (blue line) together shows a powerful visual inspection for validating the models goodness of fit. The red line (fitted values) closely follows the original data, confirming that the smoothing parameters ($\alpha ,\beta ,\gamma$) were effectively optimised to track the historical level, trend and seasonality.
+The resulting chart from plotting the original series (black line), the fitted values from the model (red line) and the 12 month forecast (blue line) together shows a powerful visual inspection for validating the models goodness of fit. The red line closely follows the original data, confirming that the smoothing parameters ($\alpha ,\beta ,\gamma$) were effectively optimised to track the historical level, trend and seasonality.
 
-The projected blue line in the future (the forecast) exhibits a repeating seasonal pattern overlaid on a linear slightly upward trend, maintaining a constant magnitude for the seasonal peaks and troughs (this is a defining characteristic of the additive model). The prediction intervals (shaded area around forecast) widen as the forecast extends further into the future, reflecting the increasing uncertainty associated with predicting events further ahead in time.
+The projected blue line in the future exhibits a repeating seasonal pattern overlaid on a linear slightly upward trend, maintaining a constant magnitude for the seasonal peaks and troughs (this is a defining characteristic of the additive model). The prediction intervals (shaded area around forecast) widens as the forecast extends further into the future, reflecting the increasing uncertainty associated with predicting events further ahead in time.
 
 ### Extracting and Visualising Model Components
 
@@ -310,19 +308,17 @@ hw_components |> autoplot() +
        y = "Cement Production") 
 ```
 
-The above figure provides a clear decomposition of the quarterly cement production series. The decomposition contains a plot the original series, the level, the slope, the season and the remainder (residuals). The level shows a smooth, long term rising curve that tracks the overall average of the series from the late 1950s through to the early 2000s, removing the short-term noise. This confirms that the average production volume of cement has consistently increased over the long term.
+The above figure provides a clear decomposition of the quarterly cement production series. The decomposition contains a plot of the original series, the level, the slope, the seasonal component and the remainder (residuals). The level shows a smooth, long term rising curve that tracks the overall average of the series from the late 1950s through to the early 2000s, removing the short-term noise. This confirms that the average production volume of cement has consistently increased over the long term.
 
 The slope shows the rate of increase per quarter. This component is generally positive and highly smoothed due to the low $\beta$ value, However the plot reveals the rate of increase was not constant, there are periods where growth accelerated or temporarily slowed. In the early decades (1960s and 1970s) the slope appears positive and relatively stable but experiences significant volatility around 1980s and shows a noticeable decline in the growth rate towards the end of the series (late 1990s). This tells us that, while the production volume continued to rise the pace of that increase may have slowed down or become more erratic.
 
-The season component has a clean, fixed amplitude (additive) waveform centred around zero demonstrating regular quarterly pattern, which is extracted and projected into the forecast. This highly predictable and consistent pattern demonstrates strong quarterly seasonality in cement production.
+The seasonal component has a clean, fixed amplitude waveform centred around zero, demonstrating regular quarterly pattern, which is extracted and projected into the forecast. This highly predictable and consistent pattern demonstrates strong quarterly seasonality in the cement production.
 
 The remainder as explained earlier is the residual noise that is left after all three components have been subtracted from the data (unexplained by the model). They appear mostly random suggesting the model has captured the systematic patterns. However there are a few noticeable spikes particularly around the early 1980s and the late 1990s where the model significantly under or over-predicted the actual value.
 
 ## Comparing Multiple ETS Models
 
 After understanding the individual ETS components, the logical next step in modelling is to compare several possible configurations to determine which one provides the best representation of the time series dynamics. We use the monthly sales training data (`training_data`) for this comparison.
-
-We will fit seven different models to the `training_data` covering
 
 ```{r}
 # fit multiple ETS configurations
@@ -352,13 +348,13 @@ training_accuracy <- ets_comparison |> accuracy()
 training_accuracy |> arrange(MASE)
 ```
 
-The Best fit model with lowest MASE is `hw_mult` (Holt-Winters Multiplicative). The MASE value confirms it has the lowest error compared to a **NAIVE** benchmark. The Damped Multiplicative and Additeive models (`damped_mult`, `damped_add`) also show lower MASE error with the additive model showing a slightly higher error than the multiplicative.
+The Best fit model with lowest MASE is `hw_mult` (Holt-Winters Multiplicative). The MASE value confirms it has the lowest error compared to a **NAIVE** benchmark. The Damped Multiplicative and Additive models (`damped_mult`, `damped_add`) also show lower MASE error with the additive model showing a slightly higher error than the multiplicative.
 
 Based solely on the training error, the models incorporating a Multiplicative seasonal component (`hw_mult` and `damped_mult`) are the best fitting models. This makes intuitive sense for the monthly sales data where peaks and troughs of the seasonal pattern appear to grow proportional to the overall sales level.
 
 ### Comparing Model Complexity (Information Criteria)
 
-The `glance()` function extracts information criteria, which penalise model complexity (the number of estimated parameters). The goal is to find the lowest value for AICc (Akaike Information Criterion corrected), as it balances fit and complexity
+The `glance()` function extracts information criteria, which penalise model complexity (the number of estimated parameters). The goal is to find the lowest value for AICc (Akaike Information Criterion corrected), as it balances fit and complexity.
 
 ```{r}
 glance(ets_comparison) |> arrange(AICc)
@@ -393,7 +389,7 @@ A 12-month forecast is generated for all seven models and plotted against the hi
 
 -   **Flat-line Models** (`auto`, `simple`, `holts`): The non-seasonal models project flat lines into the future. They fail to capture the monthly seasonality. The `simple` and `auto` models produce the lowest (most conservative) flat forecasts. The `holts` model ETS(A,A,N) projects a slightly upward-sloping line, reflecting the minor positive trend it detected, but still missing the cycles.
 
--   **Seasonal Models** (`hw_mult`, `damped_mult`, `hw_add`, `damped_add`): These models project a cyclical pattern that matches the historical 12-month period. The two best-fiiting models from the MASE comparison–Holt-Winters Multiplicative (`hw_mult`) and Damped Multiplicative (`damped_mult`)–track the final period of the training data closely and project the most reasonable and consistent seasonal cycle forward.
+-   **Seasonal Models** (`hw_mult`, `damped_mult`, `hw_add`, `damped_add`): These models project a cyclical pattern that matches the historical 12-month period. The two best-fitting models from the MASE comparison–Holt-Winters Multiplicative (`hw_mult`) and Damped Multiplicative (`damped_mult`), tracks the final period of the training data closely and projects the most reasonable and consistent seasonal cycle forward.
 
 ### Confirming Historical Goodness of Fit
 
@@ -425,15 +421,15 @@ p2 <- training_data |>
 p1+p2
 ```
 
-The plot from both models shows how extremely well the red fitted line tracks the black original series line, capturing the amplitude of the seasonal peaks and troughs. The superior fit compared to the non-seasonal models confirms that the model's ability to capture multiplicative seasonality is the primary driver for their low training MAE and MASE values.
+The plot from both models show how extremely well the red fitted line tracks the black original series line, capturing the amplitude of the seasonal peaks and troughs. The superior fit compared to the non-seasonal models confirms that the model's ability to capture multiplicative seasonality is the primary driver for their low training MAE and MASE values.
 
 The visualisations confirms the initial findings from the error metrics (MASE). Despite having the lowest AICc the simple ETS(A,N,N) model is clearly unsuitable for a highly seasonal series. The Holt-Winters Multiplicative and Damped Multiplicative models offer the most realistic forecasts, making one of them the best choice to evaluate the unseen testing data. The `damped_mult` model is often preferred in instances like this as its trend component is assumed to level off in the long run, offering a more conservative forecast.
 
 ## When to Choose Which ETS Model?
 
-Exponential Smoothing (ETS) models offer a flexible and interpretable framework for time series forecasting. The process of selecting the appropriate ETS model is highly systematic and depends entirely on the patterns–Level, Trend and Seasonality–present in your data
+Exponential Smoothing (ETS) models offer a flexible and interpretable framework for time series forecasting. The process of selecting the appropriate ETS model is highly systematic and depends entirely on the patterns (Level, Trend and Seasonality) present in your data.
 
-The ETS framework represented by ETS(Error, Trend, Season), guides model selection using a simple decision tree based on data characteristics.
+The ETS framework represented by ETS (Error, Trend, Season), guides model selection using a simple decision tree based on data characteristics.
 
 ``` texinfo
 Does your data have SEASONALITY?
@@ -450,7 +446,7 @@ Does your data have SEASONALITY?
 
 ### Insights from ETS Modelling in the Fable Framework
 
-The process of fitting and analysing ETS models within frameworks like fable provides valuable lessons applicable to all time series forecasting
+The process of fitting and analysing ETS models within frameworks like fable provides valuable lessons applicable to all time series forecasting.
 
 **Transparency Builds Trust**: Unlike black-box models, you can exactly see how ETS models generate forecasts by extracting and visualising their components.
 
@@ -458,12 +454,12 @@ The process of fitting and analysing ETS models within frameworks like fable pro
 
 **Multiplicative Seasonality Matters**: When your data shows seasonal patterns that grow with the series level (common in business data), multiplicative seasonality provides significantly better fits.
 
-**Smoothing Parameters Tell a Story**: The $\alpha, \beta, \gamma$ values reveal how stable or volatile your series is. High values suggest rapid changes, while low values indicate stable patterns.
+**Smoothing Parameters Tell a Story**: The $\alpha$, $\beta$, and $\gamma$ values reveal how stable or volatile your series is. High values suggest rapid changes, while low values indicate stable patterns.
 
-**Start Simple, Embrace Parsimony**: The automatic selection often picks simpler models when they perform nearly as well as complex ones—embracing the principle of parsimony. This reminds us that the best model is the one that captures essential patterns without unnecessary complexity
+**Start Simple, Embrace Parsimony**: The automatic selection often picks simpler models when they perform nearly as well as complex ones—embracing the principle of parsimony. This reminds us that the best model is the one that captures essential patterns without unnecessary complexity.
 
 ## Summary
 
-ETS models give you the perfect blend of sophistication and interpretability. They automatically capture the patterns we identified during exploration while remaining transparent about their reasoning. In our next chapter, we'll explore ARIMA models—a different but equally powerful approach to time series forecasting.
+ETS models give you the perfect blend of sophistication and interpretability. They automatically capture the patterns we identified during exploration while remaining transparent about their reasoning. In our next chapter, we'll explore ARIMA models — a different but equally powerful approach to time series forecasting.
 
 Remember, the best model isn't always the most complex one, it is the one that captures the essential patterns in your data while remaining understandable and reliable. ETS models often strike this balance beautifully.

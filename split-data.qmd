@@ -25,7 +25,7 @@ sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
 
 In standard predictive models that uses cross-sectional data like linear regression, the goal is to predict an outcome without regard to order, so random train-test splitting is common. However, with time series data care must be taken to maintain the chronological order when splitting because it has observations that are dependent on previous observations (autocorrelation).
 
-A random split ignores the time dependency, leading to data leakage and unrealistic evaluations. First, let us understand why time series requires special care when splitting.
+A random split ignores the time dependency, leading to data leakage and unrealistic evaluations. First, we need to understand why time series requires special care when splitting.
 
 ```{r}
 # demonstrate the wrong way to split time series data
@@ -59,7 +59,7 @@ A model evaluated this way will report optimistically high accuracy on the test 
 
 ## Proper Temporal Train-Test Splitting
 
-The correct approach is to maintain the temporal order, using earlier data for training and later data for testing. When this happens, the model uses the past to predict the future which is exactly what you need your model to do.
+The correct approach is to maintain the temporal order, using earlier data for training and later data for testing. When this happens, the model uses the past to predict the future which is exactly what we need our model to do.
 
 ```{r}
 # proper temporal split
@@ -70,7 +70,7 @@ temporal_split <- sales_ts |>
 
 ```
 
-This new code splits based on a specific time point. All data before July 2018 is used for training and all data after for testing. This preserves the temporal sequence as can be seen in @fig-proper-split below, and simulates real forecasting scenarios.
+This new code splits the data based on a specific time point. All data before July 2018 is used for training and all data after for testing. This preserves the temporal sequence as can be seen in @fig-proper-split below, and simulates real forecasting scenarios.
 
 ```{r}
 #| echo: false
@@ -90,14 +90,14 @@ temporal_split |>
   )
 ```
 
-We see in this plot how the entire data before the split point (dashed vertical line-July 2018) is used as the training data (blue), followed orderly by the testing data (red). This train-test split is necessary for a valid forecasting evaluation.
+We see in this plot how the entire data before the split point (dashed vertical line - July 2018) is used as the training data (blue), followed orderly by the testing data (red). This train-test split is necessary for a valid forecasting evaluation.
 
 ### Creating Training and Testing Datasets
 
 Now we can formally create our training and testing datasets the right way. To make the splitting easier, we are going to use the `initial_time_split()` function from the `rsample` package. This function will automatically split the data proportionally while maintaining the temporal order.
 
 ```{r}
-# create forma training and testing datasets
+# create formal training and testing datasets
 library(rsample)
 
 split <- initial_time_split(sales_ts, prop = 0.7)
@@ -109,11 +109,9 @@ testing_data <- testing(split)
 partition_table <- tibble(
   Partition = c("training data", "testing data"),
   Start_period = c(min(training_data$Month),
-                   min(testing_data$Month)
-                   ),
+                   min(testing_data$Month)),
   End_period = c(max(training_data$Month),
-                 max(testing_data$Month)
-                 ),
+                 max(testing_data$Month)),
   N_Obs = c(nrow(training_data), nrow(testing_data))
   )
 ```
@@ -125,11 +123,11 @@ kableExtra::kable(partition_table)
 
 `initial_time_split(sales_ts, prop = 0.7)` is the core function for our temporal splitting. It takes our time series data (`sales_ts`) and automatically creates the split object such that the first $70\%$ (`prop = 0.7`) of the data chronologically forms the training set, and the remaining $30\%$ forms the testing set.
 
-`training(split)` / `testing(split)` are accessor functions that extract the actual data frames (tibble) for the respective partitions. To confirm we have the right train-test split create a table to verify the chronological order. As expected we see in the table that the test data is immediately after the end date of the training data, confirming that the split is purely temporal and not random.
+`training(split)` / `testing(split)` are accessor functions that extract the actual data frames (tibble) for the respective partitions. To confirm we have the right train-test split, we create a table to verify the chronological order. As expected we see in the table that the test data is immediately after the end date of the training data, confirming that the split is purely temporal and not random.
 
 ## Time Series Cross-Validation
 
-For more robust model evaluation, we can use time series cross-validation (TS-CV). This creates multiple training and testing folds while preserving temporal order. We us the `stretch _tsibble()` function from the `tsibble` package to create cross-validation (cv) folds in a time series data.
+For more robust model evaluation, we can use time series cross-validation (TSCV). This creates multiple training and testing folds while preserving temporal order. We use the `stretch _tsibble()` function from the `tsibble` package to create cross-validation (cv) folds in a time series data.
 
 ```{r}
 # create time series cross-validation folds
@@ -154,13 +152,13 @@ kableExtra::kable(cv_summary)
 
 ```
 
-`stretch_tsibble(.init = 25, .step = 1)` creates expanding window folds. `.init` sets the initial training window size and `.step` specifies how many months to move forward for each fold. Our code creates multiple folds where each fold starts with at least 25 observations (months) and expands by 1 observation each time. Here the first fold uses months 1 to 25 for training and month 26 for testing. The next fold uses months 1 to 37 for training and month 38 for testing and so on till the end of the series.
+`stretch_tsibble(.init = 25, .step = 1)` creates expanding window folds. `.init` sets the initial training window size and `.step` specifies how many months to move forward for each fold. Our code creates multiple folds where each fold starts with at least 25 observations (months) and expands by 1 observation each time. Here the first fold uses months 1 to 25 for training and month 26 for testing. The next fold uses months 1 to 26 for training and month 27 for testing and so on till the end of the series.
 
 Each fold is marked by an `.id` column allowing us to track different train-test combinations. This approach provides multiple evaluations across different time periods.
 
 ### Visualise Cross-Validation Folds
 
-Let us visualise how our cross-validation works
+Let's visualise how our cross-validation works.
 
 ```{r}
 #| label: fig-tscv
@@ -170,7 +168,7 @@ tscv_folds |>
   filter(.id <= 4) |>      # show first 4 folds
   group_by(.id) |>         # temporarily group data
   mutate(
-    fold_info = paste("Fold",.id,": ",first(Month),"to",last(Month)),
+    fold_info = paste("Fold",.id,": ",first(Month)," to ",last(Month)),
   ) |> 
   ungroup() |>             # remove grouping
   ggplot(aes(x = Month, y = Sales, group = .id)) + 
@@ -179,11 +177,11 @@ tscv_folds |>
 
 ```
 
-The above plot displays the expanding nature of the cross-validation folds produced from `stretch_tsibble`. We clearly see how each fold contains all the data from the previous fold plus the additional (`step`) month.
+The above plot displays the expanding nature of the cross-validation folds produced from `stretch_tsibble()`. We clearly see how each fold contains all the data from the previous fold plus the additional (`step`) month.
 
 ### Rolling Window Analysis
 
-Another way to create cv-folds is by using the `slide_tisbble()` function. This function differs slightly from  `stretch_tsibble()` in the way they generate folds. This function creates overlapping windows of data that move step by step.
+Another way to create cv-folds is by using the `slide_tsibble()` function. This function differs slightly from  `stretch_tsibble()` in the way they generate folds. `slide_tsibble()` creates overlapping windows of data that move step by step.
 
 ```{r}
 # implement walk forward validation
@@ -208,7 +206,7 @@ kableExtra::kable(walkf_cv_summary)
 
 ```
 
-`slide_tsibble(.size = 28, .step = 1)` creates fixed-size windows that slides forward. Here `size = 28` uses 28 months for the first fold (fixed) and each new fold (window) moves forward by 1 month (`.step = 1`). This simulates real-world forecasting where we use available history to predict the future.
+`slide_tsibble(.size = 28, .step = 1)` creates fixed-size windows that slides forward. Here `size = 28` uses 28 months for the first fold (fixed) and each new fold (window) moves forward by 1 month (`.step = 1`).
 
 The key difference between the `stretch_tsibble()` and `slide_tsibble()` functions is that the former uses expanding folds (i.e., training sets grow over time) whiles the latter uses fixed folds (old observations drop off as new ones come in, keeping the window fixed). Implementing TS-CV either with `stretch_tsibble` or `slide_tsibble` provide more robust model error estimates than a single train-test split.
 
@@ -236,7 +234,7 @@ multi_series_split <- gh_ts |>
   ungroup()
 ```
 
-In order to apply the split boundary logic to all the series independently, the data is grouped by their unique indicator name for the series. The consistent temporal rule specified in the mutate function creates a marker for the training and testing split.
+In order to apply the split boundary logic to all the series independently, the data is grouped by their unique indicator name. The consistent temporal rule specified in the mutate function creates a marker for the training and testing split.
 
 All data before the year 2005 $(~70%)$ is marked as the **training set** and 2005 upwards $(~30)$ is the **testing set**.
 
@@ -276,7 +274,7 @@ splits_multiple <- gh_ts |>
   group_map(~ initial_time_split(.x, prop = 0.7))
 ```
 
-The `group_by_key()` function is specific to `tsibbles`. It groups the data by the unique time series identifier (`indicator_name`). The core operation of what we want to achieve is carried out by `group_map()`, which iterates over each series (each indicator) and applies the `initial_time_split()` function to create a chronological split, using the first $70\%$ of the observations for training. The resulting output from this code is a list of **3** split objects, each representing a unique series.
+The `group_by_key()` function is specific to `tsibbles`. It groups the data by the unique time series identifier (`indicator_name`). The core operation of what we want to achieve is carried out by the `group_map()` function, which iterates over each series (each indicator) and applies the `initial_time_split()` function to create a chronological split, using the first $70\%$ of the observations for training. The resulting output from this code is a list of **3** split objects, each representing a unique series.
 
 ```{r}
 #| echo: false
@@ -322,8 +320,8 @@ The `multi_split_list` object is a tidy summary where each row represents a sing
 
 ## Summary
 
-In this chapter we have addressed an important aspect of time series forecasting; creating a validation framework that produces honest, reliable performance assessments. We moved beyond simple random sampling to embrace the temporal nature of our data
+In this chapter we have addressed an important aspect of time series forecasting; creating a validation framework that produces honest, reliable performance assessments. We moved beyond simple random sampling to embrace the temporal nature of our data.
 
 You have seen the reason why preserving chronological order prevents data leakage and ensures realistic model evaluation. You now understand that testing should always follow training in time and performing cross-validation on time series gives us multiple assessments of model performance, making our evaluation more reliable than a single train-test split.
 
-With our data properly prepared, variance stabilised, stationarity achieved and rigorous validation splits established we are now ready for the most exciting phase: building actual forecasting models. In our next section we will explore various forecasting models and how they effectively they fit to our temporal data.
+With our data properly prepared, variance stabilised, stationarity achieved and rigorous validation splits established we are now ready for the most exciting phase: building actual forecasting models. In our next section we will explore various forecasting models and how they effectively fit to our temporal data.

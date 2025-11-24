@@ -7,7 +7,7 @@ In this section, we will explore how to work with time series data using the **t
 ## The tidy Approach to Time Series
 
 ```{mermaid}
-%%{init: {'themeVariables': { 'fontSize': '15pt'}}}%%
+%%{init: {'themeVariables': { 'fontSize': '15pt'}}
 
 flowchart TD
     A[Raw Time Series Data] --> B{Data Structure}
@@ -61,7 +61,7 @@ This section is organised into three complementary chapters that builds your tim
 
 -   @sec-dealing-with-time-gaps-and-irregularities: Real world time series data is messy, with missing observations, irregular intervals and unexpected gaps. This chapter teaches you to identify understand and handle these imperfections.
 
--   @sec-importing-data-and-creating-a-tsibble: Time series data comes from everywhere – csv files, APIs, databases and excel files. Some of these sources might have **inconsistent** date formats**, dates** being stored as **strings** and **time zones** being **mixed up**. In this chapter you will be provided with practical strategies for importing temporal data and handling different date formats
+-   @sec-importing-data-and-creating-a-tsibble: Time series data comes from everywhere – csv files, APIs, databases and excel files. Some of these sources might have **inconsistent** date formats**, dates** being stored as **strings** and **time zones** being **mixed up**. In this chapter you will be provided with practical strategies for importing temporal data and handling different date formats.
 
 Throughout this section we will primarily use these essential packages `lubridate`, `tsibble`, `dplyr`, `tidyr`. By the end of this section you will have mastered the crucial first step in any time series analysis: **creating a valid, gap-aware `tsibble` from raw data**. This is not just busy work, it is about building a solid foundation.
 

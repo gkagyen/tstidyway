@@ -13,12 +13,12 @@ What makes time series special is that time is not just a variable, It carries i
 
 ## Why Time Series Analysis Matters
 
-Time series analysis helps us to **understand the past, monitor the present, and predict the future**. Some real world examples are:
+Time series analysis helps us to **understand the past, monitor the present, and predict the future**. Some real world examples are in:
 
--   **Public Health:** Forecasting disease outbreaks or hospital admissions
+-   **Public Health:** Forecasting disease outbreaks or hospital admissions.
 -   **Finance:** Predicting stock prices, currency exchange rates, or sales revenue.
--   **Environmental Science:** Analysing temperature trends or rainfall patterns for climate studies
--   **Engineering:** Monitoring sensor data to detect faults or changes in performance
+-   **Environmental Science:** Analysing temperature trends or rainfall patterns for climate studies.
+-   **Engineering:** Monitoring sensor data to detect faults or changes in performance.
 
 In many cases, this analysis supports decision making — whether it is planning resources, anticipating risks, or detecting unusual patterns.
 
@@ -28,24 +28,23 @@ Historically, time series in R has been handled using `ts` objects and packages 
 
 We will follow the tidy time series workflow using the tidyverse ecosystem. The workflow uses packages from the **`tidyverts`** ecosystem:
 
--   `tsibble`: A tidy data structure for time series (like a tibble but with special time handling)
+-   `tsibble`: A tidy data structure for time series (like a tibble but with special time handling).
 -   `fable`: For forecasting models (ARIMA, ETS, etc) in a tidy way.
 -   `feasts`: For exploratory analysis (seasonal plots, decomposition, autocorrelation).
 -   `lubridate`: For working with dates and times.
--   `ggplot2`: For beautiful and flexible visualisations
--   `dplyr`/`tidyr`/`tibble`: For general data wrangling
+-   `ggplot2`: For beautiful and flexible visualisations.
+-   `dplyr`/`tidyr`/`tibble`: For general data wrangling.
 
 ### The Tidy Time Series Workflow
 
-The tidyverse ecosystem in R emphasises clean, readable code and consistent data structure. For time series, the modern approach uses the `tidyverts` suite of packages.\
-The typical flow we will follow includes:
+The tidyverse ecosystem in R emphasises clean, readable code and consistent data structure. For time series, the modern approach uses the `tidyverts` suite of packages. The typical flow we will follow includes:
 
 1.  🔧 **Data Preparation:** Load and tidy data. Convert the data to a `tsibble` object so R knows how to handle time.
-2.  🔍 **Explore:** Visualise trends, seasonality, patterns
-3.  🧩 **Decompose:** Break down components (trends, seasonal, noise)
-4.  🖥️ **Model:** Fit forecasting models (simple —\> advanced)
-5.  📈 **Forecast:** Generate future predictions
-6.  📏 **Evaluate:** Check how good the forecasts are (accuracy assessment)
+2.  🔍 **Data Exploration:** Visualise trends, seasonality, patterns
+3.  🧩 **Decomposing Time Series:** Break down components (trends, seasonal, noise)
+4.  🖥️ **Mode Fitting:** Fit forecasting models (simple to advanced)
+5.  📈 **Forecasting:** Generate future predictions
+6.  📏 **Model Evaluation:** Check how good the forecasts are (accuracy assessment)
 
 This workflow is clean, consistent and integrates smoothly with other tidyverse tools you might already know.
 
@@ -59,24 +58,19 @@ They all follow the tidy philosophy, structure and grammar
 
 ### Data We Will Use
 
-We will start with some built-in datasets from the `tsibble` package so every on can follow along without downloading external files:
+We will start with some built-in datasets from the `tsibbledata` package so that you can follow along without downloading any external files yet.
 
--   `aus_production` — Quarterly production values for Australian industries.
--   `tourism` — Quarterly overnight trips in different Australian regions.
-
-Later, we shall also show how to use **real-life datasets** — for example, population growth or GDP growth data from Ghana, to make the examples relatable and practical
-
-You can download the datasets used here `gh_data.csv` .
+Later, we shall also show how to use **real-life datasets** — for example, population growth or GDP growth data from Ghana, monthly sales data and other local datasets to make the examples relatable and practical. You can download all the custom datasets used [here](https://github.com/gkagyen/tstidyway/tree/57b6d74d73da8a52af1b6db49a242949cca84430/data).
 
 ### What You Will Need to Follow Along
 
-1.  **Basic R Knowledge:** You should know how to load packages, run functions, and work with data frames
-2.  **RStudio** installed for a smooth workflow
-3.  Internet connection (for package installation and possible data download)
+1.  **Basic R Knowledge:** You should know how to load packages, run functions, and work with data frames.
+2.  **RStudio** installed for a smooth workflow.
+3.  Internet connection (for package installation and possible data download).
 
 ### By the end of this book, you will be able to:
 
--   Handle date/time data with ease
--   Explore time series visually and statistically
--   Build forecasts using tidyverse-style functions
--   Apply your skills to your own datasets in research or work
+-   Handle date/time data with ease.
+-   Explore time series visually and statistically.
+-   Build forecasts using tidyverse-style functions.
+-   Apply your skills to your own datasets in research or work.

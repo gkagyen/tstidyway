@@ -23,7 +23,7 @@ sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
 
 ## Identifying Heteroscedasticity in Time Series Data
 
-Heteroscedasticity refers to a change in the volatility and spread of a time series over time. Time series models (like ARIMA or ETS) assume that the variance of the forecast errors is constant. If the variance is changing it compromises the accuracy of confidence intervals and predictions.
+Heteroscedasticity refers to a change in the volatility and spread of a time series over time. Time series models (like ARIMA) assume that the variance of the forecast errors is constant. If the variance is changing it compromises the accuracy of confidence intervals and predictions.
 
 We will examine the `gh_ts` and `sale_ts` data and check for signs of changing variance
 
@@ -54,22 +54,22 @@ On the other hand The Annual GDP growth rate plot is a classic example of varian
 
 ### Quantitative Check Using the `guerrero` Feature
 
-While a formal statistical test for heteroscedasticity requires fitting a model and examining the squared residuals, the **Guerrero method** offers a quick quantitative diagnostic to determine if a transformation is required to achieve homoscedasticity or not. This is a technique to automatically select the optimal parameter ($\lambda$) for a Box-Cox transformation. Th `feature()` function will help us do this.
+While a formal statistical test for heteroscedasticity requires fitting a model and examining the squared residuals, the **Guerrero method** offers a quick quantitative diagnostic to determine if a transformation is required to achieve homoscedasticity or not. This is a technique to automatically select the optimal parameter ($\lambda$) for a Box-Cox transformation. The `feature()` function will help us do this.
 
 ```{r}
 # calculate optimum lambda value for sales data
 sales_ts |> 
-  features(Sales, guerrero)
+  features(Sales, features = guerrero)
 
 # calculate optimum lambda value for Annual GDP growth rate series
 gh_ts |> 
   filter(indicator_name == "Annual GDP growth rate") |> 
   drop_na() |> 
-  features(value, feature = guerrero)
+  features(value, features = guerrero)
 
 ```
 
-The $\lambda$ value is interpreted based on its proximity to three key values: 1, 0, or a non-integer value. The lambda value produced for the sale series (0.73) is close to 1 which suggests no transformation. This strongly supports the initial visual inspection which showed that the monthly sales data is largely homoscedastic (stable variance).
+The lambda ($\lambda$) value is interpreted based on its proximity to three key values: 1, 0, or a non-integer value. The lambda value produced for the sales series (0.73) is close to 1 which suggests no transformation. This strongly supports the initial visual inspection which showed that the monthly sales data is largely homoscedastic (stable variance).
 
 The lambda value for the annual GDP growth rate series (1.48, also close to 1) suggests that the variance is not proportional to the mean in a way that requires a a Box-Cox transformation (where $\lambda\le1$). This means the variance change observed in the visual inspection is not a simple multiplicative effect. The standard Box-Cox transformation is not sufficient here.
 
@@ -81,11 +81,9 @@ $$
 y^{(\lambda)}= \left\{ \begin{array}{cl}\frac{y^{\lambda}-1}{\lambda} & if\ \ \lambda\geq 0 \\log(y) & if\ \ \lambda = 0\end{array} \right.
 $$
 
-\$\$\$\$
+Rather than guessing the optimal $\lambda$ value, we can use the `guerrero()` feature function as seen earlier from the `feasts` package to find it automatically.
 
-Rather than guessing the optimal $\lambda$ value, we can use the `guerrero()` feature as seen earlier from the `feasts` package to find it automatically.
-
-We have already seen how to do this and also know that the `Sales` series and the `Annual GDP growth rate` series do not warrant any type of Box-Cox transformation. We will use the `aus_production` data to demonstrate how the Box-Cox application works
+We have already seen how to do this and also know that the `Sales` series and the `Annual GDP growth rate` series do not warrant any type of Box-Cox transformation. We will use the `aus_production` data to demonstrate how the Box-Cox application works.
 
 ```{r}
 #| label: fig-cement-aus
@@ -95,11 +93,11 @@ aus_production |>
   autoplot(Cement, linewidth = 0.7)
 ```
 
-The visual inspection shows a clear evidence of unequal variance, specifically increasing variance over time. The series is at a **low level** in the early periods (1960-1980Q1) and the fluctuations are small relative to the mean (seasonal peaks and troughs closer together).
+The visual inspection shows a clear evidence of unequal variance, specifically increasing variance over time. The series is at a **low level** in the early periods (1960-1980 Q1) and the fluctuations are small relative to the mean (seasonal peaks and troughs closer together).
 
-In the later period (1990 - 2008Q4) the series is at a **high level** and the fluctuations are visually much larger (the distance between peaks and troughs has increased). This makes the series heteroscedastic because the **variance increase as the level (mean production) increases**.
+In the later period (1990-2008 Q4) the series is at a **high level** and the fluctuations are visually much larger (the distance between peaks and troughs has increased). This makes the series heteroscedastic because the **variance increase as the level (mean production) increases**.
 
-This pattern is known as multiplicative variance and is a characteristic of a time series that exhibit growth. We will now calculate the optimal lambda needed for a Box-Cox transformation for this series.
+This pattern is known as a multiplicative variance and it is a characteristic of a time series that exhibit growth. We will now calculate the optimal lambda needed for a Box-Cox transformation for this series.
 
 ```{r}
 # calculate and extract optimal lambda using the guerrero method
@@ -109,7 +107,7 @@ optimal_lambda <- aus_production |>
 
 ```
 
-The optimal lambda value calcuated is $-0.309022$ (close to 0) which clearly suggests a transformation is required and confirms our visual inspection. In practice you would typically use a log transformation $(\lambda=0)$ for such values (closer to zero) rather than the exact $\lambda=-0.309022$. This is because a log transformation is simpler and more interpretable which performs similarly to nearby lambda values (in which our `optimal_lambda` falls squarely in that range). Now let us transform and compare the results
+The optimal lambda value calculated is $-0.309022$ (close to 0) which clearly suggests a transformation is required and confirms our visual inspection. In practice you would typically use a log transformation $(\lambda=0)$ for such values (closer to zero) rather than the exact $\lambda=-0.309022$. This is because a log transformation is simpler and more interpretable which performs similarly to nearby lambda values (in which our `optimal_lambda` falls squarely in that range). Now let's transform and compare the results.
 
 ```{r}
 #| label: fig-bc-comp
@@ -135,13 +133,14 @@ transformed_aus_cement |>
        x = "Quarter")
 ```
 
-The transformation is applied using the `box_cox()` function from the `fabletools` package. It takes the raw `Cement` values and applies the Box-Cox formula using the provided lambda. We round lambda to the nearest whole number (0) to get a log transformation.\
+The transformation is applied using the `box_cox()` function from the `fabletools` package. It takes the raw `Cement` values and applies the Box-Cox formula using the provided lambda. We round lambda to the nearest whole number (0) to get a log transformation.
+
 Comparing the original and transformed series you can clearly see how the fluctuations look similar throughout the entire period for the transformed series, whiles still showing the upward trend from the original series (preserves trend direction).
 
-The peaks and troughs for all quarters seems to have similar amplitudes throughout the years. Also notice how the y-axis scale changed from \~500 - 2500 in the original series to \~6.5 - 7.5 (log scale) in the transformed series giving it a much more constant variance over time. The transformed series is now suitable for ARIMA or ETS modelling as the constant amplitude of fluctuations satisfies the constant variance assumption.
+The peaks and troughs for all quarters seem to have similar amplitudes throughout the years. Also notice how the y-axis scale changed from \~500 - 2500 in the original series to \~6.5 - 7.5 (log scale) in the transformed series giving it a much more constant variance over time. The transformed series is now suitable for ARIMA modelling as the constant amplitude of fluctuations satisfies the constant variance assumption.
 
 ::: callout-note
-Rounding the exact $\lambda$ to a simpler, nearby value (like 0 for a log transformation) is a common, pragmatic step for better interpretability. After forecasting we can back-transform to original scale: `exp(log_forecast)`
+Rounding the exact $\lambda$ to a simpler, nearby value (like 0 for a log transformation) is a common, pragmatic step for better interpretability. After forecasting we can back-transform to original scale: `exp(log_forecast)`.
 :::
 
 ## Interpreting Transformation Parameters and Assessing Effectiveness
@@ -151,8 +150,8 @@ Rounding the exact $\lambda$ to a simpler, nearby value (like 0 for a log transf
 The **Box-Cox** transformation is governed by the parameter $\lambda$ (lambda), which dictates the power applied to the data. Different lambda values correspond to different transformations. Understanding the relationship between lambda and the resulting transformation is key to time series data preparation.
 
 | lambda $(\lambda)$ value | Recommended Transformation | Variance Implication |
-|----|----|----|
-| $\lambda=1$ | No Transformation $(Y_{t})$ | Series is already Homoskedastic |
+|------------------------|------------------------|---------------------------------------|
+| $\lambda=1$ | No Transformation $(Y_{t})$ | Series is already Homoscedastic |
 | $\lambda\ \text{close to 1}$ *(e.g., 0.7 to 1.3)* | Transformation provides minimal benefit | Variance is largely stable |
 | $\lambda=0.5$ | Square Root $(\sqrt{Y_{t}})$ | Moderate stabilisation required |
 | $\lambda=0$ | Natural Logarithm $(\log(Y_{t}))$ | Variance is proportional to the level (Multiplicative variance) |
@@ -194,7 +193,7 @@ For log transformations use `log1p()` if your series data contains zeros
 
 ### Assessing Transformation Effectiveness
 
-Although visual inspections provide insightful patterns and trends, we can statistically verify that the transformation successfully made the variance independent of the mean. This is done by examining the relationship between the rolling mean (level) and the rolling standard deviation (volatility)
+Although visual inspections provide insightful patterns and trends, we can statistically verify that the transformation successfully made the variance independent of the mean. This is done by examining the relationship between the rolling mean (level) and the rolling standard deviation (volatility).
 
 ```{r}
 #| warning: false
@@ -204,7 +203,7 @@ Although visual inspections provide insightful patterns and trends, we can stati
 library(slider)          # for roling mean and standard deviation
 library(patchwork)       # for plot layout
 
-# Calculate rolling mean and variance
+# calculate rolling mean and variance
 variance_mean_relationship <- transformed_aus_cement |> 
   as_tibble() |> 
   mutate(
@@ -218,7 +217,7 @@ variance_mean_relationship <- transformed_aus_cement |>
   ) |> 
   filter(!is.na(orig_mean))
 
-# Plot variance-mean relationship
+# plot variance-mean relationship
 p1 <- variance_mean_relationship |> 
   ggplot(aes(x = orig_mean, y = orig_sd)) +
   geom_point(alpha = 0.6) +
@@ -244,9 +243,9 @@ p2 <- variance_mean_relationship |>
 p1 + p2 
 ```
 
-The code above uses the `slide_dbl` function from the `slider` package to calculate the rolling standard deviation over a 17-quarter window (`.before = 16`)
+The code above uses the `slide_dbl()` function from the `slider` package to calculate the rolling standard deviation over a 17-Quarter window (`.before = 16`).
 
-The Left plot (Original Series) shows a clear linear relationship between its rolling mean and rolling standard deviation (SD). This is a clear heteroscedasticity where variance grows with the series' level, which further confirms that the original series has a **variance proportional to the mean**. The nearly flat blue line in the left plot indicates how the transformation has now **stabilised the variance** across all levels. The rolling SD stays relatively constant (\~0.07 to \~0.125) regardless of the rolling mean.
+The Left plot (Original Series) shows a clear linear relationship between its rolling mean and rolling standard deviation (SD). This is a clear presence of heteroscedasticity where variance grows with the series' level, which further confirms that the original series has a **variance proportional to the mean**. The nearly flat blue line in the left plot indicates how the transformation has now **stabilised the variance** across all levels. The rolling SD stays relatively constant (\~0.07 to \~0.125) regardless of the rolling mean.
 
 Picking a rolling window that captures the full business cycle is very essential for a stable estimation while still remaining sensitive to local patterns. With quarterly data, 17 quarters or \~4 years (rolling window) is a good compromise between smoothness and responsiveness. We could also quantify this relationship with correlations
 
@@ -275,7 +274,7 @@ The optimal transformation often represents a balance between variance stabiliza
 
 ## Summary
 
-We have tackled a fundamental challenge in time series forecasting; dealing with changing variances over time. We learned that many forecasting models assume constant variance, but real world data often displays a changing variance, where variability decreases or increases with the series level.
+We have tackled a fundamental challenge in time series forecasting; dealing with changing variances over time. We learnt that many forecasting models assume constant variance, but real world data often displays a changing variance, where variability decreases or increases with the series level.
 
 The key insight emerged that variance stabilisation is not just a mathematical exercise, it is about creating a series where forecasting models can learn consistent patterns rather than being misled by changing variability.
 

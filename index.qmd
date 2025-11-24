@@ -1,6 +1,6 @@
 *A practical, beginner-friendly guide using tsibble, fable and friends*
 
-> "📌Target Audience: Beginners in R with basic knowledge of data frames and plotting, but little to no experience in time series analysis
+> "📌Target Audience: Beginners in R with basic knowledge of data frames and plotting, but little to no experience in time series analysis.
 >
 > ✔️Tools Used: `tidyverse` `tsibble` `fable` `feasts` `lubridate`
 >
@@ -14,9 +14,9 @@ In this book, we will take your basic R skills and transform them into **real-wo
 
 Whether you are a student, analyst or data enthusiast, time series skills are essential in your field – and surprisingly accessible. By the end of this guide, you will be able to:
 
--   Visualise trends and seasonality like a pro
--   Decompose complex patterns
--   Build and compare forecasts using smart, automated models
--   And most importantly explain your results clearly
+-   Visualise trends and seasonality like a pro.
+-   Decompose complex patterns.
+-   Build and compare forecasts using smart, automated models.
+-   And most importantly explain your results clearly.
 
 So grab your pen and paper (whatever it is you want to grab 😁), fire up RStudio and let's turn your curiosity into prediction. 📊✨

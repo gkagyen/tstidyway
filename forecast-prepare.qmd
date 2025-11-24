@@ -2,17 +2,15 @@
 
 Exploring our time series has given us a deep understanding of our time series data – we have been able to identify its patterns, rhythms and peculiarities. Now we stand at the crucial bridge between understanding what our data has been doing and predicting what it will do next.
 
-Preparing for forecasting is the process of transforming your explored data into a modelling ready series, ensuring your forecasts are built on solid statistical foundations rather than shaky assumptions.
+Preparing for forecasting is the process of transforming our explored data into a modelling ready series, ensuring our forecasts are built on solid statistical foundations rather than shaky assumptions.
 
 ## Why Preparation Matters
 
 Skipping proper preparation is like building a house without a foundation – It might look good initially, but it will not withstand the test of time. Proper preparation ensures:
 
--   **Model Reliability**: Transformations and stationarity checks prevent statistical violations that undermines forecast accuracy
-
--   **Realistic Evaluation**: Careful train-test splitting provides honest assessment of how your models will perform in the real world
-
--   **Efficient Modelling**: Clean, structured data saves you from debugging mysterious model failures later
+-   **Model Reliability**: Transformations and stationarity checks prevent statistical violations that undermines forecast accuracy.
+-   **Realistic Evaluation**: Careful train-test splitting provides honest assessment of how your models will perform in the real world.
+-   **Efficient Modelling**: Clean, structured data saves you from debugging mysterious model failures later.
 
 ## The Journey Ahead
 
@@ -28,4 +26,4 @@ Time series forecasting has special requirements that demand careful preparation
 
 ## What This Means for You
 
-The goal of preparation is to ensure your forecasting models have the best possible chance of success by giving them clean, appropriate data to learn from. By the end of this section, you will understand how to diagnose and fix common time series issues, create robust validation framework, and transform your data into its most forecast-ready state – setting the stage for building powerful, reliable forecasting models in the next section.
+The goal of preparation is to ensure your forecasting models have the best possible chance of success by giving them clean, appropriate data to learn from. By the end of this section, you will understand how to diagnose and fix common time series issues, create robust validation framework, and transform your data into its most forecast-ready state – setting the stage for building powerful and reliable forecasting models in the next section.

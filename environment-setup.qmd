@@ -15,20 +15,20 @@ We can go ahead and start building our time series analysis task right away afte
     When creating a new project you can directly set your project directory to your preferred directory by choosing **`"Existing Directory"`** and selecting the directory manually.
     :::
 
-3.  Keep all scripts, data, and outputs in separate folders for better workflow
+3.  Keep all scripts, data, and outputs in separate folders for better workflow.
 
 ## Quick Test Run
 
-Let's run a quick test to ensure everything is working. We shall use a built in dataset
+Let's run a quick test to ensure everything is working. We shall use a built in dataset.
 
 ```{r}
 #| eval: false
 
-# Use the 'us_employment' dataset from the fpp3 package
+# use the 'us_employment' dataset from the fpp3 package
 library(fpp3)
 head(us_employment)
 
-# Lets see if it is a proper tsibble and then we can plot it
+# let's see if it is a proper tsibble and then we can plot it
 us_employment |> 
   filter(Title == "Total Private") |> 
   autoplot(Employed) +

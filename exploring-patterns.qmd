@@ -25,7 +25,7 @@ sales_ts <- read_csv('data/monthly_sales.csv', show_col_types = FALSE) |>
 
 A fundamental concept in time series analysis is decomposition. The idea is to split, $y_{t}$, into three additive parts (where the time series is represented as the sum of its parts):
 
--   **Trend (**$T_{t}$**):** The long-term progression (the increasing or decreasing direction over time)
+-   **Trend (**$T_{t}$**):** The long-term progression (the increasing or decreasing direction over time).
 -   **Seasonal (**$S_{t}$**):** Regular, repeating patterns over a fixed period (example, yearly or quarterly).
 -   **Remainder (**$R_{t}$**):** The "leftover" part after trend and seasonality are removed; this is often considered the random noisy component.
 
@@ -35,7 +35,7 @@ $$
 
 ### Basic and Advanced Decomposition with Special Arguments
 
-The most robust method for this **STL,** which stands for **S**easonal and **T**rend decomposition using **L**oess. Loess is a method for estimating non-linear relationships, and its use makes STL method versatile and robust to outliers as it handles a wide range of seasonal and trend shapes. The `feasts` package provides the `STL()` function to perform this decomposition directly on a `tsibble` object. Let us decompose the `Sales` series in the `sales_ts` data.
+The most robust method for time series decomposition is **STL,** which stands for **S**easonal and **T**rend decomposition using **L**oess. Loess is a method for estimating non-linear relationships, and its use makes the STL method versatile and robust to outliers as it handles a wide range of seasonal and trend shapes. The `feasts` package provides the `STL()` function to perform this decomposition directly on a `tsibble` object. Let's decompose the `Sales` series in the `sales_ts` data.
 
 ```{r}
 # Decompose the Sales series using STL
@@ -43,7 +43,7 @@ dcmp <- sales_ts |>
   model(STL(Sales))
 ```
 
-The simplest implementation use the default `STL()` function, which automatically selects suitable window sizes for the trend and seasonal components as illustrated in the above code. The `model()` function from the `fabletools` package is used to fit a "model" (STL Decomposition) to the tsibble `sales_ts`. The variable to decomposed is specified inside the `STL` function.
+For the simplest implementation, use the default `STL()` function, which automatically selects suitable window sizes for the trend and seasonal components as illustrated in the above code. The `model()` function from the `fabletools` package is used to fit a "model" (STL Decomposition) to the tsibble `sales_ts`. The variable to decomposed is specified inside the `STL()` function.
 
 For greater control you can include the variable of interest as a formula where you manually define the smoothing window for the trend and the seasonal components using the special arguments `trend` and `season`.
 
@@ -70,7 +70,7 @@ This returns a `fabletools` object dataset "`dable`" (decomposition table) which
 -   `trend`: The estimated trend component.
 -   `season_year`: The estimated seasonal component.
 -   `remainder`: The residual or error component (noise).
--   `season_adjust`: The final seasonally adjusted series (Original Series - Seasonal Component)
+-   `season_adjust`: The final seasonally adjusted series (Original Series - Seasonal Component).
 
 This allows for direct analysis and visualisation of how much of the variations in the `Sales` series is attributed to long-term movements, seasonal factors, and irregular noise. The `autoplot()` function when applied on this `dable` output will automatically generate a multi-panel plot displaying the decomposition of the `Sales` series into its components as calculated by the STL method.
 
@@ -81,9 +81,9 @@ components(dcmp) |>
   autoplot(linewidth = 0.7)
 ```
 
-The plot features for main panels; the original Sales time series ($y_{t}$), The long term direction of the trend, the estimated periodic pattern and the noise or irregular fluctuations.
+This plot features four main panels; the original Sales time series ($y_{t}$), The long term direction of the trend, the estimated periodic pattern and the noise or irregular fluctuations.
 
-From the STL decomposed plot we see that the original series is highly affected by both seasonality and a trend. The smooth long-term trend shows the overall level of sales over the years. Its starts around 35000 and dips noticeably around early 2018 and then rises back up towards 40,000 by late 2019
+From the STL decomposed plot we see that the original series is highly affected by both seasonality and a trend. The smooth long-term trend shows the overall level of sales over the years. It starts around 35,000 and dips noticeably in early 2018 and then rises back up towards 40,000 by late 2019
 
 The seasonal panel shows a strong, consistent repeating pattern. The vertical scale (from approximately -5000 to 5000) indicates the magnitude of the seasonal effect relative to the trend.
 
@@ -91,13 +91,13 @@ The last panel shows the irregular, left over variations (from approximately -10
 
 ## Analysing Autocorrelation Patterns
 
-Another crucial property of time series is **autocorrelation**. Simply put, autocorrelation measures the relationship between a value in a series and its past values (called "lags"). For example, is today;s sales figure correlated with the sales figure from the same quarter last year? This is a key concept for building effective forecasting models.
+Another crucial property of time series is **autocorrelation**. Simply put, autocorrelation measures the relationship between a value in a series and its past values (called "lags"). For example, is today's sales figure correlated with the sales figure from the same quarter last year? This is a key concept for building effective forecasting models.
 
 The `feasts` package provides two very useful functions, `ACF` (Autocorrelation Function) and `PACF()` (Partial Autocorrelation Function) to do this. Below, we see how to check autocorrelation for our `Sales` series.
 
 ### Autocorrelation Function (ACF)
 
-The **ACF** measures the correlation between a time series $y_{t}$ and its past values $y_{t-k}$ (where $k$ is the lag) at all observed lags, without isolating the effect of intermediate lags. High autocorrelation at a seasonal lag (e.g. lag 12 for monthly data) is a strong indicator of seasonality. We use the `ACF()` function to calculate these correlations for the `Sales` series
+The **ACF** measures the correlation between a time series $y_{t}$ and its past values $y_{t-k}$ (where $k$ is the lag) at all observed lags, without isolating the effect of intermediate lags. High autocorrelation at a seasonal lag (e.g. lag 12 for monthly data) is a strong indicator of seasonality. We use the `ACF()` function to calculate these correlations for the `Sales` series.
 
 ```{r}
 # compute the Autocorrelation for Sales
@@ -107,7 +107,7 @@ sales_acf <- sales_ts |>
 sales_acf
 ```
 
-We can also specify the maximum number of lags to use for computing the correlations with the `lag_max` argument. By default it calculates this number using the formula "$10\times log_{10}(N/m)$".
+We can also specify the maximum number of lags to use for computing the correlations with the `lag_max` argument. By default it calculates this number using the formula "$10\times log_{10}(N/m)$", where $N$ is the number of observations and $m$ is the number of series.
 
 ```{r}
 # compute autocorrelation with specified lags
@@ -116,7 +116,7 @@ sales_acf <- sales_ts |> ACF(Sales, lag_max = 24)
 
 The resulting `sales_acf` object is a tsibble that contains the correlation coefficient at the different lags. A significant spike at a particular lag indicates a strong relationship.
 
-We can visualise the output for easier interpretation using `autoplot()`. The plot of the ACF displays a series of vertical lines known as **correlogram**, where the height of each line represents the correlation at that specific lag.
+We can visualise the output for easier interpretation using `autoplot()`. The plot of the ACF displays a series of vertical lines known as a **correlogram**, where the height of each line represents the correlation at that specific lag.
 
 ```{r}
 #| label: fig-acf
@@ -134,14 +134,14 @@ This is what this ACF plot might mean in a business context:
 -   The negative correlation at **Lag 3** suggests that three months after a purchase, sales tend to be opposite to what they were. If sales were high in a given month, they are likely to be low three months later and vice versa.
 -   The positive correlation at **Lag 6** suggests that whatever the sales pattern was at a given time, it tends to **repeat itself every 6 months**.
 
-The other spikes later on at lag **14, 15 and 18** are likely harmonics of the primary 6-month cycle. Once a cyclical pattern is in the data, it can create correlations at multiple or fractions of its main period. They are part of the same underlying effect and not separate seasonal effects
+The other spikes later on at lag **14, 15 and 18** are likely harmonics of the primary 6-month cycle. Once a cyclical pattern is in the data, it can create correlations at multiple or fractions of its main period. They are part of the same underlying effect and not separate seasonal effects.
 
 ### Partial Autocorrelation Function (PACF)
 
-The **PACF** calculates the correlation between $y_{t}$ and $y_{t-k}$ **after removing the influence of the** **intermediate lags** $y_{t-1}$, $y_{t-2}$, $\dots$, $y_{t-(k-1)}$. This helps to precisely identify the direct relationship between the current observation and a past observation, filtering out the "flow-through" correlation effects. Think of it this way: The sales at lag 3 (3 months ago) might be correlated with sales today because;
+The **PACF** calculates the correlation between $y_{t}$ and $y_{t-k}$ **after removing the influence of the intermediate lags** $y_{t-1}$, $y_{t-2}$, $\dots$, $y_{t-(k-1)}$. This helps to precisely identify the direct relationship between the current observation and a past observation, filtering out the "flow-through" correlation effects. Think of it this way: The sales at lag 3 (3 months ago) might be correlated with sales today because;
 
--   Sales today are correlated with sales at lag 1 (ACF at lag 1)
--   Sales at lag 1 are correlated with sales at lag2.
+-   Sales today are correlated with sales at lag 1 (ACF at lag 1).
+-   Sales at lag 1 are correlated with sales at lag 2.
 -   Sales at lag 2 are correlated with sales at lag 3.
 
 The PACF cuts through this chain and asks: "If I already know the values at lags 1 and 2, does lag 3 still provide new, direct information today?
@@ -156,7 +156,7 @@ sales_pacf <- sales_ts |>
 sales_pacf
 ```
 
-similar to the ACF, the `sales_pacf` object also contains the partial autocorrelation values for each lag. We can again visualise this output using `autoplot()`. The PACF plot is primarily used to identify the ***order*** of an ***autoregressive*** *(**AR**)* component in a model
+similar to the ACF, the `sales_pacf` object also contains the partial autocorrelation values for each lag. We can again visualise this output using `autoplot()`. The PACF plot is primarily used to identify the ***order*** of an ***autoregressive*** *(**AR**)* component in an ARIMA model.
 
 ```{r}
 #| label: fig-pacf
@@ -164,7 +164,7 @@ similar to the ACF, the `sales_pacf` object also contains the partial autocorrel
 sales_pacf |> autoplot()
 ```
 
-The most important aspect of our PACF plot is the behaviour in the first few lags. We notice that the is a significant negative spike at **lag 3**, with the subsequent lags generally becoming smaller and non significant, with no clear pattern. This is a classic signature of a PACF plot where the beginning few vertical bars shows a significant spike and the cuts off.
+The most important aspect of our PACF plot is the behaviour in the first few lags. We notice that there is a significant negative spike at **lag 3**, with the subsequent lags generally becoming smaller and non significant, with no clear pattern. This is a classic signature of a PACF plot where the beginning few vertical bars shows a significant spike and then cuts off.
 
 The PACF and ACF plots are considered diagnostic plots for identifying an ARIMA model's specification (more information in @sec-arima).
 
@@ -174,7 +174,7 @@ Another powerful aspect of the `fabletools` is its ability to compute a wide arr
 
 ### Identifying Seasonal Patterns and Strength
 
-The most common feature to compute is the **seasonal strength**, which measures quantitatively how dominant the recurring patterns are compared to the overall trend and random noise. This is typically done using the **STL decomposition**. We demonstrate this with the `tsibbledata::aus_production` tsibble dataset which contains the quarterly production of selected commodities in Australia.
+The most common feature to compute is the **seasonal strength**, which measures quantitatively how dominant the recurring patterns are compared to the overall trend and random noise. This is typically done using the **STL decomposition**. We demonstrate this with the `tsibbledata::aus_production`, a tsibble dataset which contains the quarterly production of selected commodities in Australia.
 
 ```{r}
 # convert wide data to long 
@@ -193,7 +193,7 @@ aus_prod_features |>
 You have to change the data to a long format so that the tsibble has a 'key' variable (`Product`). The structure is essential for the `fabletools` feature functions. The `features()` function calculates metrics based on the STL decomposition for each `Product` series separately. The `feat_stl` feature set automatically returns several key metrics including:
 
 -   **`seasonal_strength_year`**: Measures the proportion of variance explained by the seasonal components. The values range between 0 and 1 (higher values mean stronger seasonality).
--   **`seasonal_peak`/`seasonal_trough_year`**: Identifies the periods (Month for monthly data & Quarter for Quarterly data) of highest and lowest seasonal activity
+-   **`seasonal_peak`/`seasonal_trough_year`**: Identifies the periods (Month for monthly data or Quarter for Quarterly data) of highest and lowest seasonal activity
 -   **`trend_strength`**: Measures the proportion of variance explained by the trend component (higher values mean stronger trend)
 
 ### Comprehensive Feature Analysis
@@ -210,15 +210,15 @@ stl_features <- gh_ts |>
   features(value, features = feature_set(tags = 'stl'))
 ```
 
-This line of code within the the `feature()` function; `faeture_set(tags = 'stl')` instructs `fabletools` to compute the full set of STL-related features. These features include;
+This line of code within the the `feature()` function; `feature_set(tags = 'stl')` instructs `fabletools` to compute the full set of STL-related features. These features include;
 
--   **`trend_strength:`** Measures how strong the trend component is relative to the remainder (noise). Values close to 1 have strong trend and values close to zero have weak or no trend. Example "*Female population"* ($0.9999953$) has and extremely strong trend but "*Annual GDP growth rate"* ($0.3091004$) has a weak trend.
+-   **`trend_strength:`** Measures how strong the trend component is relative to the remainder (noise). Values close to 1 have strong trend and values close to zero have weak or no trend. Example "*Female population"* ($0.9999953$) has an extremely strong trend but "*Annual GDP growth rate"* ($0.3091004$) has a weak trend.
 
 -   **`spikiness:`** Measures the presence of sharp intermittent spikes in the remainder (noise) component. High values = more spiky/volatile. Example *"Rural Population"* has **extremely high spikiness** ($2.086846\times10^{14}$), indicating major irregularities.
 
 -   **`linearity:`** Measures how linear the trend is (vs curved) based on fitting a linear model to the trend component. Positive values suggest trend can be well-approximated by a straight line. Negative values suggest non-linear trends. \*"Cereal yield \_kg per hectare"\* ($3395.64$) is highly linear.
 
--   **`curvature:`** Measures the degree of bending in the trend. It complements linearity -captures how much the trend curves. Higher absolute values means more curved. *"Female population percentage"* ($-1.741482$) shows negative curvature (concave down)
+-   **`curvature:`** Measures the degree of bending in the trend. It complements linearity - captures how much the trend curves. Higher absolute values means more curved. *"Female population percentage"* ($-1.741482$) shows negative curvature (concave down)
 
 -   **`stl_e_acf1:`** First order autocorrelation of the remainder component (lag1). The values ranges from -1 to 1. Values near 0 means remainders are random (which is good!). High positive or negative values indicates patterns left in residuals that the STL decomposition did not capture.
 
@@ -226,15 +226,15 @@ This line of code within the the `feature()` function; `faeture_set(tags = 'stl'
 
 **Custom Feature Calculations with Lambda Expressions**
 
-If a desired feature is not pre-defined, you can compute it using a built in function or a simple lambda expression (a short, anonymous function)
+If a desired feature is not pre-defined, you can compute it using a built in function or a simple lambda expression (a short, anonymous function).
 
 ```{r}
 # compute any other features using their function or a lambda expression
 percentile_features <- aus_prod_long |> 
-  features(Quantity, features = ~quantile(., na.rm=TRUE)) 
+  features(Quantity, features = ~ quantile(., na.rm=TRUE)) 
 ```
 
-`features = ~quantile(., na.rm=TRUE)` defines a custom function to run on the Quantity values. The `~` symbol creates the lambda expression and the `.` refers to the vector of time series values. This is a compact way of calculating the $0^{th}$, $25^{th}$, $50^{th}$, $75^{th}$ and $100^{th}$ percentiles for each `Product` series, giving insight into its distribution and volatility range.
+`features = ~ quantile(., na.rm=TRUE)` defines a custom function to run on the Quantity values. The `~` symbol creates the lambda expression and the `.` refers to the vector of time series values. This is a compact way of calculating the $0^{th}$, $25^{th}$, $50^{th}$, $75^{th}$ and $100^{th}$ percentiles for each `Product` series, giving insight into its distribution and volatility range.
 
 **Multiple Custom Features (List of Functions)**
 
@@ -242,16 +242,18 @@ You can also calculate several custom features simultaneously by passing a named
 
 ```{r}
 # for multiple custom features create a list of functions 
-cent_tend_features <- gh_ts |> 
-  features(value, features = list(sd = ~sd(., na.rm=T), median = ~median(., na.rm=T), mean = ~mean(., na.rm=T)))
-cent_tend_features
+ctendency_features <- gh_ts |> 
+  features(value, features = list(sd = ~sd(., na.rm=T), 
+                                  median = ~median(., na.rm=T), 
+                                  mean = ~mean(., na.rm=T)))
+ctendency_features
 ```
 
-The custom anonymous functions supplied to the `features` argument in a list, calculates t**hree measures of central tendency and dispersion**. For every indicator in the `gh_ts` data, the standard deviation (`sd`), the median, and the mean are calculated. This can help you understand the **average level** of the series and its overall volatility across the entire period.
+The custom anonymous functions supplied to the `features` argument in a list, calculates **three measures of central tendency and dispersion**. For every indicator in the `gh_ts` data, the standard deviation (`sd`), the median, and the mean are calculated. This can help you understand the **average level** of the series and its overall volatility across the entire period.
 
 ## Comprehensive Diagnostic Plots for Model Selection
 
-The `gg_tsdisplay()` function from the `feasts` package (now often found in the `ggtime` package) makes it possible to create specialised plots that combine multiple diagnostics to guide model selection. Especially an ARIMA model.
+The `gg_tsdisplay()` function from the `feasts` package (now often found in the `ggtime` package) makes it possible to create specialised plots that combine multiple diagnostics to guide model selection, especially an ARIMA modelling.
 
 ```{r}
 #| warning: false
@@ -267,9 +269,9 @@ gh_ts |>
 
 Here we filter the `gh_ts` data to isolate the specific series of interest; the `Gross national expenditure (% of GDP)` indicator. `gg_tsdisplay(value, plot_type = "partial")` generates a three panel plot:
 
--   The main panel (top) shows the Series Plot of the `Gross national expenditure (% of GDP)` values over the time period
--   The bottom left panel shows the ACF
--   The bottom right panel shows the PACF (specified by `plot_type = "partial")` )
+-   The main panel (top) shows the Series Plot of the `Gross national expenditure (% of GDP)` values over the time period.
+-   The bottom left panel shows the ACF correlogram.
+-   The bottom right panel shows the PACF plot (specified by `plot_type = "partial"`).
 
 The `plot_type` argument controls what type of plot is displayed in the bottom right panel it can either be a PACF, histogram, lagged scatterplot or spectral density depending on what you specify. The values that can be specified for this argument can be found in its help documentation.
 
@@ -279,12 +281,9 @@ The series show high **volatility** with **no** **clear** **trend**, the ACF sho
 
 In this chapter we moved beyond visual inspection and explored the `feasts` and `fabletools` package to perform a rigorous, quantitative diagnosis of our time series. We systematically:
 
--   Decomposed the a time series using `STL` to isolate the trend, seasonal and remainder components.
-
--   Analysed autocorrelation with `ACF` and `PACF` to understand how each value depends on its past.
-
+-   Decomposed a time series using `STL` to isolate the trend, seasonal and remainder components.
+-   Analysed autocorrelations with `ACF` and `PACF` to understand how each value depends on its past.
 -   Quantified pattern strength using `features()` to calculate statistics like `seasonal_strength` and `trend_strenght`, confirming our visual observations with hard numbers.
-
--   Created diagnostic plots using `gg_tsdisplay()` to get comprehensive multi-panel view of a time series' behaviour, which is essential for guiding our model selection.
+-   Created diagnostic plots using `gg_tsdisplay()` to get comprehensive multi-panel view of a time series' behaviour, which is essential for guiding an ARIMA model selection.
 
 With a deep understanding of patterns in our data, we are now ready to build forecasting models. But before we do, a critical step remains. In the next section, we will cover **"Preparing Data for Forecasting"**.
